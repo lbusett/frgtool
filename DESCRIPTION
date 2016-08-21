@@ -2,8 +2,12 @@ Package: frgtool
 Type: Package
 Title: What the Package Does (Title Case)
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: Who to complain to <yourfault@somewhere.net>
+Author: Lorenzo Busetto, phD
+Maintainer: Joe Developer <Joe.Developer@some.domain.net>
 Description: More about what it does (maybe more than one line)
-License: What license is it under?
+Depends: R (>= 3.3.1)
+Imports:
+License: GPL 3.0
 LazyData: TRUE
+Depends: R (>= 3.1.0), gWidgets2RGtk2, gWidgets2
+RoxygenNote: 5.0.1
