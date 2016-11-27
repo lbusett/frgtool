@@ -149,7 +149,7 @@ function FRG_ROI_STAT_ERODE, $
  
     
     if roi_size ne 0 then begin
-       end_index = start_index + (roi_size-1)                                      ; Update end_index on the basis of number of pixels in the ROI
+      end_index = start_index + (roi_size-1)                                      ; Update end_index on the basis of number of pixels in the ROI
       roi_data_temp = (float(envi_get_roi_data(roi_ids[roi], fid=in_fid,pos=pos)))         ; Get ROI data
       roi_data_temp[where(roi_data_temp eq no_data_in)] = no_data_out                      ; set no_data to new value
       

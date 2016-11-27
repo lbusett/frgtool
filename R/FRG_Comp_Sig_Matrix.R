@@ -42,7 +42,7 @@ FRG_Comp_Sig_Matrix = function (In_File = In_File , out_file_pmat = out_file_pma
   
   print(paste('-> Performing Statistical Analysis on Post-Fire SVI Time Series from: ', basename(In_File)))   # Status Message
   load(In_File)
-  Index = attributes(Data)$Index				;        SVI_File = attributes(Data)$SVI_File   ;    Shape_File = attributes(Data)$Shape_File
+  Index    = attributes(Data)$Index				 ;        SVI_File = attributes(Data)$SVI_File   ;    Shape_File = attributes(Data)$Shape_File
   CSV_File = attributes(Data)$CSV_File     ;    		CLC_File = attributes(Data)$CLC_File
   N_Years = as.numeric(attributes(Data)$End_Year)-as.numeric(attributes(Data)$Start_Year)
   

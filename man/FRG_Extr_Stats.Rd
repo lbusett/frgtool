@@ -39,13 +39,14 @@ if =='Multiple, extract time series for areas burned multiple times}
 'DONE' if all went OK, otherwise error message
 }
 \description{
-Function used to extract Scaled VIs time series of the different pixels of analyzed burnt areas, associate info form the burnt areas \cr
-            shapefile and save as an RData file to be used for statistical analysis
+Function used to extract Scaled VIs time series of the different pixels of analyzed burnt areas, 
+ associate info form the burnt areas shapefile and save as an RData file to be used for statistical analysis
 }
 \details{
-This function is used to extract Scaled VIs time series of the different pixels of analyzed burnt areas from the raster images created by \cr
-        "FRG_Compute_SVI.R, associate ancillary info derived form the burnt areas shapefile (e.g., Area, FireYear, ...) and save results as an RData file \cr
-        (in the "/TS_Extraction subfolder) to be used later for statistical analysis
+This function is used to extract Scaled VIs time series of the different pixels of analyzed burnt 
+ areas from the raster images created by "FRG_Compute_SVI.R, associate ancillary info derived form the burnt 
+ areas shapefile (e.g., Area, FireYear, ...) and save results as an RData file (in the "/TS_Extraction subfolder) 
+ to be used later for statistical analysis
 }
 \author{
 Lorenzo Busetto (2012)
