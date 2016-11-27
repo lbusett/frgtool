@@ -16,7 +16,7 @@
 #' 			sVI = 100 * (VI_pix - VI_median)/(VI_median). Previous methods no longer used !
 #' \item SNDVI, SRDVI checkboxes used to select which vegetation indexes are to be used in the analysis
 #' \item ReProc Checkbox used to specify if already present images are to be reprocessed. Defaults to FALSE
-#' 
+#' }
 #' @return
 #' If the user chooses 'Start' and all processing parameters are OK, the selected parameters are saved in the 'FRG_SVI_Previous.RData' file and the computation starts \cr
 #' Results are saved in appropriate subfolders of the MOD_Dir folder.

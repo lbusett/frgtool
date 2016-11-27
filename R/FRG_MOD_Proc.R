@@ -12,7 +12,7 @@
 #'               2) The DVI (Difference Vegetation Index) is computed for each date starting from the RED and NIR MODIS images
 #'               3) The average yearly values for DVI and NDVI are computed starting from the images of DOY 209 and 225. NODATA and bad quality data\cr
 #'                   are automatically removed
-#'
+#'}
 #' @param MOD_Dir string Folder where the original and preprocessed image will be stored
 #' @param Start_Year numeric Starting year of the analysis
 #' @param End_Year numeric Ending Year of the analysis

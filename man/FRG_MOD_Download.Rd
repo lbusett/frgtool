@@ -23,6 +23,14 @@ already existing mosaics will be overwritten}
 \description{
 Function used to download, mosaic and reproject MODIS data
 }
+\details{
+Function used to download, mosaic and reproject MODIS data  \cr
+  \itemize{
+		\item Download and Mosaicing: \cr
+              Images covering Europe for DOYS 209 and 225 of each selected year are downloaded, mosaiced and reprojected \cr
+              Resulting images are saved in TIFF format in the Originals subfolder of the output folder selected by the user. Separate subfolders are used\cr
+              to store images related to  NDVI, RED and NIR reflectance, QA (Quality Assurance) and Pixel Reliability.}
+}
 \author{
 Babak Naimi (naimi@r-gis.net)
 email: lorenzo.busetto@jrc.ec.europa.eu

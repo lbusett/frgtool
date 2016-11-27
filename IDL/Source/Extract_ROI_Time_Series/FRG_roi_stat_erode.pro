@@ -38,15 +38,16 @@
 ;http://effis.jrc.ec.europa.eu
 ;
 ;-
-function FRG_ROI_STAT_ERODE,ROI_File = ROI_File, $
-    Erode_File =  Erode_File, $
-    sVI_File = sVI_File,$
-    CLC_File_00 = CLC_File_00,  $
+function FRG_ROI_STAT_ERODE, $
+    ROI_File       = ROI_File, $
+    Erode_File     =  Erode_File, $
+    sVI_File       = sVI_File,$
+    CLC_File_00    = CLC_File_00,  $
     ENV_Zones_File = ENV_Zones_File, $
-    Out_File = Out_File, $
-    no_data_in = no_data_in, $
-    Start_Year = Start_Year, $
-    End_Year = End_Year
+    Out_File       = Out_File, $
+    no_data_in     = no_data_in, $
+    Start_Year     = Start_Year, $
+    End_Year       = End_Year
     
   compile_opt IDL2
   
@@ -56,16 +57,16 @@ function FRG_ROI_STAT_ERODE,ROI_File = ROI_File, $
   ; Open Files and get useful Info
   ; -------------------------------------------------------------------------------------------------------------------- -
   
-  envi_open_file, sVI_File, r_fid = in_fid,/no_realize                           ; Open the VegCover input file and get dimensions
+  envi_open_file,  sVI_File, r_fid = in_fid,/no_realize                           ; Open the VegCover input file and get dimensions
   envi_file_query, in_fid, wl=wl, pos=pos, nb = nb, bnames = bnames, ns = ns, nl = nl
   
-  envi_open_file, CLC_File_00, r_fid = clc_fid,/no_realize                       ; Open Corine File and get useful Info
+  envi_open_file,  CLC_File_00, r_fid = clc_fid,/no_realize                       ; Open Corine File and get useful Info
   envi_file_query, clc_fid, ns = ns_clc, nl = nl_clc
   
-  envi_open_file, Erode_File, r_fid = erode_fid,/no_realize                      ; Open Corine File and get useful Info
+  envi_open_file,  Erode_File, r_fid = erode_fid,/no_realize                      ; Open Eroded ROI File and get useful Info
   envi_file_query, erode_fid, ns = ns_clc, nl = nl_clc
   
-  envi_open_file, ENV_Zones_File, r_fid = env_fid,/no_realize                    ; Open ENV_ZONES File and get useful Info
+  envi_open_file,  ENV_Zones_File, r_fid = env_fid,/no_realize                    ; Open ENV_ZONES File and get useful Info
   envi_file_query, env_fid, ns = ns_env, nl = nl_env
   
   ;   envi_open_file, CLC_File_00_06, r_fid = clc_fid_06,/no_realize                               ; Open Corine File and get useful Info

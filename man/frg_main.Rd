@@ -18,7 +18,7 @@ It builds the main GUI and handles events corresponding to the different buttons
 Also loads all required libraries, sources necessary routines and sets the main processing frg_conf.  \cr
 The main processing functions of the FRG Tool can be accessed from the Main GUI. In particular:
 
-\Itemize {
+\itemize {
 \item Create Burned Area Shapefile: \cr
             Allows creating the input burnt areas shapefile, starting from data present in the EFFIS database (esposito) \cr
 \item Analyse burned ares: \cr

@@ -1,7 +1,6 @@
+#'FRG_Regr_GUI
 #'
-#' @title FRG_Regr_Sel
-#'
-#' This routine builds the GUI for the selection of files to be used for statistical analysis of time series information derived for burnt
+#' @description This routine builds the GUI for the selection of files to be used for statistical analysis of time series information derived for burnt
 #' areas from MODIS scaled vegetation indexes files.
 #'
 #' @return

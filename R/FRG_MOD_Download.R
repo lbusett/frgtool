@@ -5,8 +5,7 @@
 #' 		\item Download and Mosaicing: \cr
 #'               Images covering Europe for DOYS 209 and 225 of each selected year are downloaded, mosaiced and reprojected \cr
 #'               Resulting images are saved in TIFF format in the Originals subfolder of the output folder selected by the user. Separate subfolders are used\cr
-#'               to store images related to  NDVI, RED and NIR reflectance, QA (Quality Assurance) and Pixel Reliability.
-#'
+#'               to store images related to  NDVI, RED and NIR reflectance, QA (Quality Assurance) and Pixel Reliability.}
 #' @param dates string array of dates to be downloaded
 #' @param OutOrig_Path string Main folder where the original MODIS mosaics (i.e., one pan european image for each data and data type) will be stored
 #' @param ReDown numeric if = 1, MODIS images needed to create already existing mosaic files will be redownloaded, and

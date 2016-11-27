@@ -30,6 +30,21 @@ already existing mosaics will be overwritten}
 \description{
 Function used to download, mosaic and preprocess MODIS data
 }
+\details{
+Function used to download, mosaic and preprocess MODIS data. \cr
+	\itemize{
+		\item Download and Mosaicing: \cr
+              Images covering Europe for end July - mid august  of each selected year are downloaded, mosaiced and reprojected \cr
+              Resulting images are saved in TIFF format in the Originals subfolder of the output folder selected by the user. Separate subfolders are used\cr
+              to store images related to  NDVI, RED and NIR reflectance, QA (Quality Assurance) and Pixel Reliability.
+	\item Preprocessing: \cr
+              The preprocessing steps conducted are the following: \cr
+              1) MODIS UI (Usefulness Index) values are extracted from the MODIS QA (Quality Assurance) files
+              2) The DVI (Difference Vegetation Index) is computed for each date starting from the RED and NIR MODIS images
+              3) The average yearly values for DVI and NDVI are computed starting from the images of DOY 209 and 225. NODATA and bad quality data\cr
+                  are automatically removed
+}
+}
 \author{
 Lorenzo Busetto (2012)
 email: lorenzo.busetto@jrc.ec.europa.eu

@@ -3,10 +3,9 @@
 #'@details This function is used to update the Oracle database tables using processing results of FRG 
 #'
 #' @return In_folder : Name of the folder containing the files used to update the oracle tables
-#' @returnType 
 #'
 #' @author Lorenzo Busetto (2012)
-#' email: lorenzo.busetto@@jrc.ec.europa.eu
+#' email: lorenzo.busetto@@jrc.ec.europa.e
 #'
 #' Created Date: Nov 8, 2012
 #' @export

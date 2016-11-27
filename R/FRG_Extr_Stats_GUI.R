@@ -1,12 +1,10 @@
-#'
-#' @title FRG_Extr_Stats_GUI
+#' FRG_Extr_Stats_GUI
 #'
 #' @description  This routine builds the GUI for the selection of files to be used for extracting time series information from MODIS scaled
 #' vegetation indexes files.
 #'
 #' @return
 #'
-#' @returnType
 #'
 #' @author Lorenzo Busetto
 #' Created Date: Feb 17, 2012
@@ -119,13 +117,15 @@ FRG_Extr_Stats_GUI = function() {
                            paste(sub("[.][^.]*$", "", basename(ROI_File)),'_ENVI_Mask_Eroded', sep = ''))
 
     er = with(ex_Selection, FRG_Extr_Stats(SVI_File = SVI_File, Shape_File = Shape_File, CLC_File_00 = CLC_File_00,
-                                           ENV_Zones_File = ENV_Zones_File, Out_File = Out_File, ,erode = erode, erode_file = erode_file  ))			# Call the processing routine
+                                           ENV_Zones_File = ENV_Zones_File, Out_File = Out_File, erode = erode, erode_file = erode_file  ))			# Call the processing routine
 
     if (er == 'DONE') {
       print ('--- Time Series Extraction Complete !!!')
       addHandlerUnrealize(Main_GUI, handler = function(h,...) {return(FALSE)})		# Allow Main GUI to be closed since processing ended .
       enabled(Main_GUI) = TRUE								#Re-enable the Main GUI
-    } else {stop('An Error Occured During Time Series extraction')}
+    } else {
+      stop('An Error Occured During Time Series extraction')
+      }
 
   }, container=But_Group)
 

@@ -2,15 +2,16 @@
 % Please edit documentation in R/FRG_Regr_GUI.R
 \name{FRG_Regr_GUI}
 \alias{FRG_Regr_GUI}
-\title{FRG_Regr_Sel
-
-This routine builds the GUI for the selection of files to be used for statistical analysis of time series information derived for burnt
-areas from MODIS scaled vegetation indexes files.}
+\title{FRG_Regr_GUI}
 \usage{
 FRG_Regr_GUI()
 }
 \value{
 
+}
+\description{
+This routine builds the GUI for the selection of files to be used for statistical analysis of time series information derived for burnt
+areas from MODIS scaled vegetation indexes files.
 }
 \author{
 Lorenzo Busetto

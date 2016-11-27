@@ -2,15 +2,16 @@
 % Please edit documentation in R/FRG_Extr_Stats_GUI.R
 \name{FRG_Extr_Stats_GUI}
 \alias{FRG_Extr_Stats_GUI}
-\title{FRG_Extr_Stats_GUI
-
-This routine builds the GUI for the selection of files to be used for extracting time series information from MODIS scaled
-vegetation indexes files.}
+\title{FRG_Extr_Stats_GUI}
 \usage{
 FRG_Extr_Stats_GUI()
 }
 \value{
 
+}
+\description{
+This routine builds the GUI for the selection of files to be used for extracting time series information from MODIS scaled
+vegetation indexes files.
 }
 \author{
 Lorenzo Busetto

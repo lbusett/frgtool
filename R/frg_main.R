@@ -5,7 +5,7 @@
 #'Also loads all required libraries, sources necessary routines and sets the main processing frg_conf.  \cr
 #'The main processing functions of the FRG Tool can be accessed from the Main GUI. In particular:
 #'
-#'\Itemize {
+#'\itemize {
 #'\item Create Burned Area Shapefile: \cr
 #'             Allows creating the input burnt areas shapefile, starting from data present in the EFFIS database (esposito) \cr
 #'\item Analyse burned ares: \cr
@@ -18,7 +18,6 @@
 #'IMPORTANT NOTE: The FRG tool requires the NASA MODIS Reprojection Tool (MRT -https://lpdaac.usgs.gov/tools/modis_reprojection_tool) )
 #'and th gdal an proj4 libraries to be properly installed and configured in the system. Moreover, ENVI+IDL and ARCGIS must be installed on the system ! See the "Installation Instructions.pdf" file
 #'distributed with the source code for further info !!!
-#'
 #' @return Main GUI of the Tool
 #'
 #' @author Lorenzo Busetto - email: lorenzo.busetto@@jrc.ec.europa.eu
@@ -124,7 +123,7 @@ frg_main = function() {
   acc_group = ggroup(horizontal = TRUE, container = but_group)
   exit_but = gbutton("Quit ", cont = acc_group, handler = function(h,...) {res = FRG_Dispose(main_gui)})
   help_but = gbutton("Help ", cont = acc_group, handler = function(h,...) {system2('open',file.path(main_dir, 'frgtool_manual.pdf'))})
-  visible(main_gui)
+  visible(main_gui, TRUE)
   # main_gui <<- main_w
 
 }

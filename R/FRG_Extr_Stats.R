@@ -1,9 +1,10 @@
 #'@title FRG_MOD_Comp_SVI
-#'@description Function used to extract Scaled VIs time series of the different pixels of analyzed burnt areas, associate info form the burnt areas \cr
-#'             shapefile and save as an RData file to be used for statistical analysis
-#'@details This function is used to extract Scaled VIs time series of the different pixels of analyzed burnt areas from the raster images created by \cr
-#'         "FRG_Compute_SVI.R, associate ancillary info derived form the burnt areas shapefile (e.g., Area, FireYear, ...) and save results as an RData file \cr
-#'         (in the "/TS_Extraction subfolder) to be used later for statistical analysis
+#'@description Function used to extract Scaled VIs time series of the different pixels of analyzed burnt areas, 
+#'  associate info form the burnt areas shapefile and save as an RData file to be used for statistical analysis
+#'@details This function is used to extract Scaled VIs time series of the different pixels of analyzed burnt 
+#'  areas from the raster images created by "FRG_Compute_SVI.R, associate ancillary info derived form the burnt 
+#'  areas shapefile (e.g., Area, FireYear, ...) and save results as an RData file (in the "/TS_Extraction subfolder) 
+#'  to be used later for statistical analysis
 #'
 #' @param SVI_File string ENVI Meta File associated to time serie to be analyzed
 #' @param Shape_File string Burnt Areas Shapefile (Must Correspond to the "burned_once" shafile if Overlap == 'Single'
@@ -32,10 +33,10 @@ FRG_Extr_Stats = function(SVI_File = SVI_File, Shape_File = Shape_File, CLC_File
                           Intermediate_Folder = Intermediate_Folder, Overlap = Overlap, Shape_File_Orig = '', LUT_File_Multiple = '') {
 
   if (Overlap == 'Single') {
-    Out_RData =  paste(Out_File, 'RData.RData', sep = '_')																		# Filenames used for output saving RData Matrix
+    Out_RData =  paste(Out_File, 'RData.RData', sep = '_')		# Filenames used for output saving RData Matrix
     Out_IDL_CSV = paste(Out_File, 'IDL_Matrix.csv', sep = '_')
   } else {
-    Out_RData =  paste(Out_File, 'Multiple_RData.RData', sep = '_')  													# Filenames used for output saving RData Matrix
+    Out_RData =  paste(Out_File, 'Multiple_RData.RData', sep = '_') # Filenames used for output saving RData Matrix
     Out_IDL_CSV = paste(Out_File, 'Multiple_IDL_Matrix.csv', sep = '_')
   }
 
@@ -67,13 +68,13 @@ FRG_Extr_Stats = function(SVI_File = SVI_File, Shape_File = Shape_File, CLC_File
 
     str_idl = paste('res = FRG_ROI_STAT_ERODE(','ROI_File = \'', ROI_File, sp,
                     'Erode_File =\'',  	 erode_file,sp,
-                    'SVI_File =\'',		 SVI_File,sp,
-                    'CLC_File_00=\'', CLC_File_00, sp,
-                    'ENV_Zones_File=\'',  ENV_Zones_File, sp,
-                    'Out_File =\'', 	 Out_IDL_CSV,sp,
-                    'no_data_in = \'', FRG_Options$No_Data_Out_Rast,sp,
+                    'SVI_File =\'',		   SVI_File,sp,
+                    'CLC_File_00=\'',    CLC_File_00, sp,
+                    'ENV_Zones_File=\'', ENV_Zones_File, sp,
+                    'Out_File =\'', 	   Out_IDL_CSV,sp,
+                    'no_data_in = \'',   FRG_Options$No_Data_Out_Rast,sp,
                     'Start_Year =\'', 	 Start_Year, sp,
-                    'End_Year =\'',    End_Year,
+                    'End_Year =\'',      End_Year,
                     '\' )',
                     sep = ''	)
 

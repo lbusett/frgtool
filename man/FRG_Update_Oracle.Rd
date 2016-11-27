@@ -17,7 +17,7 @@ This function is used to update the Oracle database tables using processing resu
 }
 \author{
 Lorenzo Busetto (2012)
-email: lorenzo.busetto@jrc.ec.europa.eu
+email: lorenzo.busetto@jrc.ec.europa.e
 
 Created Date: Nov 8, 2012
 }
