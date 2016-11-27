@@ -1,9 +1,11 @@
 Package: frgtool
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Analyze Post Fire Vegetation Regeneration from Time Series of summertime MODIS data
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: Who to complain to <yourfault@somewhere.net>
+Author: Lorenzo Busetto
+Maintainer: Lorenzo Busetto <lbusetto@gmail.com>
 Description: More about what it does (maybe more than one line)
-License: What license is it under?
+License: GPL-3
+Imports: ggplot2, gdalUtils, rgdal, sf, sp, gWidgetsRGtk2, gWidgets
 LazyData: TRUE
+RoxygenNote: 5.0.1

@@ -23,8 +23,8 @@
 #'
 #' @author Lorenzo Busetto - email: lorenzo.busetto@@jrc.ec.europa.eu
 #' Created Date: Feb 16, 2012
-#' @import gWidgets2RGtk2
-#' @import gWidgets2
+#' @import gWidgetsRGtk2
+#' @import gWidgets
 #' @import ireaRscripts
 #' @import gdalUtils
 #' @export
@@ -79,38 +79,7 @@ frg_main = function() {
   frg_conf = get(load(file.path(cfg_dir, "frg_config.RData")))
 
   # paths to required scripts
-  Create_ShapeFile_script = file.path(Main_Dir,'Create_ShapeFile_script','FRG_Create_Shape.exe')
-
-  # Source R scripts (Remove when building package !!!!)
-  #
-  # #   source(file.path(Src_Dir,'GUI','FRG_MOD_GUI.R'))
-  #   source(file.path(Src_Dir,'Processing','FRG_MOD_Comp_RDVI.R'))
-  #   source(file.path(Src_Dir,'Processing','FRG_MOD_Comp_UI.R'))
-  #   source(file.path(Src_Dir,'Processing','FRG_MOD_Comp_MeanInd.R'))
-  #   source(file.path(Src_Dir,'Processing','FRG_MOD_Download.R'))
-  #   source(file.path(Src_Dir,'Processing','FRG_MOD_Proc.R'))
-  #
-  # #   source(file.path(Src_Dir,'GUI','FRG_SVI_GUI.R'))
-  #   source(file.path(Src_Dir,'Processing','FRG_MOD_Comp_SVI.R'))
-  #   source(file.path(Src_Dir,'Processing','FRG_ROI_Build.R'))
-  #   source(file.path(Src_Dir,'Processing','FRG_Create_Mask.R'))
-  #   source(file.path(Src_Dir,'Processing','FRG_Create_Mask_Eroded.R'))
-  #
-  # #   source(file.path(Src_Dir,'GUI','FRG_Extr_Stats_GUI.R'))
-  #   source(file.path(Src_Dir,'Processing','FRG_Extr_Stats.R'))
-  #   source(file.path(Src_Dir,'Processing','FRG_Process_Shapefile.R'))
-  #
-  # #   source(file.path(Src_Dir,'GUI','FRG_Regr_GUI.R'))
-  #   source(file.path(Src_Dir,'Processing','FRG_Significance_Matrix.R'))
-  #   source(file.path(Src_Dir,'Processing','FRG_Significance_Analysis.R'))
-  #   source(file.path(Src_Dir,'Processing','FRG_Comp_Sig_Matrix.R'))
-  #   source(file.path(Src_Dir,'Processing','FRG_Comp_Plot_Stat_Multiple.R'))
-  #
-  #   source(file.path(Src_Dir,'Processing','FRG_Full_Proc_GUI.R'))
-  #   source(file.path(Src_Dir,'Processing','FRG_Full_Processing.R'))
-  #   source(file.path(Src_Dir,'Processing','FRG_Create_Shape.R'))
-  #   source(file.path(Src_Dir,'Processing','FRG_Update_Oracle.R'))
-  #
+  Create_ShapeFile_script = file.path(main_dir,'Create_ShapeFile_script','FRG_Create_Shape.exe')
   #   # Set Main Processing frg_conf
   frg_options <<- data.frame(main_dir = main_dir,
                              prev_dir = prev_dir,
