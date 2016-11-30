@@ -188,9 +188,9 @@ FRG_Full_Processing = function(MOD_Dir= MOD_Dir, Shape_File = Shape_File, CLC_Fi
       
       # Shape_Files_Inter = FRG_Process_Shapefile(Shape_File = Shape_File, Intermediate_Folder = Intermediate_Folder,
                                                 # CLC_File_00=CLC_File_00)
-      Shape_Files_Inter = data.frame(Shape_File_Single = "D:/Documents/temp/frgdata/output_2015/Intermediate_Processing/Shapefiles/Burned_Areas_00_15_Single_Fires.shp",
-                                     Shape_File_Multiple = "D:/Documents/temp/frgdata/output_2015/Intermediate_Processing/Shapefiles/Burned_Areas_00_15_Multiple_Fires.shp",
-                                     LUT_File_Multiple    = "D:/Documents/temp/frgdata/output_2015/Intermediate_Processing/Shapefiles/Burned_Areas_00_15_Intersect_LUT_csv.csv")
+      Shape_Files_Inter = data.frame(Shape_File_Single = "/home/lb/Google_Drive/Intermediate_Processing/Shapefiles//Burned_Areas_00_15_Single_Fires.shp",
+                                     Shape_File_Multiple = "/home/lb/Google_Drive/Intermediate_Processing/Shapefiles/Burned_Areas_00_15_Multiple_Fires.shp",
+                                     LUT_File_Multiple    = "/home/lb/Google_Drive/Intermediate_Processing/Shapefiles/Burned_Areas_00_15_Intersect_LUT_csv.csv")
       # retrieve the ROI file name and the name of the ENVI mask file of eroded ROIS (created automatically in FRG_Compute_SVI)
       ROI_File = file.path(Intermediate_Folder,'ENVI_ROI', paste(sub("[.][^.]*$", "", basename(Shape_File)),'.ROI', sep = '')) # Define ROI file name
       erode_file = file.path(Intermediate_Folder,'ENVI_Mask',
@@ -209,7 +209,7 @@ FRG_Full_Processing = function(MOD_Dir= MOD_Dir, Shape_File = Shape_File, CLC_Fi
         message('----------------------------------------------------------')
         message(paste('-> In File for TS extraction: ',TS_filename))
         message(paste('-> Out File for TS extraction: ',ExtTS_File))
-        browser()
+        
         er = FRG_Extr_Stats_new(SVI_File = TS_filename, Shape_File = as.character(Shape_Files_Inter$Shape_File_Single),    # Call the processing routine
                             CLC_File_00 = CLC_File_00 , ENV_Zones_File = ENV_Zones_File, Out_File = ExtTS_File, 
                             erode = 1, erode_file = erode_file, Intermediate_Folder = Intermediate_Folder, Overlap = 'Single',
