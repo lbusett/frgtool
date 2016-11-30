@@ -13,9 +13,11 @@
 
 FRG_Full_Proc_GUI = function () {
   
-  if (file.exists(file.path(FRG_Options$Previous_Dir,'FRG_Full_Previous.RData'))) {load (file.path(FRG_Options$Previous_Dir,'FRG_Full_Previous.RData'))}
+  if (file.exists(file.path(FRG_Options$Previous_Dir,'FRG_Full_Previous.RData'))) {
+    load (file.path(FRG_Options$Previous_Dir,'FRG_Full_Previous.RData'))}
   else (Full_Selection = data.frame(MOD_Dir = '', Start_Year = 2001, End_Year = 2013, ReDown = 1, ReProc = 1,ReProcIm = 1, 
-                                    Shape_File = '', CLC_File_00 = '', NKer = 200, Method = 1, SDVI = 1, SNDVI = 1, nodata_out = FRG_Options$No_Data_Out_Rast))
+                                    Shape_File = '', CLC_File_00 = '', NKer = 200, Method = 1, SRDVI = 2, SNDVI = 1, 
+                                    nodata_out = FRG_Options$No_Data_Out_Rast))
   
   # ------------------------------------------------------------------- #
   # Build Main Widgets
@@ -187,6 +189,7 @@ FRG_Full_Proc_GUI = function () {
       # Start the processing
       dispose(Main_W)											# Selection finished - close the GUI
       enabled(Main_GUI) = FALSE
+      
       with(Full_Selection, FRG_Full_Processing(MOD_Dir = MOD_Dir,Shape_File = Shape_File,CLC_File_00 = CLC_File_00, 
                                                Out_Folder = Out_Folder, Start_Year = Start_Year, End_Year = End_Year,
                                                NKer = NKer, perc_diffs = hash(c(NDVI=perc_diff, RDVI=11.5)), Method = Method, SRDVI = SRDVI ,SNDVI = SNDVI,

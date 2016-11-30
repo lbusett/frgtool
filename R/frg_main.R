@@ -32,31 +32,31 @@ frg_main = function() {
 
   #	Accessory functions to get the  the execution folder of the Main script
 
-  #   rscript.stack <- function() {					#	Returns the stack of RScript files
-  #     Filter(Negate(is.null), lapply(sys.frames(), function(x) x$ofile))
-  #   }
-  #
-  #   rscript.current <- function() {				## Returns the current RScript file path
-  #     stack <- rscript.stack()
-  #     as.character(stack[length(stack)])
-  #   }
-  #
-  #   pkgTest <- function(x)
-  #   {if (!require(x,character.only = TRUE))
-  #   {install.packages(x,dep=TRUE)
-  #    if(!require(x,character.only = TRUE)) stop("Package not found")
-  #   }
-  #   }
-  #   #- ------------------------------------------------------------------------------- -#
-  #   #  Initialize project
-  #   #- ------------------------------------------------------------------------------- -#
-  #
-  #   # Check if needed packages are present. Install them otherwise
-  #   pkgList = c('tools','debug','gWidgets','gWidgetsRGtk2','RCurl','rgdal','reshape2','ggplot2','tcltk',
-  #               'gdata','abind', 'data.table','hash','plyr','car')
-  #   for (pkg in pkgList) {pkgTest(pkg)	}
-  #   frg_conf("guiToolkit"="RGtk2")
-  #
+    rscript.stack <- function() {					#	Returns the stack of RScript files
+      Filter(Negate(is.null), lapply(sys.frames(), function(x) x$ofile))
+    }
+
+    rscript.current <- function() {				## Returns the current RScript file path
+      stack <- rscript.stack()
+      as.character(stack[length(stack)])
+    }
+
+    pkgTest <- function(x)
+    {if (!require(x,character.only = TRUE))
+    {install.packages(x,dep=TRUE)
+     if(!require(x,character.only = TRUE)) stop("Package not found")
+    }
+    }
+    #- ------------------------------------------------------------------------------- -#
+    #  Initialize project
+    #- ------------------------------------------------------------------------------- -#
+
+    # Check if needed packages are present. Install them otherwise
+    pkgList = c('tools','debug','gWidgets','gWidgetsRGtk2','RCurl','rgdal','reshape2','ggplot2','tcltk',
+                'gdata','abind', 'data.table','hash','plyr','car','lubridate','stringr','raster','gdalUtils','dplyr')
+    for (pkg in pkgList) {pkgTest(pkg)	}
+    options("guiToolkit"="RGtk2")
+
   memory.limit(6000)							# Increase maximum allocable memory
 
   # setup the processing folders
@@ -80,10 +80,10 @@ frg_main = function() {
   # paths to required scripts
   Create_ShapeFile_script = file.path(main_dir,'Create_ShapeFile_script','FRG_Create_Shape.exe')
   #   # Set Main Processing frg_conf
-  frg_options <<- data.frame(main_dir = main_dir,
-                             prev_dir = prev_dir,
-                             nodata_in = as.numeric((frg_conf$nodata)),
-                             nodata_out = as.numeric((frg_conf$nodata)),
+  FRG_Options <<- data.frame(main_dir = main_dir,
+                             Previous_Dir = prev_dir,
+                             No_Data_In_Rast = as.numeric((frg_conf$nodata)),
+                             No_Data_Out_Rast = as.numeric((frg_conf$nodata)),
                              src_dir_idl = src_dir_idl,
                              idl_exe = frg_conf$idl_exe,
                              use_temp_folder = 0,
@@ -123,8 +123,9 @@ frg_main = function() {
   acc_group = ggroup(horizontal = TRUE, container = but_group)
   exit_but = gbutton("Quit ", cont = acc_group, handler = function(h,...) {res = FRG_Dispose(main_gui)})
   help_but = gbutton("Help ", cont = acc_group, handler = function(h,...) {system2('open',file.path(main_dir, 'frgtool_manual.pdf'))})
+  Main_GUI  <<- main_gui
   visible(main_gui, TRUE)
-  # main_gui <<- main_w
+  
 
 }
 

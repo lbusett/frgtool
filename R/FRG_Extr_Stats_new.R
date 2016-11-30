@@ -104,7 +104,10 @@ FRG_Extr_Stats_new = function(SVI_File = SVI_File, Shape_File = Shape_File, CLC_
    # if (file.exists(Out_RData)) {
    #   selection = tk_messageBox(caption = 'Overwrite Warning', type = c ("yesno"), message =
    #                               "Outpur RData files already exists !\n Do you want to re-compute and overwrite them ?\n", defaul = 'no')}
- if (!(file.exists(Out_RData)) | selection == 'yes') {
+ selection = "no"
+ 
+ 
+  if (!(file.exists(Out_RData)) | selection == 'yes') {
 
    # Open required raster files
   svi_files   <- tools::file_path_sans_ext(list.files(sVI_Folder, pattern = ".hdr$", full.names = TRUE))
@@ -127,7 +130,7 @@ FRG_Extr_Stats_new = function(SVI_File = SVI_File, Shape_File = Shape_File, CLC_
   id_field <- ifelse(Overlap == "Single", "OBJECTID", "OVERLAP_ID")
   gdal_rasterize(Shape_File, tempraster, tr = raster::res(svi_stack), te = extent(svi_stack)[c(1, 3, 2, 4)], 
                  a = id_field, ot = "Int32")
-       
+   
   ts_data <- frg_fastzonal(in_rts         = svi_stack, 
                            zone_object    = tempraster, 
                            mask_object    = erode_rast, 
@@ -135,15 +138,13 @@ FRG_Extr_Stats_new = function(SVI_File = SVI_File, Shape_File = Shape_File, CLC_
                            envzone_object = envzon_rast,
                            id_field       = "ID", 
                            small          = "FALSE", 
-                           verbose        = TRUE, 
-                           start_band     = 1, 
-                           end_band = 2)
+                           verbose        = TRUE)
   write.csv(ts_data, file = Out_IDL_CSV)
   save(ts_data, file = Out_RData)
   Data <- ts_data
   
   print(paste('-> Creating RData file joining MODIS and Shapefile info'))
-
+browser()
     #----------------------------------------------------------------------------------------------------------#
     # Load the burned Areas shapefile and save the attribute table as a data frame
     #-----------------------------------------------------------------------------------------------------------------#

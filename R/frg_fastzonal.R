@@ -2,20 +2,20 @@
 #' 
 #' @description aaaa
 #'
-#' @param in_rts
-#' @param zone_object
-#' @param end_date
-#' @param id_field
-#' @param FUN
-#' @param out_format
-#' @param small
-#' @param small_method
-#' @param na.rm
-#' @param verbose
-#' @param start_band
-#' @param end_band
-#' @param maxchunk 
-#' @param mask_object 
+#' @param in_rts a
+#' @param zone_object f
+#' @param end_date g
+#' @param id_field g
+#' @param FUN h
+#' @param out_format g
+#' @param small h
+#' @param small_method h
+#' @param na.rm g
+#' @param verbose g
+#' @param start_band t
+#' @param end_band re
+#' @param maxchunk f
+#' @param mask_object g 
 #'
 #' @importFrom xts as.xts
 #' @importFrom rgdal writeOGR readOGR
@@ -226,8 +226,7 @@ will be retrieved\n using only the available pixels !"
       }
       
       if (n_chunks > 1) {
-        for (chunk in 4:7) {
-          # seq_len(n_chunks)) {
+        for (chunk in seq_len(n_chunks)) {
           
           # Import data chunk ----
           startrow <- ifelse(chunk == 1, 1, (chunk - 1) * ceiling(nrow(zone_object) / n_chunks)) 
@@ -254,7 +253,7 @@ will be retrieved\n using only the available pixels !"
         # Add to the full data ----
         
         full_data <- rbindlist(full_data)
-        full_data[ , mask_data := NULL]     # remove mask_data column
+        # full_data[ , mask_data:=NULL]     # remove mask_data column
         
       } 
       

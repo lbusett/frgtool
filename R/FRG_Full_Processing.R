@@ -24,25 +24,25 @@
 #' @author Lorenzo Busetto - email: lorenzo.busetto@jrc.ec.europa.eu
 #' @export
 #' 
-  Shape_File     <- "D:/Documents/temp/frgdata/Input_Shapefiles/Burned_Areas_00_15.shp" 
-  Erode_File     <- "D:/Documents/temp/frgdata/output_2015/Intermediate_Processing/ENVI_Mask/Burned_Areas_00_15_ENVI_Mask_Eroded" 
+  Shape_File     <- "D:/Documents/temp/frgdata/Input_Shapefiles/Burned_Areas_00_15.shp"
+  Erode_File     <- "D:/Documents/temp/frgdata/output_2015/Intermediate_Processing/ENVI_Mask/Burned_Areas_00_15_ENVI_Mask_Eroded"
   sVI_Folder     <- "D:/Documents/temp/frgdata/output_2015/Scaled_Indexes/Med_SNDVI/Yearly_Images/"
-  CLC_File_00    <- "data/CLC_00/CLC_00_250_ENVI"  
-  ENV_Zones_File <- "data/ENV_Zones/ENV_Zones.tif" 
+  CLC_File_00    <- "data/CLC_00/CLC_00_250_ENVI"
+  ENV_Zones_File <- "data/ENV_Zones/ENV_Zones.tif"
   Out_Folder     <- "D:/Documents/temp/frgdata/output_2015/"
   no_data_in     <- -999
-  Start_Year     <- 2003 
+  Start_Year     <- 2003
   End_Year       <- 2015
-  csv_file_single <- "D:/Documents/temp/frgdata/output_2015/Med_SNDVI/TS_Extraction/Burned_Once/TS_Extraction_Med_SNDVI_2000_2015_META_IDL_Matrix.csv" 
-  RData_file_single <- "D:/Documents/temp/frgdata/output_2015/Med_SNDVI/TS_Extraction/Burned_Once/TS_Extraction_Med_SNDVI_2000_2015_META_IDL_Matrix.RData" 
+  csv_file_single <- "D:/Documents/temp/frgdata/output_2015/Med_SNDVI/TS_Extraction/Burned_Once/TS_Extraction_Med_SNDVI_2000_2015_META_IDL_Matrix.csv"
+  RData_file_single <- "D:/Documents/temp/frgdata/output_2015/Med_SNDVI/TS_Extraction/Burned_Once/TS_Extraction_Med_SNDVI_2000_2015_META_IDL_Matrix.RData"
   perc_diff      <- 9.5
   min_pix        <- 20
   MedWdt         <- 3
   Method = 2
   NKer = 200
   SNDVI = 1
-  
-    
+
+
 
 
 FRG_Full_Processing = function(MOD_Dir= MOD_Dir, Shape_File = Shape_File, CLC_File_00 = CLC_File_00, 
@@ -51,13 +51,15 @@ FRG_Full_Processing = function(MOD_Dir= MOD_Dir, Shape_File = Shape_File, CLC_Fi
                                erode = 1, min_pix = 10, MedWdt = 3, NKer = NKer , sig_level = 0.05,
                                sub_zones = 0,  perc_diffs = hash( c(NDVI=9.5, RDVI=11.5))      ) {
   
-  
+  SRDVI = 1
   #- ------------------------------------------------------------------------------------------------- - #
   #- Initialize Processing: Set processing folders on the basis of user's choice and set some processing parameters 
   #- ------------------------------------------------------------------------------------------------- - #
   
   perc_diff = perc_diffs[['NDVI']]
-  Out_Folder = file.path(Out_Folder,paste('Results', Start_Year,End_Year,paste('Ker',NKer,sep ='_'),paste('Perc_Diff',perc_diff,sep ='_'), sep = '_'))  # Set Main Statistical Results folder
+  
+  Out_Folder = file.path(Out_Folder,paste('Results', Start_Year,End_Year, paste('Ker',NKer,sep ='_'),
+                                          paste('Perc_Diff',perc_diff,sep ='_'), sep = '_'))  # Set Main Statistical Results folder
   
   selection = 'yes'  # Check if Main Results folder already exist and ask if overwrite
   
@@ -97,7 +99,7 @@ FRG_Full_Processing = function(MOD_Dir= MOD_Dir, Shape_File = Shape_File, CLC_Fi
     cat(c("--- -------------------------------------------------- ---"), file =OutFile_Conn,sep="\n",append=TRUE)
     cat("", file =OutFile_Conn,sep="\n",append=TRUE)
     cat(c("--- -------------------------------------------------- ---"), file =OutFile_Conn,sep="\n",append=TRUE)
-    cat(paste("--- Processing Date: ",date()), file =OutFile_Conn,sep="\n",append=TRUE)  
+    cat(paste("--- Processing Date: "), file =OutFile_Conn,sep="\n",append=TRUE)  
     cat("", file =OutFile_Conn,sep="\n",append=TRUE)
     cat(c("--- -------------------------------------------------- ---"), file =OutFile_Conn,sep="\n",append=TRUE)
     cat(c("--- Processing PArameters ---"), file =OutFile_Conn,sep="\n",append=TRUE)
@@ -189,7 +191,7 @@ FRG_Full_Processing = function(MOD_Dir= MOD_Dir, Shape_File = Shape_File, CLC_Fi
       Shape_Files_Inter = data.frame(Shape_File_Single = "D:/Documents/temp/frgdata/output_2015/Intermediate_Processing/Shapefiles/Burned_Areas_00_15_Single_Fires.shp",
                                      Shape_File_Multiple = "D:/Documents/temp/frgdata/output_2015/Intermediate_Processing/Shapefiles/Burned_Areas_00_15_Multiple_Fires.shp",
                                      LUT_File_Multiple    = "D:/Documents/temp/frgdata/output_2015/Intermediate_Processing/Shapefiles/Burned_Areas_00_15_Intersect_LUT_csv.csv")
-      a# retrieve the ROI file name and the name of the ENVI mask file of eroded ROIS (created automatically in FRG_Compute_SVI)
+      # retrieve the ROI file name and the name of the ENVI mask file of eroded ROIS (created automatically in FRG_Compute_SVI)
       ROI_File = file.path(Intermediate_Folder,'ENVI_ROI', paste(sub("[.][^.]*$", "", basename(Shape_File)),'.ROI', sep = '')) # Define ROI file name
       erode_file = file.path(Intermediate_Folder,'ENVI_Mask',
                              paste(sub("[.][^.]*$", "", basename(ROI_File)),'_ENVI_Mask_Eroded', sep = ''))
@@ -207,7 +209,7 @@ FRG_Full_Processing = function(MOD_Dir= MOD_Dir, Shape_File = Shape_File, CLC_Fi
         message('----------------------------------------------------------')
         message(paste('-> In File for TS extraction: ',TS_filename))
         message(paste('-> Out File for TS extraction: ',ExtTS_File))
-        
+        browser()
         er = FRG_Extr_Stats_new(SVI_File = TS_filename, Shape_File = as.character(Shape_Files_Inter$Shape_File_Single),    # Call the processing routine
                             CLC_File_00 = CLC_File_00 , ENV_Zones_File = ENV_Zones_File, Out_File = ExtTS_File, 
                             erode = 1, erode_file = erode_file, Intermediate_Folder = Intermediate_Folder, Overlap = 'Single',
@@ -529,3 +531,4 @@ FRG_Full_Processing = function(MOD_Dir= MOD_Dir, Shape_File = Shape_File, CLC_Fi
 #         
 #       }
 # ----     
+# ou = FRG_Full_Processing()
