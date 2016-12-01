@@ -24,23 +24,23 @@
 #' @author Lorenzo Busetto - email: lorenzo.busetto@jrc.ec.europa.eu
 #' @export
 #' 
-  Shape_File     <- "D:/Documents/temp/frgdata/Input_Shapefiles/Burned_Areas_00_15.shp"
-  Erode_File     <- "D:/Documents/temp/frgdata/output_2015/Intermediate_Processing/ENVI_Mask/Burned_Areas_00_15_ENVI_Mask_Eroded"
-  sVI_Folder     <- "D:/Documents/temp/frgdata/output_2015/Scaled_Indexes/Med_SNDVI/Yearly_Images/"
-  CLC_File_00    <- "data/CLC_00/CLC_00_250_ENVI"
-  ENV_Zones_File <- "data/ENV_Zones/ENV_Zones.tif"
-  Out_Folder     <- "D:/Documents/temp/frgdata/output_2015/"
-  no_data_in     <- -999
-  Start_Year     <- 2003
-  End_Year       <- 2015
-  csv_file_single <- "D:/Documents/temp/frgdata/output_2015/Med_SNDVI/TS_Extraction/Burned_Once/TS_Extraction_Med_SNDVI_2000_2015_META_IDL_Matrix.csv"
-  RData_file_single <- "D:/Documents/temp/frgdata/output_2015/Med_SNDVI/TS_Extraction/Burned_Once/TS_Extraction_Med_SNDVI_2000_2015_META_IDL_Matrix.RData"
-  perc_diff      <- 9.5
-  min_pix        <- 20
-  MedWdt         <- 3
-  Method = 2
-  NKer = 200
-  SNDVI = 1
+  # Shape_File     <- "D:/Documents/temp/frgdata/Input_Shapefiles/Burned_Areas_00_15.shp"
+  # Erode_File     <- "D:/Documents/temp/frgdata/output_2015/Intermediate_Processing/ENVI_Mask/Burned_Areas_00_15_ENVI_Mask_Eroded"
+  # sVI_Folder     <- "D:/Documents/temp/frgdata/output_2015/Scaled_Indexes/Med_SNDVI/Yearly_Images/"
+  # CLC_File_00    <- "data/CLC_00/CLC_00_250_ENVI"
+  # ENV_Zones_File <- "data/ENV_Zones/ENV_Zones.tif"
+  # Out_Folder     <- "D:/Documents/temp/frgdata/output_2015/"
+  # no_data_in     <- -999
+  # Start_Year     <- 2003
+  # End_Year       <- 2015
+  # csv_file_single <- "D:/Documents/temp/frgdata/output_2015/Med_SNDVI/TS_Extraction/Burned_Once/TS_Extraction_Med_SNDVI_2000_2015_META_IDL_Matrix.csv"
+  # RData_file_single <- "D:/Documents/temp/frgdata/output_2015/Med_SNDVI/TS_Extraction/Burned_Once/TS_Extraction_Med_SNDVI_2000_2015_META_IDL_Matrix.RData"
+  # perc_diff      <- 9.5
+  # min_pix        <- 20
+  # MedWdt         <- 3
+  # Method = 2
+  # NKer = 200
+  # SNDVI = 1
 
 
 
