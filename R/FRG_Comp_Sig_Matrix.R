@@ -47,13 +47,13 @@ FRG_Comp_Sig_Matrix = function (In_File = In_File , out_file_pmat = out_file_pma
   N_Years = as.numeric(attributes(Data)$End_Year)-as.numeric(attributes(Data)$Start_Year)
   
    # Retrieve time series data
-  if(erode == 0) { #  Get data in the case that erode = 0
-    Data = Data [,1:(8+N_Years)]
-  } else { #  Get data in the case that erode = 1
-    names = names(Data)[1:(8+N_Years)]    
-    Data = Data [,c(1:7,(8+N_Years+1):(8+2*N_Years+1))]
-    names(Data)= names
-  }
+  # if(erode == 0) { #  Get data in the case that erode = 0
+  #   Data = Data [,1:(8+N_Years)]
+  # } else { #  Get data in the case that erode = 1
+  #   names = names(Data)[1:(8+N_Years)]    
+  #   Data = Data [,c(1:7,(8+N_Years+1):(8+2*N_Years+1))]
+  #   names(Data)= names
+  # }
   
   # Initialization and Preliminary pre elaborations
   
@@ -74,16 +74,17 @@ FRG_Comp_Sig_Matrix = function (In_File = In_File , out_file_pmat = out_file_pma
   
   # Reshape data structure to facilitate the analyis (melting) and get info about the data (e.g., number of years, ecc)
   Data = Data[complete.cases(Data),]
-  Data_Melted = melt(Data, id.vars = c(1:(st_ind-1)))
-  names(Data_Melted)[st_ind:(st_ind+1)] = c('Year', 'Index')
+  Data_Melted = Data
+  # Data_Melted = melt(Data, id.vars = c(1:(st_ind-1)))
+  # names(Data_Melted)[st_ind:(st_ind+1)] = c('Year', 'Index')
   attributes(Data_Melted)$Index = Index
   # 	Data_Melted = drop.levels(subset(Data_Melted,Year != '2000'))			# If present, remove the data regarding year 2000 (Strong uncertainties in MODIS data of this year !!!!
   
-  Avail_Years = as.numeric(levels(Data_Melted$Year))				# Get list of available years
-  n_Years = length(Avail_Years)															# Number of years in the time series	
-  Start_Year = min(Avail_Years)															# Starting year of the time serie
-  End_Year = max(Avail_Years)  	                            # Ending year of the time serie
-  
+  # Avail_Years = as.numeric(levels(Data_Melted$Year))				# Get list of available years
+ 														# Number of years in the time series	
+  Start_Year = min(Data_Melted$Year)															# Starting year of the time serie
+  End_Year = max(Data_Melted$Year)  	                            # Ending year of the time serie
+  n_Years = 1+ End_Year - Start_Year
   #- --------------------------------------------------------------------------- -#
   #- #Initialize output matrixes
   #- --------------------------------------------------------------------------- -#
@@ -99,7 +100,7 @@ FRG_Comp_Sig_Matrix = function (In_File = In_File , out_file_pmat = out_file_pma
   
   p_matrix_median_empty =  array(data = NA, dim = c(max_plus_years-max_minus_years, max_plus_years-max_minus_years))		#Define an empty matrix with correct dimensions to store the results of 
   colnames(p_matrix_median_empty) = seq(max_minus_years,max_plus_years-1, 1 )																		    #the wilcoxon comparisons - using medians 
-  rownames(p_matrix_median_empty) = seq(max_minus_years+1,max_plus_years, 1 )		
+  rownames(p_matrix_median_empty) = seq(max_minus_years + 1,max_plus_years, 1 )		
   
   #- ---------------------------------------------------- - #
   # Start Analysis on single fires. FirePix is a counter on fires. ? Fires are analyzed ordered by total area according to the EFFIS shapefile ?

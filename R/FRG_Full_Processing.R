@@ -24,34 +24,15 @@
 #' @author Lorenzo Busetto - email: lorenzo.busetto@jrc.ec.europa.eu
 #' @export
 #' 
-  # Shape_File     <- "D:/Documents/temp/frgdata/Input_Shapefiles/Burned_Areas_00_15.shp"
-  # Erode_File     <- "D:/Documents/temp/frgdata/output_2015/Intermediate_Processing/ENVI_Mask/Burned_Areas_00_15_ENVI_Mask_Eroded"
-  # sVI_Folder     <- "D:/Documents/temp/frgdata/output_2015/Scaled_Indexes/Med_SNDVI/Yearly_Images/"
-  # CLC_File_00    <- "data/CLC_00/CLC_00_250_ENVI"
-  # ENV_Zones_File <- "data/ENV_Zones/ENV_Zones.tif"
-  # Out_Folder     <- "D:/Documents/temp/frgdata/output_2015/"
-  # no_data_in     <- -999
-  # Start_Year     <- 2003
-  # End_Year       <- 2015
-  # csv_file_single <- "D:/Documents/temp/frgdata/output_2015/Med_SNDVI/TS_Extraction/Burned_Once/TS_Extraction_Med_SNDVI_2000_2015_META_IDL_Matrix.csv"
-  # RData_file_single <- "D:/Documents/temp/frgdata/output_2015/Med_SNDVI/TS_Extraction/Burned_Once/TS_Extraction_Med_SNDVI_2000_2015_META_IDL_Matrix.RData"
-  # perc_diff      <- 9.5
-  # min_pix        <- 20
-  # MedWdt         <- 3
-  # Method = 2
-  # NKer = 200
-  # SNDVI = 1
 
 
-
-
-FRG_Full_Processing = function(MOD_Dir= MOD_Dir, Shape_File = Shape_File, CLC_File_00 = CLC_File_00, 
+FRG_Full_Processing = function(MOD_Dir= MOD_Dir, Shape_File = Shape_File, CLC_File_00 = CLC_File_00, ENV_Zones_File = ENV_Zones_File, 
                                Out_Folder = Out_Folder, Start_Year = Start_Year, End_Year = End_Year,
                                Method = Method, SRDVI = 1, SNDVI = 2,ReProc = ReProc, ReDown = ReDown, ReProcIm = ReProcIm, 
                                erode = 1, min_pix = 10, MedWdt = 3, NKer = NKer , sig_level = 0.05,
-                               sub_zones = 0,  perc_diffs = hash( c(NDVI=9.5, RDVI=11.5))      ) {
+                               sub_zones = 0,  perc_diffs = hash( c(NDVI=9.5, RDVI=11.5))) {
   
-  SRDVI = 1
+  SRDVI = 32
   #- ------------------------------------------------------------------------------------------------- - #
   #- Initialize Processing: Set processing folders on the basis of user's choice and set some processing parameters 
   #- ------------------------------------------------------------------------------------------------- - #
@@ -82,7 +63,7 @@ FRG_Full_Processing = function(MOD_Dir= MOD_Dir, Shape_File = Shape_File, CLC_Fi
     # ENV_Zones_File = file.path(FRG_Options$Main_Dir,'Ancillary_Data','ENV_Zones','ENV_Zones.tif') # Input file of EcoZOnes (Obsolete and unused, now)
 
    # Flags to skip some processing steps in debugging phase - Set all to T for complete processing - proceed with caution !
-    MOD_dwl = F  ;   Comp_SVI = F  ;  Extr_Stat = T   ;  Sig_Anal = T;  Perc_Anal = T
+    MOD_dwl = F  ;   Comp_SVI = F  ;  Extr_Stat = T  ;  Sig_Anal = T;  Perc_Anal = T
     
     # Set flags indicating which rescaled indexes to calculate
     comp_ind = NULL
@@ -188,15 +169,15 @@ FRG_Full_Processing = function(MOD_Dir= MOD_Dir, Shape_File = Shape_File, CLC_Fi
       
       # Shape_Files_Inter = FRG_Process_Shapefile(Shape_File = Shape_File, Intermediate_Folder = Intermediate_Folder,
                                                 # CLC_File_00=CLC_File_00)
-      Shape_Files_Inter = data.frame(Shape_File_Single = "/home/lb/Google_Drive/Intermediate_Processing/Shapefiles//Burned_Areas_00_15_Single_Fires.shp",
-                                     Shape_File_Multiple = "/home/lb/Google_Drive/Intermediate_Processing/Shapefiles/Burned_Areas_00_15_Multiple_Fires.shp",
-                                     LUT_File_Multiple    = "/home/lb/Google_Drive/Intermediate_Processing/Shapefiles/Burned_Areas_00_15_Intersect_LUT_csv.csv")
+      Shape_Files_Inter = data.frame(Shape_File_Single = "/Documents/GDrive/Intermediate_Processing/Shapefiles/Burned_Areas_00_15_Single_Fires.shp",
+                                     Shape_File_Multiple = "/Documents/GDrive/Intermediate_Processing/Shapefiles/Burned_Areas_00_15_Multiple_Fires.shp",
+                                     LUT_File_Multiple    = "/Documents/GDrive/Intermediate_Processing/Shapefiles/Burned_Areas_00_15_Intersect_LUT_csv.csv")
       # retrieve the ROI file name and the name of the ENVI mask file of eroded ROIS (created automatically in FRG_Compute_SVI)
       ROI_File = file.path(Intermediate_Folder,'ENVI_ROI', paste(sub("[.][^.]*$", "", basename(Shape_File)),'.ROI', sep = '')) # Define ROI file name
       erode_file = file.path(Intermediate_Folder,'ENVI_Mask',
                              paste(sub("[.][^.]*$", "", basename(ROI_File)),'_ENVI_Mask_Eroded', sep = ''))
       
-      if (Extr_Stat == T) {
+      
         
         #       Perform TS extraction on the shapefile of areas burned once
         out_dir= file.path(Out_Stat_Dir,paste('Med_S',Index, sep = ''),'TS_Extraction','Burned_Once')       # Set output folder
@@ -209,7 +190,7 @@ FRG_Full_Processing = function(MOD_Dir= MOD_Dir, Shape_File = Shape_File, CLC_Fi
         message('----------------------------------------------------------')
         message(paste('-> In File for TS extraction: ',TS_filename))
         message(paste('-> Out File for TS extraction: ',ExtTS_File))
-        
+      if (Extr_Stat == T) {  
         er = FRG_Extr_Stats_new(SVI_File = TS_filename, Shape_File = as.character(Shape_Files_Inter$Shape_File_Single),    # Call the processing routine
                             CLC_File_00 = CLC_File_00 , ENV_Zones_File = ENV_Zones_File, Out_File = ExtTS_File, 
                             erode = 1, erode_file = erode_file, Intermediate_Folder = Intermediate_Folder, Overlap = 'Single',
@@ -532,3 +513,31 @@ FRG_Full_Processing = function(MOD_Dir= MOD_Dir, Shape_File = Shape_File, CLC_Fi
 #       }
 # ----     
 # ou = FRG_Full_Processing()
+
+
+MOD_Dir       =  "D:\\Documents\\temp\\frgdata\\MODIS_Data"
+Shape_File    =  "D:\\Documents\\GDrive\\Input_Shapefiles\\Burned_Areas_00_15.shp" 
+CLC_File_00   =  "D:\\Documents\\Source\\git\\frgtool\\data\\CLC_00\\CLC_00_250_ENVI"
+Out_Folder    =  "D:\\Documents\\GDrive"
+Start_Year    = 2000
+End_Year      = 2015
+Method        = 2
+SNDVI         = 1
+ReProc        = 2
+ReDown        = 2
+ReProcIm      = 2 
+erode         = 1
+min_pix       = 10
+MedWdt        = 3
+NKer          = 200
+sig_level     = 0.05
+sub_zones     = 0
+perc_diffs    = hash( c(NDVI = 9.5, RDVI = 11.5))
+ENV_Zones_File = "D:\\Documents\\Source\\git\\frgtool\\data\\ENV_Zones\\ENV_Zones.tif"
+
+a =  FRG_Full_Processing(MOD_Dir= MOD_Dir, Shape_File = Shape_File, CLC_File_00 = CLC_File_00, ENV_Zones_File = ENV_Zones_File,
+                               Out_Folder = Out_Folder, Start_Year = Start_Year, End_Year = End_Year,
+                               Method = Method, SRDVI = SRDVI, SNDVI = SNDVI ,ReProc = ReProc, ReDown = ReDown, ReProcIm = ReProcIm, 
+                               erode = erode, min_pix = min_pix, MedWdt = MedWdt, NKer = NKer , sig_level = sig_level,
+                               sub_zones = sub_zones,  perc_diffs = perc_diffs)
+ 

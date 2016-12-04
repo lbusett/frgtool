@@ -110,11 +110,11 @@ FRG_Extr_Stats_new = function(SVI_File = SVI_File, Shape_File = Shape_File, CLC_
  
   if (!(file.exists(Out_RData)) | selection == 'yes') {
 
-   # Open required raster files
+  # Open required raster files
   # svi_files   <- tools::file_path_sans_ext(list.files(sVI_Folder, pattern = ".hdr$", full.names = TRUE))
   # svi_stack   <- raster::stack(svi_files)
   # clc_rast    <- raster::raster(CLC_File_00)
-  # erode_rast  <- raster::raster(Erode_File)  
+  # erode_rast  <- raster::raster(Erode_File)
   # envzon_rast <- raster::raster(ENV_Zones_File)
   # 
   # # set nodatavalue for input SVI file
@@ -129,19 +129,20 @@ FRG_Extr_Stats_new = function(SVI_File = SVI_File, Shape_File = Shape_File, CLC_
   # print(Shape_File)
   # tempraster = tempfile(tmpdir = tempdir(), fileext = ".tiff")
   # id_field <- ifelse(Overlap == "Single", "OBJECTID", "OVERLAP_ID")
-  # gdal_rasterize(Shape_File, tempraster, tr = raster::res(svi_stack), te = extent(svi_stack)[c(1, 3, 2, 4)], 
+  # gdal_rasterize(Shape_File, tempraster, tr = raster::res(svi_stack), te = extent(svi_stack)[c(1, 3, 2, 4)],
   #                a = id_field, ot = "Int32")
-  #  
-  # ts_data <- frg_fastzonal(in_rts         = svi_stack, 
-  #                          zone_object    = tempraster, 
-  #                          mask_object    = erode_rast, 
+  # 
+  # ts_data <- frg_fastzonal(in_rts         = svi_stack,
+  #                          zone_object    = tempraster,
+  #                          mask_object    = erode_rast,
   #                          clc_object     = clc_rast,
   #                          envzone_object = envzon_rast,
-  #                          id_field       = "ID", 
-  #                          small          = "FALSE", 
+  #                          id_field       = "ID",
+  #                          small          = "FALSE",
   #                          verbose        = TRUE)
   # write.csv(ts_data, file = Out_IDL_CSV)
   # save(ts_data, file = Out_RData)
+  # save(ts_data, file = paste0(Out_RData,"bis.R"))
   # Data <- ts_data
   
   print(paste('-> Creating RData file joining MODIS and Shapefile info'))
@@ -153,10 +154,9 @@ FRG_Extr_Stats_new = function(SVI_File = SVI_File, Shape_File = Shape_File, CLC_
     BAreas_Dir = dirname(Shape_File_Orig)
     BAreas_shp = readOGR(BAreas_Dir, BAreas_Name, stringsAsFactors = FALSE)
     Data_Shape = BAreas_shp@data										# Get attributes data from the shp
-    Data_Shape$Area_HA = as.numeric(Data_Shape$Area_HA)
-    Data_Shape$OBJECTID = as.numeric(Data_Shape$OBJECTID)
-    Data_Shape = arrange(Data_Shape,desc(Area_HA))
     
+
+
   #----------------------------------------------------------------------------------------------------------#
   # Processing conducted when analyzing areas burned only once
   #----------------------------------------------------------------------------------------------------------#
@@ -167,20 +167,19 @@ FRG_Extr_Stats_new = function(SVI_File = SVI_File, Shape_File = Shape_File, CLC_
       # Data = read.csv(Out_IDL_CSV,header = TRUE, na.strings = FRG_Options$No_Data_Out_Rast, stringsAsFactors = FALSE)
       # Data[Data == FRG_Options$No_Data_Out_Rast] = NA						# Put the NODATA to "R" NA
       
-      Data <- read.csv(Out_IDL_CSV) 
-      #get(load(Out_RData))
-      
-      browser()
-      
+      Data <-  read.csv(Out_IDL_CSV)
+      Data <-  select(Data, -X)
       n_Years = length(unique(Data$Year))
       names(Data)[1] = 'OBJECTID'
+      Data$OBJECTID <-  as.factor(Data$OBJECTID)
       # names(Data)[5:(5+n_Years-1)] =  as.character(seq(as.numeric(Start_Year),as.numeric(End_Year)))    # Correct columns names
       # names(Data)[(5+n_Years):(5+2*n_Years-1)] =  paste('erode',as.character(seq(as.numeric(Start_Year),as.numeric(End_Year))), sep = '_')    # Correct columns names
 
       # Remove from Data_Shape records not found in the MODIS ROI data
 
       Data_Shape = Data_Shape[which(Data_Shape$OBJECTID %in% unique(Data$OBJECTID)) ,]
-
+      Data_Shape$Area_HA = as.numeric(as.character(Data_Shape$Area_HA))
+      Data_Shape = arrange(Data_Shape,desc(Area_HA))
       # Compute the FireYear and Area variable for each fire (From the sahpefile data) and add it to the DataFrame
 
       FireYear = numeric(length(Data$OBJECTID))
@@ -199,11 +198,12 @@ FRG_Extr_Stats_new = function(SVI_File = SVI_File, Shape_File = Shape_File, CLC_
         trans_Area = 250*250*(length(Data_tmp$N_PIX[which(Data_tmp$CLC_Class %in% c(6))]))/10000.0
         est_Area   = data.frame (tot_Area = tot_Area,bro_Area=bro_Area ,con_Area=con_Area,mix_Area=mix_Area,trans_Area=trans_Area,scler_Area=scler_Area, full_Area = full_Area)
       }
-      Data = data.table(Data, key = "OBJECTID" )
+      Data = data.table(Data, key = c("OBJECTID", "Year"))
       Data_Shape = data.table(Data_Shape, key = "OBJECTID" )
       for (FireID in 1:length(IDS)){
-      if (FireID %in% seq(1,20000, 100)) message(FireID, "  ",length(IDS))
+        if (FireID %in% seq(1,20000,100)) (message(FireID, "  ",length(IDS)))
         ID = as.numeric(as.character(IDS[FireID]))
+        
         FireRows = which(Data$OBJECTID == ID)                           # Rows of the dataframe corresponding to the selected fire
         where_id = which(Data_Shape$OBJECTID == ID)
         YY = Data_Shape$YearSeason[where_id][1]        # Retrieve Fire Year
@@ -212,8 +212,8 @@ FRG_Extr_Stats_new = function(SVI_File = SVI_File, Shape_File = Shape_File, CLC_
                    Data_Shape[where_id,'MixedFores'] +
                    Data_Shape[where_id,'Sclerophyl'] +
                    Data_Shape[where_id,'Transition']
-        if (Area_For == 0 ) {                    # If Area_Forest = 0 then, noinfo in shape and area estimated from number of pixels.
-          est_Area = estimate_Area(Data[FireRows,])
+        if (Area_For == 0 ){                    # If Area_Forest = 0 then, noinfo in shape and area estimated from number of pixels.
+          est_Area = estimate_Area(Data[FireRows,])/n_Years
           Area_For = est_Area$tot_Area
           Data_Shape$BroadLeave[where_id] = est_Area$bro_Area
           Data_Shape$Coniferous[where_id] = est_Area$con_Area
@@ -222,7 +222,7 @@ FRG_Extr_Stats_new = function(SVI_File = SVI_File, Shape_File = Shape_File, CLC_
           Data_Shape$Transition[where_id] = est_Area$trans_Area
         }
         Area_Tot = Data_Shape$Area_HA[where_id][1]       # Retrieve Total Area burned
-        if (Area_Tot == 0) {Area_All= est_Area$full_Area}                  # If Area_Tot = 0 then, noinfo in shape and area estimated from number of pixels.
+        if (Area_Tot == 0) {Area_All = est_Area$full_Area}                  # If Area_Tot = 0 then, noinfo in shape and area estimated from number of pixels.
         FireYear[FireRows] = YY          # Assign FireYear
         Area_Forest[FireRows] = Area_For           # Assign total area burnt in forest land cover types
         Area_All[FireRows] = Area_Tot           # Assign total area burnt in forest land cover types
@@ -258,7 +258,7 @@ FRG_Extr_Stats_new = function(SVI_File = SVI_File, Shape_File = Shape_File, CLC_
       attr(Data, "Shape_File") = Shape_File     #; 	attr(Data, "CSV_File") = Out_IDL_CSV
       attr(Data, "CLC_File") = CLC_File_00			;    attr(Data, "Processing Date") = Sys.Date()
       attr(Data, "Start_Year") = Start_Year     ;    attr(Data, "End_Year") = End_Year
-      attr(Data, "Index") ='Med_SNDVI'
+      attr(Data, "Index") = 'Med_SNDVI'
       # if (length(grep( 'RDVI',SVI_File)) > 0) {attr(Data, "Index") ='RDVI'}     # to be removed !
       # if (length(grep( 'NDVI',SVI_File)) > 0) {attr(Data, "Index") ='NDVI'}     # to be removed !
       # if (length(grep( 'SNDVI',SVI_File) > 0)) {attr(Data, "Index") ='SNDVI'}
@@ -290,9 +290,8 @@ FRG_Extr_Stats_new = function(SVI_File = SVI_File, Shape_File = Shape_File, CLC_
       # Data = read.csv(Out_IDL_CSV,header = TRUE, na.strings = FRG_Options$No_Data_Out_Rast, stringsAsFactors = FALSE)
       # Data[Data == FRG_Options$No_Data_Out_Rast] = NA  					# Put the NODATA to "R" NA
       # n_Years = (length(names(Data)) - 4)/2
-      #Data <-  get(load(Out_RData))
       Data <-  get(load(Out_RData))
-      names(Data)[1] = 'OVERLAP_ID'
+            names(Data)[1] = 'OVERLAP_ID'
       n_Years = length(unique(Data$Year))
       
       # names(Data)[5:(5+n_Years-1)] =  as.character(seq(as.numeric(Start_Year),as.numeric(End_Year)))    # Correct columns names
@@ -306,7 +305,7 @@ FRG_Extr_Stats_new = function(SVI_File = SVI_File, Shape_File = Shape_File, CLC_
       names = names(Data_Shape)
       n_recs = length(unique(Data$OVERLAP_ID))
       tmp_df = as.data.frame(array(NA, dim = c(n_recs,length(names))))
-      names(tmp_df)=names
+      names(tmp_df) = names
       Data_Shape = tmp_df
       #Set the Data_Shape OVERLAPID to the values derived from the ROIS
       Data_Shape$OVERLAP_ID = unique(Data$OVERLAP_ID)
@@ -315,13 +314,16 @@ FRG_Extr_Stats_new = function(SVI_File = SVI_File, Shape_File = Shape_File, CLC_
       Data_Shape$FireDate = 'Multiple'
       # Compute the FireYear and Area variable for each fire (From the sahpefile data) and add it to the DataFrame
       # FireYear corresponds to the FIreYear of the earlier fire that originated the overlap
-      FireYear = numeric(length(Data$OBJECTID))
+      FireYear = numeric(length(Data$OVERLAP_ID))
       Area_All = numeric(length(Data$OVERLAP_ID))
       Area_Forest = numeric(length(Data$OVERLAP_ID))
       IDS = unique(Data$OVERLAP_ID)
+      Data = data.table(Data, key = "OVERLAP_ID" )
+      Data_Shape = data.table(Data_Shape, key = "OVERLAP_ID" )
 
       estimate_Area = function(Data_tmp) {   #Accessory function used to compute Burnt area for each CLC class from the number of pixels in the ROI
         # Used ALWAYS for areas burned multiple times, since no Info is already available regarding the area burned in different classes within an overlap
+       
         full_Area  =250*250*(length(Data_tmp$N_PIX))/10000.0
         Area_For = 250*250*(length(Data_tmp$N_PIX[which(Data_tmp$CLC_Class %in% c(2,3,4,5,6))]))/10000.0
         bro_Area = 250*250*(length(Data_tmp$N_PIX[which(Data_tmp$CLC_Class %in% c(2))]))/10000.0
@@ -333,18 +335,18 @@ FRG_Extr_Stats_new = function(SVI_File = SVI_File, Shape_File = Shape_File, CLC_
       }
 
       for(FireID in 1:length(IDS)){
-        if(FireID %in% seq(1,20000, 100)) message(FireID, "  ",length(IDS))
+        if (FireID %in% seq(1,20000,100)) (message(FireID, "  ",length(IDS)))
         FireRows = which(Data$OVERLAP_ID == IDS[FireID])                           # Rows of the dataframe corresponding to the selected fire
         min_FireYear = min(Data_LUT[which(Data_LUT$OVERLAP_ID == IDS[FireID]),]$YearSeason)   # Get fire year of the first fire originating the overlap
         YY = min_FireYear   # Set Fire Year to the year of the first fire
         est_Area = estimate_Area(Data[FireRows,])    # Estimate burned area in the different LC classes, as the product of the number of pixel*250*250
-        whereID = Data_Shape$OVERLAP_ID == IDS[FireID]
-        Data_Shape$Area_HA[whereID] = Data_Shape_mult$Area_Int[BAreas_shp_mult$OVERLAP_ID == IDS[FireID]][1]  # Area burned in all land cover types
-        Data_Shape$BroadLeave[whereID] = est_Area$bro_Area
-        Data_Shape$Coniferous[whereID] = est_Area$con_Area
-        Data_Shape$MixedFores[whereID] = est_Area$mix_Area
-        Data_Shape$Sclerophyl[whereID] = est_Area$scler_Area
-        Data_Shape$Transition[whereID] = est_Area$trans_Area
+        where_id = which(Data_Shape$OVERLAP_ID == IDS[FireID])
+        Data_Shape$Area_HA[where_id] = Data_Shape_mult$Area_Int[BAreas_shp_mult$OVERLAP_ID == IDS[FireID]][1]  # Area burned in all land cover types
+        Data_Shape$BroadLeave[where_id] = est_Area$bro_Area
+        Data_Shape$Coniferous[where_id] = est_Area$con_Area
+        Data_Shape$MixedFores[where_id] = est_Area$mix_Area
+        Data_Shape$Sclerophyl[where_id] = est_Area$scler_Area
+        Data_Shape$Transition[where_id] = est_Area$trans_Area
         FireYear [FireRows] = YY          # Assign FireYear
         Area_Forest [FireRows] = est_Area$Area_For          # Assign total area burnt in forest land cover types
         Area_All [FireRows] = Data_Shape_mult$Area_Int[BAreas_shp_mult$OVERLAP_ID == IDS[FireID]][1]           # Assign total area burnt in forest land cover types
