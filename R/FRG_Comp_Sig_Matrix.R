@@ -21,7 +21,7 @@
 #' @author Lorenzo Busetto - email: lorenzo.busetto@@jrc.ec.europa.eu
 #' Created Date: Feb 16, 2012
 #' @export
-#' 
+#' @importFrom data.table rbindlist
 
 
 FRG_Comp_Sig_Matrix = function (In_File = In_File , out_file_pmat = out_file_pmat ,min_pix = min_pix, 
@@ -44,9 +44,10 @@ FRG_Comp_Sig_Matrix = function (In_File = In_File , out_file_pmat = out_file_pma
   load(In_File)
   Index    = attributes(Data)$Index				 ;        SVI_File = attributes(Data)$SVI_File   ;    Shape_File = attributes(Data)$Shape_File
   CSV_File = attributes(Data)$CSV_File     ;    		CLC_File = attributes(Data)$CLC_File
-  N_Years = as.numeric(attributes(Data)$End_Year)-as.numeric(attributes(Data)$Start_Year)
   
-   # Retrieve time series data
+  
+  # Retrieve time series data
+  # Retrieve time series data
   # if(erode == 0) { #  Get data in the case that erode = 0
   #   Data = Data [,1:(8+N_Years)]
   # } else { #  Get data in the case that erode = 1
@@ -56,7 +57,7 @@ FRG_Comp_Sig_Matrix = function (In_File = In_File , out_file_pmat = out_file_pma
   # }
   
   # Initialization and Preliminary pre elaborations
-  
+  counter = 1
   ptm <- proc.time()
   # Select "Interesting" CLC Classes
   sel_levels = c('Schlerophyllus Vegetation', 'Broadleaved Forests', 'Coniferous Forests',	'Mixed Forests','Transitional Vegetation')  
@@ -81,10 +82,11 @@ FRG_Comp_Sig_Matrix = function (In_File = In_File , out_file_pmat = out_file_pma
   # 	Data_Melted = drop.levels(subset(Data_Melted,Year != '2000'))			# If present, remove the data regarding year 2000 (Strong uncertainties in MODIS data of this year !!!!
   
   # Avail_Years = as.numeric(levels(Data_Melted$Year))				# Get list of available years
- 														# Number of years in the time series	
+  # Number of years in the time series	
   Start_Year = min(Data_Melted$Year)															# Starting year of the time serie
   End_Year = max(Data_Melted$Year)  	                            # Ending year of the time serie
-  n_Years = 1+ End_Year - Start_Year
+  N_Years  =  1 + as.numeric(End_Year) - as.numeric(Start_Year)
+  Avail_Years = seq(Start_Year, End_Year, 1)
   #- --------------------------------------------------------------------------- -#
   #- #Initialize output matrixes
   #- --------------------------------------------------------------------------- -#
@@ -93,8 +95,8 @@ FRG_Comp_Sig_Matrix = function (In_File = In_File , out_file_pmat = out_file_pma
   
   # Define the output matrixes that will contain information on p-values of wilcoxon rank sum tests. 
   
-  max_plus_years = n_Years-3						#To compute the limits of the p-values full matrixes: 
-  max_minus_years =-(n_Years -1)				#To compute the limits of the p-values full matrixes
+  max_plus_years = N_Years - 3						#To compute the limits of the p-values full matrixes: 
+  max_minus_years =-(N_Years - 1)				#To compute the limits of the p-values full matrixes
   
   p_matrix_median = NULL ; plot_stat = NULL    # Initialize output variables
   
@@ -119,7 +121,7 @@ FRG_Comp_Sig_Matrix = function (In_File = In_File , out_file_pmat = out_file_pma
     Data_Fire_Shape = subset(Data_Shape, OBJECTID == FireCode)
     
     YearDiffs = (unique(Data_Fire$YearDiff)	)															# get levels of "Difference" with fire year - full and before fire
-    YearDiffs_Before =YearDiffs[which(YearDiffs < 0)]
+    YearDiffs_Before = YearDiffs[which(YearDiffs < 0)]
     
     if (length(Data_Fire$FireYear) != 0 & is.finite(Data_Fire$FireYear[1])) {   #control on number of records for selected fire
       FireYear =  Data_Fire$FireYear[1]																	# Get year of occurrence of the selected fire		
@@ -145,6 +147,12 @@ FRG_Comp_Sig_Matrix = function (In_File = In_File , out_file_pmat = out_file_pma
             
             if (Class != 'All') {Data_Class =droplevels(Data_Zone[CLC_Class == Class])	} else  {Data_Class = Data_Zone} 
             
+            Data_Class_check <- Data_Class %>% 
+              group_by(N_PIX) %>% 
+              summarise(lgtyy = length(Index)) %>% 
+              filter(lgtyy == N_Years) %>% 
+              select(N_PIX)
+            Data_Class = subset(Data_Class, Data_Class$N_PIX %in% Data_Class_check$N_PIX) 
             n_pix= length(unique(Data_Class$N_PIX))		# Check to see if at least min_pix pixels are "available" for the selected CLC class and Zone in the selected fire
             case_ID = case_ID + 1
             if (n_pix >= min_pix) { # if number of pixels grater than minimum , perform analysis 
@@ -167,25 +175,39 @@ FRG_Comp_Sig_Matrix = function (In_File = In_File , out_file_pmat = out_file_pma
                 
                 for (Before_Year in YearDiffs_Before) {				# Start of cycle on: 
                   
-                  Data_Before = droplevels(Data_Class[YearDiff >= Before_Year & YearDiff <0])								# Get before fire data up to "Before_Year" CHECK !!!!!!!!!!!
-                  mean_before = Data_Before[,list(mean=mean(Index, na.rm = T)), by = list(N_PIX)]$mean      # Compute means per pixels of the before years
-                  Data_Class_med[YearDiff == Before_Year]$Index= mean_before    														# Replace the original values with the means of before years
+                  Data_Before = droplevels(Data_Class[YearDiff >= Before_Year & YearDiff < 0])								# Get before fire data up to "Before_Year" CHECK !!!!!!!!!!!
+                  mean_before = as.integer(Data_Before[,list(mean=mean(Index, na.rm = T)), by = list(N_PIX)]$mean)      # Compute means per pixels of the before years
+                  Data_Class_med[YearDiff == Before_Year]$Index = mean_before    														# Replace the original values with the means of before years
                 }    # End of cycle on: 
                 
                 #- ----------------------------------------------
                 # - Statistical analysis - apply wilcoxon test to compute the p-values matrixes - check differences with respect to means of before years
                 #- ----------------------------------------------
                 p_matrix_median_tmp = p_matrix_median_empty		#Define an empty matrix with correct dimensions to store the results
-                paired_wtest_median = pairwise.wilcox.test (Data_Class_med$Index, Data_Class_med$YearDiff, paired = TRUE, alternative = 'less', p.adjust.method = 'none', mu = -perc_diff)  # Compute p-values
+     
                 
+                
+                paired_wtest_median = try(pairwise.wilcox.test(Data_Class_med$Index, Data_Class_med$YearDiff, 
+                                                               paired = TRUE, alternative = 'less', 
+                                                               p.adjust.method = 'none', 
+                                                               mu = -perc_diff))  # Compute p-values
+           
+                if(class(paired_wtest_median) == "try-error") {
+                  browser()
+                } 
                 
                 #- ----------------------------------------------
                 # - Then put results in the cumulated matrix. Assign the "CASE_ID" as dimname of the 3rd dimension 
                 # for easy referencing
                 #- ----------------------------------------------
                 
-                p_matrix_median_tmp [attributes(paired_wtest_median$p.value)[2]$dimnames[[1]], attributes(paired_wtest_median$p.value)[2]$dimnames[[2]]] = paired_wtest_median$p.value
-                p_matrix_median= abind(p_matrix_median, p_matrix_median_tmp, along = 3)
+                p_matrix_median_tmp[attributes(paired_wtest_median$p.value)[2]$dimnames[[1]], 
+                                    attributes(paired_wtest_median$p.value)[2]$dimnames[[2]]] = paired_wtest_median$p.value
+                
+                p_matrix_median = try(abind(p_matrix_median, p_matrix_median_tmp, along = 3))
+                if(class(p_matrix_median) == "try-error") {
+                  browser()
+                } 
                 dimnames(p_matrix_median)[[3]][dim(p_matrix_median)[3]] = case_ID
                 
               }
@@ -208,7 +230,8 @@ FRG_Comp_Sig_Matrix = function (In_File = In_File , out_file_pmat = out_file_pma
               
               plot_stat_tmp= as.data.frame(cbind(case_ID, FireCode,FireYear, YearFromFire,Area_All,Area_Forest,Area_CLC, as.character(Zone),as.character(Class),n_pix,  Time_Signif = 'Yes', Avail_Years,YearDiffs, int_data,sdev_data$sd, box_data), stringsAsFactors = FALSE)
               names(plot_stat_tmp) = plot_stat_names
-              plot_stat = rbind(plot_stat, plot_stat_tmp) # Add the results for the selected fire to the full output matrix
+              plot_stat [[counter]]= plot_stat_tmp # Add the results for the selected fire to the full output matrix
+              counter = counter + 1
             } 	else {	# If n_pix too low, the fire is skipped. Neither "plot_stat" nor the p-values matrixes are filled
               
             } 
@@ -220,11 +243,13 @@ FRG_Comp_Sig_Matrix = function (In_File = In_File , out_file_pmat = out_file_pma
       } else case_ID = case_ID + 1	# End of check for sufficient number of years before and after fire
     }		
     
-    if ((FirePix/50)-floor(FirePix/50) == 0) {print(paste('-> Analysing Burnt Area: ',  FirePix, ' of: ', n_fires, sep = ''))}
+    if ((FirePix/100)-floor(FirePix/100) == 0) {message('-> Analysing Burnt Area: ',  FirePix, ' of: ', n_fires)}
     
   }   # End of Cycle on Fires
   
-   #Convert the columns to the correct formats
+  plot_stat <- rbindlist(plot_stat)
+  browser()
+  #Convert the columns to the correct formats
   for (cc_df in c(5,6,7,10, 14:22)) plot_stat [,cc_df] = as.numeric(plot_stat [,cc_df])
   for (cc_df in c(2,3,8,9,11)) plot_stat [,cc_df] = as.factor(plot_stat [,cc_df])
   for (cc_df in c(1,4,12,13)) plot_stat [,cc_df] = as.ordered(as.numeric(plot_stat [,cc_df]))  	

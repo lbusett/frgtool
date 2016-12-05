@@ -198,7 +198,7 @@ FRG_Extr_Stats_new = function(SVI_File = SVI_File, Shape_File = Shape_File, CLC_
         trans_Area = 250*250*(length(Data_tmp$N_PIX[which(Data_tmp$CLC_Class %in% c(6))]))/10000.0
         est_Area   = data.frame (tot_Area = tot_Area,bro_Area=bro_Area ,con_Area=con_Area,mix_Area=mix_Area,trans_Area=trans_Area,scler_Area=scler_Area, full_Area = full_Area)
       }
-      Data = data.table(Data, key = c("OBJECTID", "Year"))
+      Data       = data.table(Data, key = c("OBJECTID", "Year"))
       Data_Shape = data.table(Data_Shape, key = "OBJECTID" )
       for (FireID in 1:length(IDS)){
         if (FireID %in% seq(1,20000,100)) (message(FireID, "  ",length(IDS)))
@@ -290,9 +290,12 @@ FRG_Extr_Stats_new = function(SVI_File = SVI_File, Shape_File = Shape_File, CLC_
       # Data = read.csv(Out_IDL_CSV,header = TRUE, na.strings = FRG_Options$No_Data_Out_Rast, stringsAsFactors = FALSE)
       # Data[Data == FRG_Options$No_Data_Out_Rast] = NA  					# Put the NODATA to "R" NA
       # n_Years = (length(names(Data)) - 4)/2
-      Data <-  get(load(Out_RData))
-            names(Data)[1] = 'OVERLAP_ID'
-      n_Years = length(unique(Data$Year))
+      Data           <-  read.csv(Out_IDL_CSV)
+      Data           <-  select(Data, -X)
+      n_Years        <-  length(unique(Data$Year))
+      names(Data)[1] <- 'OVERLAP_ID'
+      Data$OVERLAP_ID <-  as.factor(Data$OVERLAP_ID)
+      
       
       # names(Data)[5:(5+n_Years-1)] =  as.character(seq(as.numeric(Start_Year),as.numeric(End_Year)))    # Correct columns names
       # names(Data)[(5+n_Years):(5+2*n_Years-1)] =  paste('erode',as.character(seq(as.numeric(Start_Year),as.numeric(End_Year))), sep = '_')    # Correct columns names
@@ -314,12 +317,12 @@ FRG_Extr_Stats_new = function(SVI_File = SVI_File, Shape_File = Shape_File, CLC_
       Data_Shape$FireDate = 'Multiple'
       # Compute the FireYear and Area variable for each fire (From the sahpefile data) and add it to the DataFrame
       # FireYear corresponds to the FIreYear of the earlier fire that originated the overlap
-      FireYear = numeric(length(Data$OVERLAP_ID))
-      Area_All = numeric(length(Data$OVERLAP_ID))
+      FireYear    = numeric(length(Data$OVERLAP_ID))
+      Area_All    = numeric(length(Data$OVERLAP_ID))
       Area_Forest = numeric(length(Data$OVERLAP_ID))
-      IDS = unique(Data$OVERLAP_ID)
-      Data = data.table(Data, key = "OVERLAP_ID" )
-      Data_Shape = data.table(Data_Shape, key = "OVERLAP_ID" )
+      IDS         = unique(Data$OVERLAP_ID)
+      Data        = data.table(Data, key = "OVERLAP_ID" )
+      Data_Shape  = data.table(Data_Shape, key = "OVERLAP_ID" )
 
       estimate_Area = function(Data_tmp) {   #Accessory function used to compute Burnt area for each CLC class from the number of pixels in the ROI
         # Used ALWAYS for areas burned multiple times, since no Info is already available regarding the area burned in different classes within an overlap
@@ -339,9 +342,9 @@ FRG_Extr_Stats_new = function(SVI_File = SVI_File, Shape_File = Shape_File, CLC_
         FireRows = which(Data$OVERLAP_ID == IDS[FireID])                           # Rows of the dataframe corresponding to the selected fire
         min_FireYear = min(Data_LUT[which(Data_LUT$OVERLAP_ID == IDS[FireID]),]$YearSeason)   # Get fire year of the first fire originating the overlap
         YY = min_FireYear   # Set Fire Year to the year of the first fire
-        est_Area = estimate_Area(Data[FireRows,])    # Estimate burned area in the different LC classes, as the product of the number of pixel*250*250
+        est_Area = estimate_Area(Data[FireRows,])/n_Years    # Estimate burned area in the different LC classes, as the product of the number of pixel*250*250
         where_id = which(Data_Shape$OVERLAP_ID == IDS[FireID])
-        Data_Shape$Area_HA[where_id] = Data_Shape_mult$Area_Int[BAreas_shp_mult$OVERLAP_ID == IDS[FireID]][1]  # Area burned in all land cover types
+        Data_Shape$Area_HA[where_id]    = Data_Shape_mult$Area_Int[BAreas_shp_mult$OVERLAP_ID == IDS[FireID]][1]  # Area burned in all land cover types
         Data_Shape$BroadLeave[where_id] = est_Area$bro_Area
         Data_Shape$Coniferous[where_id] = est_Area$con_Area
         Data_Shape$MixedFores[where_id] = est_Area$mix_Area
