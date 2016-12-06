@@ -6,7 +6,7 @@ Author: Lorenzo Busetto
 Maintainer: Lorenzo Busetto <lbusetto@gmail.com>
 Description: More about what it does (maybe more than one line)
 License: GPL-3
-Imports: ggplot2, gdalUtils, rgdal, sf, sp, gWidgetsRGtk2, gWidgets, tools,debug,gWidgets,gWidgetsRGtk2,RCurl,rgdal,reshape2,ggplot2,tcltk,
-         gdata,abind, data.table,hash,plyr,car
+Imports: ggplot2, gdalUtils, rgdal, sf, sp, gWidgetsRGtk2, gWidgets, tools,gWidgets,gWidgetsRGtk2,RCurl,rgdal,reshape2,ggplot2,tcltk,
+         gdata,abind, data.table,hash,plyr,car, tcltk
 LazyData: TRUE
 RoxygenNote: 5.0.1

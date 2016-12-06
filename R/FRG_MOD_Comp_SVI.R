@@ -1,4 +1,4 @@
-#'@title FRG_MOD_Comp_SVI
+#' FRG_MOD_Comp_SVI
 #'@description Function used to call the IDL functiosn used for computation of SRDVI and SNDVI yearly images ( FRG_Compute_MedScaled_VI.pro)
 #'@details This function is used to call the IDL function used for computation of SDVI and SNDVI yearly images.\cr
 #' Also calls the IDL routines needed to create the ENVI burnt areas ROI, and the ENVI burnt areas MASKS (both total and eroded!) \cr

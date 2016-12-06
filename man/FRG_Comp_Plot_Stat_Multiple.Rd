@@ -2,7 +2,7 @@
 % Please edit documentation in R/FRG_Comp_Plot_Stat_Multiple.R
 \name{FRG_Comp_Plot_Stat_Multiple}
 \alias{FRG_Comp_Plot_Stat_Multiple}
-\title{}
+\title{FRG_Comp_Plot_Stat_Multiple}
 \usage{
 FRG_Comp_Plot_Stat_Multiple(In_File = In_File, Out_File = Out_File,
   min_pix = min_pix, sub_zones = sub_zones, erode = erode)

@@ -11,7 +11,7 @@
 #' @importFrom rgdal readOGR
 #' @importFrom tools file_path_sans_ext
 #'
-#' @examples
+
 
 check_spatype <- function(object) {
   

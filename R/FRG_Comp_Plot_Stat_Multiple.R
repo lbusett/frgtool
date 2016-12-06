@@ -1,4 +1,4 @@
-#' @title 
+#' FRG_Comp_Plot_Stat_Multiple 
 #' 
 #' @description Function used extract the info necessary to plot the NDVIRtime series (i.e., boxplots, overlapid of BA, fireyears, ecc) \ cr
 #' for multiple-fire areas
@@ -36,13 +36,13 @@ FRG_Comp_Plot_Stat_Multiple = function (In_File = In_File , Out_File = Out_File 
   N_Years = as.numeric(attributes(Data)$End_Year)-as.numeric(attributes(Data)$Start_Year)
   
   # Retrieve time series data
-  if(erode == 0) { #  Get data in the case that erode = 0
-    Data = Data [,1:(8+N_Years)]
-  } else { #  Get data in the case that erode = 1
-    names = names(Data)[1:(8+N_Years)]    
-    Data = Data [,c(1:7,(8+N_Years+1):(8+2*N_Years+1))]
-    names(Data)= names
-  }
+  # if(erode == 0) { #  Get data in the case that erode = 0
+  #   Data = Data [,1:(8+N_Years)]
+  # } else { #  Get data in the case that erode = 1
+  #   names = names(Data)[1:(8+N_Years)]    
+  #   Data = Data [,c(1:7,(8+N_Years+1):(8+2*N_Years+1))]
+  #   names(Data)= names
+  # }
   
   # Initialization and Preliminary pre elaborations
   

@@ -1,4 +1,4 @@
-#' @title FRG_Main
+#' FRG_Main
 #' @description Main Function of the Fire Regeneration Monitoring Tool
 #' @details This is the main function of the Fire Regeneration Monitoring Tool. \cr
 #'It builds the main GUI and handles events corresponding to the different buttons, calling the corresponding functions. \cr
@@ -53,7 +53,7 @@ frg_main = function() {
 
     # Check if needed packages are present. Install them otherwise
     pkgList = c('tools','debug','gWidgets','gWidgetsRGtk2','RCurl','rgdal','reshape2','ggplot2','tcltk',
-                'gdata','abind', 'data.table','hash','plyr','car','lubridate','stringr','raster','gdalUtils','dplyr')
+                'gdata','abind', 'data.table','tcltk', 'hash','plyr','car','lubridate','stringr','raster','gdalUtils','dplyr')
     for (pkg in pkgList) {pkgTest(pkg)	}
     options("guiToolkit"="RGtk2")
 
