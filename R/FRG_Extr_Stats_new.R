@@ -37,8 +37,8 @@ FRG_Extr_Stats_new = function(SVI_File = SVI_File, Shape_File = Shape_File, CLC_
     Out_RData  =  paste(Out_File, 'RData.RData', sep = '_')		# Filenames used for output saving RData Matrix
     Out_IDL_CSV = paste(Out_File, 'IDL_Matrix.csv', sep = '_')
   } else {
-    Out_RData =  paste(Out_File, 'Multiple_RData.RData', sep = '_') # Filenames used for output saving RData Matrix
-    Out_IDL_CSV = paste(Out_File, 'Multiple_IDL_Matrix.csv', sep = '_')
+    Out_RData =  paste(Out_File, 'RData.RData', sep = '_') # Filenames used for output saving RData Matrix
+    Out_IDL_CSV = paste(Out_File, 'IDL_Matrix.csv', sep = '_')
   }
 
 #   # Get Year names from the name of the input MODIS SVI file
@@ -206,7 +206,7 @@ FRG_Extr_Stats_new = function(SVI_File = SVI_File, Shape_File = Shape_File, CLC_
         
         FireRows = which(Data$OBJECTID == ID)                           # Rows of the dataframe corresponding to the selected fire
         where_id = which(Data_Shape$OBJECTID == ID)
-        YY = Data_Shape$YearSeason[where_id][1]        # Retrieve Fire Year
+         YY = Data_Shape$YearSeason[where_id][1]        # Retrieve Fire Year
         Area_For = Data_Shape[where_id,'BroadLeave'] +  # Retrieve Total Area burned in considered CLC_Classes
                    Data_Shape[where_id,'Coniferous'] +
                    Data_Shape[where_id,'MixedFores'] +
@@ -226,6 +226,7 @@ FRG_Extr_Stats_new = function(SVI_File = SVI_File, Shape_File = Shape_File, CLC_
         FireYear[FireRows] = YY          # Assign FireYear
         Area_Forest[FireRows] = Area_For           # Assign total area burnt in forest land cover types
         Area_All[FireRows] = Area_Tot           # Assign total area burnt in forest land cover types
+        
       }
       Data$FireYear    = FireYear          # Assign FireYear
       Data$Area_All    = Area_All          # Assign total area of the intersectr
@@ -235,7 +236,7 @@ FRG_Extr_Stats_new = function(SVI_File = SVI_File, Shape_File = Shape_File, CLC_
 
       # Reclass the values of CORINE using the same scheme used in the EFFIS data base
 
-      Data$CLC_Class  = factor(Data$CLC_Class, levels = c(1:11), 
+      Data$CLC_Class  = factor(Data$CLC_Class, levels = c(0:10), 
                                labels = c('Artificial Surfaces','Agricultural Areas','Broadleaved Forests',
                                           'Coniferous Forests','Mixed Forests','Schlerophyllus Vegetation',	
                                           'Transitional Vegetation','Other Natural Land','Wetlands',
@@ -363,7 +364,7 @@ FRG_Extr_Stats_new = function(SVI_File = SVI_File, Shape_File = Shape_File, CLC_
 
       # Reclass the values of CORINE using the same scheme used in the EFFIS data base
 
-     Data$CLC_Class  = factor(Data$CLC_Class, levels = c(1:11), 
+     Data$CLC_Class  = factor(Data$CLC_Class, levels = c(0:10), 
                                labels = c('Artificial Surfaces','Agricultural Areas','Broadleaved Forests',
                                           'Coniferous Forests','Mixed Forests','Schlerophyllus Vegetation',	
                                           'Transitional Vegetation','Other Natural Land','Wetlands',

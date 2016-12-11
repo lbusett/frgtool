@@ -24,8 +24,10 @@
 #' Created Date: Feb 16, 2012
 #' @import gWidgetsRGtk2
 #' @import gWidgets
+#' @import RGtk2
 #' @import ireaRscripts
 #' @import gdalUtils
+#' @import tcltk
 #' @export
 #'
 frg_main = function() {

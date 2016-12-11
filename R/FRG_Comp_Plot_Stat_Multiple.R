@@ -45,7 +45,7 @@ FRG_Comp_Plot_Stat_Multiple = function (In_File = In_File , Out_File = Out_File 
   # }
   
   # Initialization and Preliminary pre elaborations
-  
+  counter = 1
   ptm <- proc.time()
   # Select "Interesting" CLC Classes
   sel_levels = c('Schlerophyllus Vegetation', 'Broadleaved Forests', 'Coniferous Forests',	'Mixed Forests','Transitional Vegetation')  
@@ -59,18 +59,19 @@ FRG_Comp_Plot_Stat_Multiple = function (In_File = In_File , Out_File = Out_File 
   Data_Shape  = droplevels(subset(Data_Shape,OVERLAP_ID %in% unique(Data$OVERLAP_ID)))			# Remove fires not "present" in the MODIS dataset					
   recs = unique(Data_Shape$OVERLAP_ID)							# Count the remaining fires
   n_recs =length(recs)														# Number of fires to process
-  
+  # browser()
   # Reshape data structure to facilitate the analyis (melting) and get info about the data (e.g., number of years, ecc)
   Data = Data[complete.cases(Data),]
-  Data_Melted = melt(Data, id.vars = c(1:(st_ind-1)))
-  names(Data_Melted)[st_ind:(st_ind+1)] = c('Year', 'Index')
+  # Data_Melted = melt(Data, id.vars = c(1:(st_ind-1)))
+  # names(Data_Melted)[st_ind:(st_ind+1)] = c('Year', 'Index')
+  Data_Melted = Data
   attributes(Data_Melted)$Index = Index
   # 	Data_Melted = drop.levels(subset(Data_Melted,Year != '2000'))			# If present, remove the data regarding year 2000 (Strong uncertainties in MODIS data of this year !!!!
   
-  Avail_Years = as.numeric(levels(Data_Melted$Year))				# Get list of available years
-  n_Years = length(Avail_Years)															# Number of years in the time series	
-  Start_Year = min(Avail_Years)															# Starting year of the time serie
-  End_Year = max(Avail_Years)  	                            # Ending year of the time serie
+  Start_Year = min(Data_Melted$Year)															# Starting year of the time serie
+  End_Year = max(Data_Melted$Year)  	                            # Ending year of the time serie
+  N_Years  =  1 + as.numeric(End_Year) - as.numeric(Start_Year)
+  Avail_Years = seq(Start_Year, End_Year, 1)
   
   #- --------------------------------------------------------------------------- -#
   #- #Initialize output matrixes
@@ -121,7 +122,14 @@ FRG_Comp_Plot_Stat_Multiple = function (In_File = In_File , Out_File = Out_File 
             
             if (Class != 'All') {Data_Class =droplevels(Data_Zone[CLC_Class == Class])	} else  {Data_Class = Data_Zone} 
             
+            Data_Class_check <- Data_Class %>% 
+              group_by(N_PIX) %>% 
+              summarise(lgtyy = length(Index)) %>% 
+              filter(lgtyy == N_Years) %>% 
+              select(N_PIX)
+            Data_Class = subset(Data_Class, Data_Class$N_PIX %in% Data_Class_check$N_PIX) 
             n_pix= length(unique(Data_Class$N_PIX))		# Check to see if at least min_pix pixels are "available" for the selected CLC class and Zone in the selected fire
+            
             case_ID = case_ID + 1
             if (n_pix >= min_pix) { # if number of pixels grater than minimum , perform analysis 
               
@@ -151,7 +159,8 @@ FRG_Comp_Plot_Stat_Multiple = function (In_File = In_File , Out_File = Out_File 
               
               plot_stat_tmp= as.data.frame(cbind(case_ID, FireCode,FireYear, YearFromFire,Area_All,Area_Forest,Area_CLC, as.character(Zone),as.character(Class),n_pix,  Time_Signif = 'Yes', Avail_Years,YearDiffs, int_data,sdev_data$sd, box_data), stringsAsFactors = FALSE)
               names(plot_stat_tmp) = plot_stat_names
-              plot_stat = rbind(plot_stat, plot_stat_tmp) # Add the results for the selected fire to the full output matrix
+              plot_stat[[counter]] = plot_stat_tmp # Add the results for the selected fire to the full output matrix
+              counter = counter + 1
             } 	else {	# If n_pix too low, the fire is skipped. Neither "plot_stat" nor the p-values matrixes are filled
               
             } 
@@ -168,12 +177,37 @@ FRG_Comp_Plot_Stat_Multiple = function (In_File = In_File , Out_File = Out_File 
   }   # End of Cycle on Fires
   
   #Convert the columns to the correct formats
-  for (cc_df in c(5,6,7,10, 14:22)) plot_stat [,cc_df] = as.numeric(plot_stat [,cc_df])
-  for (cc_df in c(2,3,8,9,11)) plot_stat [,cc_df] = as.factor(plot_stat [,cc_df])
-  for (cc_df in c(1,4,12,13)) plot_stat [,cc_df] = as.ordered(as.numeric(plot_stat [,cc_df]))				  
+  # for (cc_df in c(5,6,7,10, 14:22)) plot_stat [,cc_df] = as.numeric(plot_stat [,cc_df])
+  # for (cc_df in c(2,3,8,9,11)) plot_stat [,cc_df] = as.factor(plot_stat [,cc_df])
+  # for (cc_df in c(1,4,12,13)) plot_stat [,cc_df] = as.ordered(as.numeric(plot_stat [,cc_df]))				  
+  # 
+ plot_stat <- rbindlist(plot_stat)
+  
+  plot_stat <- plot_stat[, CASE_ID := as.ordered(as.numeric(CASE_ID))]
+  plot_stat <- plot_stat[, OVERLAP_ID:=as.factor(OVERLAP_ID)]
+  plot_stat <- plot_stat[, FireYear:=as.factor(FireYear)]
+  plot_stat <- plot_stat[, YearFromFire :=as.ordered(as.numeric(YearFromFire))]
+  plot_stat <- plot_stat[, Area_All :=as.numeric(Area_All)]
+  plot_stat <- plot_stat[, Area_Forest :=as.numeric(Area_Forest)]
+  plot_stat <- plot_stat[, Area_CLC :=as.numeric(Area_CLC)]
+  plot_stat <- plot_stat[, ENV_ZONE :=as.factor(ENV_ZONE)]
+  plot_stat <- plot_stat[, CLC_Class :=as.factor(CLC_Class)]
+  plot_stat <- plot_stat[, N_PIX :=as.numeric(N_PIX)]
+  plot_stat <- plot_stat[, Time_Signif :=as.factor(Time_Signif)]
+  plot_stat <- plot_stat[, Year :=as.ordered(as.numeric(Year))]
+  plot_stat <- plot_stat[, YearDiff :=as.ordered(as.numeric(YearDiff))]
+  plot_stat <- plot_stat[, low_ci :=as.numeric(low_ci)]
+  plot_stat <- plot_stat[, mean :=as.numeric(mean)]
+  plot_stat <- plot_stat[, hi_ci :=as.numeric(hi_ci)]
+  plot_stat <- plot_stat[, std_dev :=as.numeric(std_dev)]
+  plot_stat <- plot_stat[, low_box :=as.numeric(low_box)]
+  plot_stat <- plot_stat[, X25th :=as.numeric(X25th)]
+  plot_stat <- plot_stat[, median :=as.numeric(median)]
+  plot_stat <- plot_stat[, X75th :=as.numeric(X75th)]
+  plot_stat <- plot_stat[, up_box :=as.numeric(up_box)]
   
   # Add attributes to the output Data Frame (Useful to keep track of processing !)
-  
+  # browser()
   attr(plot_stat, "RData_File") = In_File
   attr(plot_stat, "SVI_File") =SVI_File
   attr(plot_stat, "Shape_File") = Shape_File	

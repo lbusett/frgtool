@@ -101,7 +101,7 @@ prova_survreg <- function() {
   survreg.curves <- function(model, col = "black", values = c('Coniferous Forests', 'Broadleaved Forests'),seq.quantiles = seq(from = 0.00, to = 1.00, by = 0.01)) {
 
     l_ply(values, function(X) {
-      browser()
+      # browser()
         lines(x = predict(model,                    # survreg object to use
                   CLC_Class = X, # Dataset to perform prediction for
                   type = "quantile",                # Predict survival time (X-axis values) given event quantile

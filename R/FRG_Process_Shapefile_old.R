@@ -18,7 +18,7 @@ FRG_Process_Shapefile = function(Shape_File = Shape_File, Intermediate_Folder = 
   out = system (str_python,  invisible = FALSE, show.output.on.console = TRUE)
   if (out != 0) {
     print('An error occurred while processing shapefiles using python ! Processing stopped')
-    browser()
+    # browser()
   }
   Shape_File_Single =  file.path(Intermediate_Folder,'Shapefiles', paste(sub("[.][^.]*$", "", basename(Shape_File)),'_Single_Fires.shp', sep = '')) # Define ROI file name
   Shape_File_Multiple = file.path(Intermediate_Folder,'Shapefiles', paste(sub("[.][^.]*$", "", basename(Shape_File)),'_Multiple_Fires.shp', sep = '')) # Define ROI file name

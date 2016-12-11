@@ -25,7 +25,8 @@
 
 
 FRG_Comp_Sig_Matrix = function (In_File = In_File , out_file_pmat = out_file_pmat ,min_pix = min_pix, 
-                                perc_diff = perc_diff , MedWdt = MedWdt ,sub_zones = sub_zones, erode = erode) {
+                                perc_diff = perc_diff , MedWdt = MedWdt ,sub_zones = sub_zones, erode = erode) 
+  {
   
   median_analysis = T
   perc_difference = perc_diff
@@ -65,7 +66,7 @@ FRG_Comp_Sig_Matrix = function (In_File = In_File , out_file_pmat = out_file_pma
   Data$N_PIX = as.factor(paste('p', Data$N_PIX, sep = '_'))	  	# Convert N_PIX to factor and add a "p" before the number
   n_fires = length(unique(Data$OBJECTID))												# Number of records to be analyzed (total number of FIRES in both burned areas shapefile and MODIS ROI )
   
-  st_ind = 8   ;    end_ind = length(names(Data))		;  								# Start and end indexes of "years" columns
+  # st_ind = 8   ;    end_ind = length(names(Data))		;  								# Start and end indexes of "years" columns
   
   # Get ancillary data regarding fires from the EFFIS shape file
   
@@ -114,7 +115,8 @@ FRG_Comp_Sig_Matrix = function (In_File = In_File , out_file_pmat = out_file_pma
   Data_Melted = data.table(Data_Melted)																														# cONVERT TO A DATA.TABLE to improve speed !!!
   setkey(Data_Melted ,OBJECTID,CLC_Class,ENV_ZONE)																									# Set the "keys" for the table. 
   
-  for (FirePix in 1:n_fires){
+   for (FirePix in 1:n_fires){
+    # for (FirePix in 1:200){
     
     FireCode = recs[FirePix]																				    # Getrr OBJECTID of the fire to be analyzed
     Data_Fire =droplevels(Data_Melted[J(FireCode)])												# Get Data of the selected fire
@@ -193,7 +195,7 @@ FRG_Comp_Sig_Matrix = function (In_File = In_File , out_file_pmat = out_file_pma
                                                                mu = -perc_diff))  # Compute p-values
            
                 if(class(paired_wtest_median) == "try-error") {
-                  browser()
+                  # browser()
                 } 
                 
                 #- ----------------------------------------------
@@ -206,7 +208,7 @@ FRG_Comp_Sig_Matrix = function (In_File = In_File , out_file_pmat = out_file_pma
                 
                 p_matrix_median = try(abind(p_matrix_median, p_matrix_median_tmp, along = 3))
                 if(class(p_matrix_median) == "try-error") {
-                  browser()
+                  # browser()
                 } 
                 dimnames(p_matrix_median)[[3]][dim(p_matrix_median)[3]] = case_ID
                 
@@ -248,11 +250,37 @@ FRG_Comp_Sig_Matrix = function (In_File = In_File , out_file_pmat = out_file_pma
   }   # End of Cycle on Fires
   
   plot_stat <- rbindlist(plot_stat)
-  browser()
+  # browser()
   #Convert the columns to the correct formats
-  for (cc_df in c(5,6,7,10, 14:22)) plot_stat [,cc_df] = as.numeric(plot_stat [,cc_df])
-  for (cc_df in c(2,3,8,9,11)) plot_stat [,cc_df] = as.factor(plot_stat [,cc_df])
-  for (cc_df in c(1,4,12,13)) plot_stat [,cc_df] = as.ordered(as.numeric(plot_stat [,cc_df]))  	
+  # for (cc_df in c(5,6,7,10, 14:22)) plot_stat[, cc_df, with = FALSE] = as.numeric(plot_stat[,cc_df, with = FALSE])
+  # for (cc_df in c(2,3,8,9,11)) plot_stat [,cc_df, with = FALSE] = as.factor(plot_stat [,cc_df, with = FALSE])
+  # for (cc_df in c(1,4,12,13)) plot_stat [,cc_df, with = FALSE] = as.ordered(as.numeric(plot_stat [,cc_df, with = FALSE]))  	
+  
+  plot_stat <- plot_stat[, CASE_ID := as.ordered(as.numeric(CASE_ID))]
+  plot_stat <- plot_stat[, OBJECTID:=as.factor(OBJECTID)]
+  plot_stat <- plot_stat[, FireYear:=as.factor(FireYear)]
+  plot_stat <- plot_stat[, YearFromFire :=as.ordered(as.numeric(YearFromFire))]
+  plot_stat <- plot_stat[, Area_All :=as.numeric(Area_All)]
+  plot_stat <- plot_stat[, Area_Forest :=as.numeric(Area_Forest)]
+  plot_stat <- plot_stat[, Area_CLC :=as.numeric(Area_CLC)]
+  plot_stat <- plot_stat[, ENV_ZONE :=as.factor(ENV_ZONE)]
+  plot_stat <- plot_stat[, CLC_Class :=as.factor(CLC_Class)]
+  plot_stat <- plot_stat[, N_PIX :=as.numeric(N_PIX)]
+  plot_stat <- plot_stat[, Time_Signif :=as.factor(Time_Signif)]
+  plot_stat <- plot_stat[, Year :=as.ordered(as.numeric(Year))]
+  plot_stat <- plot_stat[, YearDiff :=as.ordered(as.numeric(YearDiff))]
+  plot_stat <- plot_stat[, low_ci :=as.numeric(low_ci)]
+  plot_stat <- plot_stat[, mean :=as.numeric(mean)]
+  plot_stat <- plot_stat[, hi_ci :=as.numeric(hi_ci)]
+  plot_stat <- plot_stat[, std_dev :=as.numeric(std_dev)]
+  plot_stat <- plot_stat[, low_box :=as.numeric(low_box)]
+  plot_stat <- plot_stat[, X25th :=as.numeric(X25th)]
+  plot_stat <- plot_stat[, median :=as.numeric(median)]
+  plot_stat <- plot_stat[, X75th :=as.numeric(X75th)]
+  plot_stat <- plot_stat[, up_box :=as.numeric(up_box)]
+  
+  
+  
   
   
   # Add attributes to the output Data Frame (Useful to keep track of processing !)
@@ -289,7 +317,3 @@ FRG_Comp_Sig_Matrix = function (In_File = In_File , out_file_pmat = out_file_pma
   return('DONE')
   
 }
-
-#- ----------------------------------------------
-#- END OF Function 
-#- ----------------------------------------------
