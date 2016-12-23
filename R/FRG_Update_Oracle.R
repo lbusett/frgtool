@@ -33,11 +33,11 @@ FRG_Update_Oracle = function(effis_folder){
     effis_folder = FRG_Options$effis_folder
     enabled(Main_GUI) = FALSE
     
-
+browser()
     # Copy the processing log file
     log_file = list.files(paste (svalue(Res_Fold), sep = ''), pattern = ".txt$",full.names = T)
-    copy = file.copy(log_file, file.path(effis_folder,'Data','Processing_log.txt'), overwrite = T)
-    if (copy == 'FALSE') {err = 'Error'}
+    # copy = file.copy(log_file, file.path(effis_folder,'Data','Processing_log.txt'), overwrite = T)
+    # if (copy == 'FALSE') {err = 'Error'}
     
     # Check for existance of output tables and set the names
     
@@ -50,7 +50,7 @@ FRG_Update_Oracle = function(effis_folder){
       if (length(grep("PLOT_DATA",file)) == 1 & length(grep("PLOT_DATA_MULTIPLE",file)) != 1) {Plot_File = file   ; chk_Plot = 1} 
       if (length(grep("PLOT_DATA_MULTIPLE",file)) != 0) {Plot_File_Multiple = file ; chk_Plot_M = 1} 
       if (length(grep("RECOV_DATA",file)) == 1) {Recov_File = file ; chk_Recov = 1} 
-    }
+     }
     
     if (min(c(chk_LUT,chk_Plot,chk_Plot_M,chk_Recov)) == 0) {err ='Error'}
     # Check for existance of output shapefiles and set the names

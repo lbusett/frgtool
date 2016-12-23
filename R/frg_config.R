@@ -3,6 +3,7 @@ frg_config = function(cfg_dir) {
   # Check if configuration file exists
   test_config <- file.exists(file.path(cfg_dir, 'frg_config.RData'))
   choice <- TRUE
+  browser()
   # if exists, ask if overwrite
   if (test_config) {
     choice <- gconfirm('Config file already existing - do you want to modify it ? ',
@@ -76,7 +77,7 @@ frg_config = function(cfg_dir) {
     nodata_value     <- gedit(text = "", width = 25, container = nodata_group)
     size(nodata_lab) <- c(250,8)																				# Set label width
 
-    visible(conf_w)
+    visible(conf_w, TRUE)
 
   }
 
