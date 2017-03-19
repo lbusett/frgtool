@@ -17,7 +17,7 @@
 #' @param ReDown numeric if = 1, MODIS images needed to create already existing mosaic files will be redownloaded, and
 #'               already existing mosaics will be overwritten
 #' @param max_UI Max UI value kept when averaging MODIS data. default = 5
-#' @param UI_check 
+#' @param UI_check
 
 #' @author Lorenzo Busetto (2016)
 #' email: lbusett@gmail.com
@@ -46,9 +46,11 @@ frg_modproc <- function(MOD_Dir,
   message("--------------------------------------------------------")
   message("--- Downloading, Mosaicing and Reprojecting Files ---> RUNNING <--- ")
   
-  # Download MODIS images using MODIStsp - oprions file is saved in
-  # inst/Ext/frg_modistsp_opts.json -----
+  # Download MODIS images using MODIStsp for each selected year - options file 
+  # is saved in inst/Ext/frg_modistsp_opts.json -----
   
+  for (yy in seq(Start_Year, End_Year, 1)){
+    
   er <- frg_moddownload(OutOrig_Path = OutOrig_Path, 
                         ReDown       = ReDown, 
                         yy           = yy)
@@ -57,14 +59,20 @@ frg_modproc <- function(MOD_Dir,
   
   # Compute yearly average values from 209 and 225 images ----
   message("----------- Computing averages of summer values --------- ")
-  message("  ---  Computing Mean Indexes --> ONGOING <---")
-  nodata_in <- FRG_Options$No_Data_Out_Rast
-  er <- (FRG_MOD_Comp_MeanInd(OutOrig_Path = OutOrig_Path, ReProc = ReProcIm, 
-                              yy = yy, UI_check = UI_check, max_UI = max_UI, nodata_in = nodata_in))
+  message("---  Computing Mean Indexes --> ONGOING <---")
+  
+  
+  browser()
+  er <- frg_compmean(OutOrig_Path = OutOrig_Path, 
+                      ReProc      = ReProcIm, 
+                      yy          = yy, 
+                      UI_check    = UI_check, 
+                      max_UI      = max_UI)
+  
   message("  ---  Computing Mean Indexes --> DONE <---")
   
   # End Cylcle on years
-  
+  }
   print(" ---- Download and Preprocessing Complete ! ---- ")
   
   return("DONE")  # Return processing variables

@@ -15,9 +15,9 @@
 #'   Monitoring using the results of the latest processing.
 #'
 #' @return Opens the Main GUI of the Tool and allow selection of the processing step
-#'
-#' @author Lorenzo Busetto - email: lorenzo.busetto@@jrc.ec.europa.eu
+#' @author Lorenzo Busetto
 #' @import gWidgetsRGtk2
+#' @import gWidgets
 #' @export
 
 frg_main <- function() {

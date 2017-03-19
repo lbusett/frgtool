@@ -6,7 +6,7 @@ Author: Lorenzo Busetto
 Maintainer: Lorenzo Busetto <lbusett@gmail.com>
 Description: More about what it does (maybe more than one line)
 License: GPL-3
-Imports: gWidgetsRGtk2, gWidgets, RGtk2
+Imports: gWidgetsRGtk2, gWidgets, RGtk2, tcltk, MODIStsp, magrittr
 LazyData: TRUE
 RoxygenNote: 6.0.1
 Roxygen: list(markdown = TRUE)

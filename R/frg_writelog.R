@@ -4,12 +4,11 @@
 #' @export
 #'
 #' @examples
-start_log <- function(){
+start_log <- function() {
   
   cat(c("--- -------------------------------------------------- ---"), 
       file = OutFile_Conn, sep = "\n", append = FALSE)
-  cat("--- Processing Summary", file = OutFile_Conn, sep = "\n", 
-      append = TRUE)
+  cat("--- Processing Summary", file = OutFile_Conn, sep = "\n", append = TRUE)
   cat(c("--- -------------------------------------------------- ---"), 
       file = OutFile_Conn, sep = "\n", append = TRUE)
   cat("", file = OutFile_Conn, sep = "\n", append = TRUE)
@@ -31,8 +30,8 @@ start_log <- function(){
       sep = "\n", append = TRUE)
   cat(paste("--- Moving Window  Size: ", NKer, " Km"), file = OutFile_Conn, 
       sep = "\n", append = TRUE)
-  cat(paste("--- Number of Before Fire Years used as reference : ", 
-            MedWdt), file = OutFile_Conn, sep = "\n", append = TRUE)
+  cat(paste("--- Number of Before Fire Years used as reference : ", MedWdt), 
+      file = OutFile_Conn, sep = "\n", append = TRUE)
   if (SNDVI == 1) {
     cat(paste("--- NDVI Analysis: Yes"), file = OutFile_Conn, sep = "\n", 
         append = TRUE)
@@ -40,33 +39,22 @@ start_log <- function(){
     cat(paste("--- NDVI Analysis: No"), file = OutFile_Conn, sep = "\n", 
         append = TRUE)
   }
-  if (SRDVI == 1) {
-    cat(paste("--- RDVI Analysis: Yes"), file = OutFile_Conn, sep = "\n", 
-        append = TRUE)
-  } else if (SNDVI == 1) {
-    cat(paste("--- RDVI Analysis: No"), file = OutFile_Conn, sep = "\n", 
+  if (SNDVI == 1) {
+    cat(paste("--- NDVI Analysis: Yes"), file = OutFile_Conn, sep = "\n", 
         append = TRUE)
   }
   if (SNDVI == 1) {
     cat(paste("--- Minimum Percentages for significant difference: NDVI--> ", 
-              perc_diffs[["NDVI"]]), file = OutFile_Conn, sep = "\n", 
-        append = TRUE)
-  }
-  if (SRDVI == 1) {
-    cat(paste("--- Minimum Percentages for significant difference: RDVI--> ", 
-              perc_diffs[["RDVI"]]), file = OutFile_Conn, sep = "\n", 
-        append = TRUE)
+              perc_diff), file = OutFile_Conn, sep = "\n", append = TRUE)
   }
   cat(c("--- -------------------------------------------------- ---"), 
       file = OutFile_Conn, sep = "\n", append = TRUE)
   cat(c("--- Input Data ---"), file = OutFile_Conn, sep = "\n", append = TRUE)
   cat(c("--- -------------------------------------------------- ---"), 
       file = OutFile_Conn, sep = "\n", append = TRUE)
-  cat(paste("--- Input ShapeFile of Burnt Areas: ", Shape_File), 
-      file = OutFile_Conn, sep = "\n", append = TRUE)
-  cat(paste("--- Input Corine Map: ", CLC_File_00), file = OutFile_Conn, 
+  cat(paste("--- Input ShapeFile of Burnt Areas: ", Shape_File), file = OutFile_Conn, 
       sep = "\n", append = TRUE)
-  cat(paste("--- Input EcoZones Map: ", ENV_Zones_File), file = OutFile_Conn, 
+  cat(paste("--- Input Corine Map: ", CLC_File_00), file = OutFile_Conn, 
       sep = "\n", append = TRUE)
   cat(c("--- -------------------------------------------------- ---"), 
       file = OutFile_Conn, sep = "\n", append = TRUE)

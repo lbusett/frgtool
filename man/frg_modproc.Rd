@@ -19,8 +19,6 @@ frg_modproc(MOD_Dir, Start_Year, End_Year, ReProcIm, ReDown, UI_check = TRUE,
 \item{ReDown}{numeric if = 1, MODIS images needed to create already existing mosaic files will be redownloaded, and
 already existing mosaics will be overwritten}
 
-\item{UI_check}{}
-
 \item{max_UI}{Max UI value kept when averaging MODIS data. default = 5}
 }
 \description{

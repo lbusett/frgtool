@@ -22,36 +22,37 @@
 #' @param MedWdt 
 #' @param perc_diffs numeric hash table Reduction Threshold on NDVIR reduction used in significance reduction analysis 
 #' with wilcoxon test
-#'
+#' @inheritParams frg_main author
 #' @import dplyr
-#' @author Lorenzo Busetto - email: lbusett@gmail.
+#' @importFrom hash hash
+#' @importFrom tcltk tk_messageBox
+#' @import gWidgetsRGtk2
+
 #' @export
 
-frg_fullprocessing <- function(MOD_Dir     = MOD_Dir, 
-                               Shape_File  = Shape_File, 
-                               CLC_File_00 = CLC_File_00, 
-                               Out_Folder  = Out_Folder, 
-                               Start_Year  = Start_Year, 
-                               End_Year    = End_Year, 
-                               Method      = Method, 
-                               SRDVI       = 2, 
+frg_fullprocessing <- function(MOD_Dir     , 
+                               Shape_File  , 
+                               CLC_File_00 , 
+                               Out_Folder  , 
+                               Start_Year  , 
+                               End_Year    , 
+                               Method      , 
                                SNDVI       = 1, 
-                               ReProc      = ReProc, 
-                               ReDown      = ReDown, 
-                               ReProcIm    = ReProcIm, 
+                               ReProc      , 
+                               ReDown      , 
+                               ReProcIm    , 
                                erode       = 1, 
                                min_pix     = 10, 
                                MedWdt      = 3, 
-                               NKer        = NKer, 
+                               NKer        , 
                                sig_level   = 0.05, 
                                sub_zones   = 0, 
-                               perc_diffs  = hash(c(NDVI = 9.5, RDVI = 11.5))) {
+                               perc_diff  ) {
   
   #- ------------------------------------------------------------------------------------------------- - #
   #- Initialize Processing: Set processing folders on the basis of user's choice and set some processing parameters 
   #- ------------------------------------------------------------------------------------------------- - #
   
-  perc_diff  <- perc_diffs[["NDVI"]]
   
   Out_Folder <- file.path(Out_Folder, paste("Results", Start_Year, End_Year, 
                                             paste("Ker", NKer, sep = "_"), paste("Perc_Diff", perc_diff, sep = "_"), 
@@ -59,7 +60,7 @@ frg_fullprocessing <- function(MOD_Dir     = MOD_Dir,
   
   selection <- "yes"  # Check if Main Results folder already exist and ask if overwrite
   
-  if (file.exists(Out_Folder)) {
+  if (file.exists(Out_Folder) & selection == "No") {
     selection <- tk_messageBox(caption = "Overwrite Warning", type = c("yesno"), 
                                message = "A results folder for the same analysis already exists ! All results will be overwritten !\n Do you want to continue ? ", 
                                default = "no")
@@ -78,18 +79,18 @@ frg_fullprocessing <- function(MOD_Dir     = MOD_Dir,
     
     # Flags to skip some processing steps in debugging phase - Set all to T
     # for complete processing - proceed with caution !
-    MOD_dwl   <- F
+    MOD_dwl   <- T
     Comp_SVI  <- F
     Extr_Stat <- F
-    Sig_Anal  <- T
-    Perc_Anal <- T
+    Sig_Anal  <- F
+    # Perc_Anal <- T
     
     # Set flags indicating which rescaled indexes to calculate
     comp_ind <- NULL
     if (SNDVI == 1) {comp_ind <- c(comp_ind, "NDVI")}
-    if (SRDVI == 1) {comp_ind <- c(comp_ind, "RDVI")}
-    
+ 
     # Write first lines of processing summary text file
+    environment(start_log) <- environment()
     start_log()
     
     #- Step 1: Call Routines for download and preprocessing MODIS data ---------

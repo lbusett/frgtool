@@ -28,5 +28,5 @@ Monitoring using the results of the latest processing.
 }
 }
 \author{
-Lorenzo Busetto - email: lorenzo.busetto@jrc.ec.europa.eu
+Lorenzo Busetto
 }

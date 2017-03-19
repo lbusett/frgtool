@@ -4,13 +4,10 @@
 \alias{frg_fullprocessing}
 \title{frg_fullprocessing}
 \usage{
-frg_fullprocessing(MOD_Dir = MOD_Dir, Shape_File = Shape_File,
-  CLC_File_00 = CLC_File_00, Out_Folder = Out_Folder,
-  Start_Year = Start_Year, End_Year = End_Year, Method = Method,
-  SRDVI = 2, SNDVI = 1, ReProc = ReProc, ReDown = ReDown,
-  ReProcIm = ReProcIm, erode = 1, min_pix = 10, MedWdt = 3,
-  NKer = NKer, sig_level = 0.05, sub_zones = 0, perc_diffs = hash(c(NDVI
-  = 9.5, RDVI = 11.5)))
+frg_fullprocessing(MOD_Dir, Shape_File, CLC_File_00, Out_Folder, Start_Year,
+  End_Year, Method, SNDVI = 1, ReProc, ReDown, ReProcIm, erode = 1,
+  min_pix = 10, MedWdt = 3, NKer, sig_level = 0.05, sub_zones = 0,
+  perc_diff)
 }
 \arguments{
 \item{MOD_Dir}{string Folder where the original and preprocessed image will be stored (i.e., the one above the 'Originals' folder)}
@@ -26,8 +23,6 @@ frg_fullprocessing(MOD_Dir = MOD_Dir, Shape_File = Shape_File,
 \item{End_Year}{numeric Ending Year of the analysis}
 
 \item{Method}{numeric. 2 = Percentage Median difference computation}
-
-\item{SRDVI}{numeric. 1 = compute SRDVI; 2 =  Don't Compute SRDVI}
 
 \item{SNDVI}{numeric. 1 =  compute SNDVI; 2 = Don't Compute SNDVI}
 
@@ -50,12 +45,11 @@ already existing mosaics will be overwritten}
 
 \item{sub_zones}{Obsolete}
 
+\item{SRDVI}{numeric. 1 = compute SRDVI; 2 =  Don't Compute SRDVI}
+
 \item{perc_diffs}{numeric hash table Reduction Threshold on NDVIR reduction used in significance reduction analysis
 with wilcoxon test}
 }
 \description{
 Function used to apply all FRG processing steps
-}
-\author{
-Lorenzo Busetto - email: lbusett@gmail.
 }

@@ -2,8 +2,8 @@
  "sel_prod": "Vegetation Indexes_16Days_250m (M*D13Q1)",
 "sensor": "Terra",
 "prod_version": "6",
-"start_date": "2000-07-15",
-"end_date": "2020-08-15",
+"start_date": "2015-7-15",
+"end_date": "2015-8-15",
 "bandsel": [      1,      0,      1,      0,      0,      0,      0,      0,      0,      0,      0,      1 ],
 "indexes_bandsel": [      0,      0,      0,      0 ],
 "quality_bandsel": [      0,      1,      0,      0,      0,      0,      0,      0,      0 ],
@@ -33,8 +33,8 @@
 "delete_hdf": "No",
 "reprocess": "No",
 "bbox": [ 2.6e+06, 1.4e+06, 7.3e+06, 5.45e+06 ],
-"out_folder": "D:\\Temp\\tempfrg\\Original_MODIS\\time_series",
-"out_folder_mod": "D:\\Temp\\tempfrg\\Original_MODIS\\tiffs",
+"out_folder": "D:\\Temp\\tempfrg\\MODIS_data/Originals/time_series",
+"out_folder_mod": "D:\\Temp\\tempfrg\\MODIS_data/Originals/hdfs",
 "MODIStspVersion": "1.3.2",
 "custom_indexes": [] 
 }

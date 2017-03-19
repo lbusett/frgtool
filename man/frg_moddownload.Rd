@@ -12,6 +12,8 @@ frg_moddownload(OutOrig_Path, ReDown, yy)
 
 \item{ReDown}{numeric if = 1, MODIS images needed to create already existing
 mosaic files will be redownloaded, and already existing mosaics will be overwritten}
+
+\item{yy}{Year for which images are to be downloaded and processed}
 }
 \description{
 Function used to download, mosaic and reproject MODIS data
@@ -30,5 +32,5 @@ access the full time series in \code{ENVI} and \code{R} are stored in the \code{
 subfolder
 }
 \author{
-Lorenzo Busetto, PhD (2017)
+Lorenzo Busetto, PhD (2017) - email lbusett@gmail.com
 }

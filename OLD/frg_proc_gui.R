@@ -9,6 +9,7 @@
 #' email: lorenzo.busetto@@jrc.ec.europa.eu
 #'
 #' Created Date: Oct 26, 2012
+#' @importFrom hash hash
 #' @export
 
 FRG_Full_Proc_GUI = function () {

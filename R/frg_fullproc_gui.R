@@ -12,6 +12,7 @@
 #'
 #' @export
 #' @import gWidgetsRGtk2
+#' @importfrom hash hash values
 
 frg_fullproc_gui <- function() {
   
@@ -57,9 +58,9 @@ frg_fullproc_gui <- function() {
                             container = Shape_SelGroup, anchor = c(1, 1))
   size(Shape_File) <- c(600, 20)
   Shape_Choose     <- gbutton("Browse", handler = function(h, ...) {
-                         choice <- gfile(type = "open", 
-                                         text = "Select the Input Burnt Areas Shape file...", 
-                                         filter = list(Shapfiles = list(patterns = c("*.shp"))))
+    choice <- gfile(type = "open", 
+                    text = "Select the Input Burnt Areas Shape file...", 
+                    filter = list(Shapfiles = list(patterns = c("*.shp"))))
     if (!is.na(choice)) {
       svalue(Shape_File) <- choice  ## Set value of the label widget
       Full_Selection$Shape_File <- choice  # Set value of the selected variable\t
@@ -77,13 +78,13 @@ frg_fullproc_gui <- function() {
                          container = MOD_SelGroup)  # Selected file 
   size(MOD_Dir) <- c(600, 20)  # Set field width
   MOD_Choose    <- gbutton("Browse", handler = function(h, ...) {
-                           choice <- gfile(type = "selectdir", 
-                                           text = "Select the Main Folder for MODIS data...")  # File selection widget
-                                            if (!is.na(choice)) {
-                                              svalue(MOD_Dir) <- choice  ## On new selection, set value of the label widget
-                                              Full_Selection$MOD_Dir <- format(choice, justify = "right")  # \tOn new selection,  Set value of the selected variable\t
-                                            }
-                                          }, container = MOD_SelGroup)
+    choice <- gfile(type = "selectdir", 
+                    text = "Select the Main Folder for MODIS data...")  # File selection widget
+    if (!is.na(choice)) {
+      svalue(MOD_Dir) <- choice  ## On new selection, set value of the label widget
+      Full_Selection$MOD_Dir <- format(choice, justify = "right")  # \tOn new selection,  Set value of the selected variable\t
+    }
+  }, container = MOD_SelGroup)
   addSpace(MOD_SelGroup, 20)
   
   # Build Widgets for Full_Selection of CORINE 2000 image ---------------------
@@ -96,14 +97,14 @@ frg_fullproc_gui <- function() {
                              container = CLC_SelGroup_00, anchor = c(1, 1))
   size(CLC_File_00) <- c(600, 20)  # Set field width
   CLC_Choose_00     <- gbutton("Browse", handler = function(h, ...) {
-                                choice <- gfile(type = "open", 
-                                text = "Select the Input CLC 2000 file...")
-                                  if (!is.na(choice)) {
-                                    svalue(CLC_File_00) <- choice  ## Set value of the label widget
-                                    Full_Selection$CLC_File_00 <- choice  # Set value of the selected variable\t
-                                  }
-                                }, container = CLC_SelGroup_00)
-                                
+    choice <- gfile(type = "open", 
+                    text = "Select the Input CLC 2000 file...")
+    if (!is.na(choice)) {
+      svalue(CLC_File_00) <- choice  ## Set value of the label widget
+      Full_Selection$CLC_File_00 <- choice  # Set value of the selected variable\t
+    }
+  }, container = CLC_SelGroup_00)
+  
   
   # Build Widgets for Full_Selection of Output Folder --------------------------
   
@@ -117,24 +118,24 @@ frg_fullproc_gui <- function() {
   Out_Choose       <- gbutton("Browse", handler = function(h, ...) {
     choice <- gfile(type = "selectdir", 
                     text = "Select the Output Folder for the results of the statistical analysis...")
-                    if (!is.na(choice)) {
-                      svalue(Out_Folder) <- choice  ## Set value of the label widget
-                      Full_Selection$Out_Folder <- choice  # Set value of the selected variable\t
-                    }
-                  }, container = Out_SelGroup)
-                  
+    if (!is.na(choice)) {
+      svalue(Out_Folder) <- choice  ## Set value of the label widget
+      Full_Selection$Out_Folder <- choice  # Set value of the selected variable\t
+    }
+  }, container = Out_SelGroup)
+  
   # Build Widgets for Full_Selection of Processing Years -----------------------
   
   Year_SelGroup     <- ggroup(horizontal = TRUE, container = Proc_Group)
   StartYear_Lab     <- glabel(text = "Starting Year", container = Year_SelGroup, 
                               font.attr = list(style = "bold", size = "big"), editable = FALSE)
-  Start_Year        <- gspinbutton(from = 2000, to = 2000, by = 1, value = Full_Selection$Start_Year, 
+  Start_Year        <- gspinbutton(from = 2000, to = 2020, by = 1, value = Full_Selection$Start_Year, 
                                    container = Year_SelGroup, anchor = c(1, 1))
   Fake_Lab          <- glabel(Text = "", container = Year_SelGroup)
   EndYear_Lab       <- glabel(text = "     Ending Year", container = Year_SelGroup, 
                               font.attr = list(style = "bold", size = "big"), editable = FALSE)
   size(EndYear_Lab) <- c(130, 20)
-  End_Year          <- gspinbutton(from = 2012, to = 2020, by = 1, 
+  End_Year          <- gspinbutton(from = 2000, to = 2020, by = 1, 
                                    value = Full_Selection$End_Year, 
                                    container = Year_SelGroup, anchor = c(1, 1))
   size(StartYear_Lab) <- c(130, 20)
@@ -205,12 +206,20 @@ frg_fullproc_gui <- function() {
       # Start the processing
       dispose(Main_W)  # Selection finished - close the GUI
       enabled(Main_GUI) <- FALSE
-      with(Full_Selection, frg_fullprocessing(MOD_Dir = MOD_Dir, 
-                                               Shape_File = Shape_File, CLC_File_00 = CLC_File_00, Out_Folder = Out_Folder, 
-                                               Start_Year = Start_Year, End_Year = End_Year, NKer = NKer, 
-                                               perc_diffs = hash(c(NDVI = perc_diff, RDVI = 11.5)), Method = Method, 
-                                               SRDVI = SRDVI, SNDVI = SNDVI, ReProc = ReProc, ReDown = ReDown, 
-                                               ReProcIm = ReProcIm))
+      
+      frg_fullprocessing(MOD_Dir     = Full_Selection$MOD_Dir, 
+                         Shape_File  = Full_Selection$Shape_File, 
+                         CLC_File_00 = Full_Selection$CLC_File_00, 
+                         Out_Folder  = Full_Selection$Out_Folder, 
+                         Start_Year  = Full_Selection$Start_Year, 
+                         End_Year    = Full_Selection$End_Year, 
+                         NKer        = Full_Selection$NKer, 
+                         perc_diff  = Full_Selection$perc_diff, 
+                         Method      = Full_Selection$Method,
+                         SNDVI       = 1, 
+                         ReProc      = Full_Selection$ReProc, 
+                         ReDown      = Full_Selection$ReDown, 
+                         ReProcIm    = Full_Selection$ReProcIm)
       
       enabled(Main_GUI) <- TRUE
       
