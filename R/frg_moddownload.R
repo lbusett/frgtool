@@ -43,7 +43,7 @@ frg_moddownload <- function(OutOrig_Path,
     write("inst/ExtData/frg_modistsp_opts_test.json")
   
   MODIStsp(options_file = "inst/ExtData/frg_modistsp_opts_test.json", gui = FALSE)
-  browser()
+  
   message("--- Download, mosaicing and reprojection complete ! ---")
   
   return("DONE")

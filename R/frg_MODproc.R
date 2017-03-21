@@ -62,7 +62,6 @@ frg_modproc <- function(MOD_Dir,
   message("---  Computing Mean Indexes --> ONGOING <---")
   
   
-  browser()
   er <- frg_compmean(OutOrig_Path = OutOrig_Path, 
                       ReProc      = ReProcIm, 
                       yy          = yy, 

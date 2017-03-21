@@ -10,7 +10,7 @@ frg_compmean <- function(OutOrig_Path,
                          yy, 
                          UI_check,
                          max_UI) {
-  
+
   # Get file names for NDVI, UI and Reliability for the selected year ----
   NDVI_Dir = file.path(OutOrig_Path,"time_series/VI_16Days_250m_v6/NDVI")
   UI_Dir = file.path(OutOrig_Path,"time_series/VI_16Days_250m_v6/QA_usef")
@@ -38,13 +38,14 @@ frg_compmean <- function(OutOrig_Path,
   
   frg_maskNDVI <- function(NDVI, UI, Rely) {
     
-    NDVI = NDVI * (UI > UI_check) * (Rely < 1)
+    NDVI = NDVI * (UI > max_UI) * (Rely < 1)
     # NDVI[[y]] = NA
     return(NDVI)
     
   }
-  NDVI_stack <- raster(NDVI)
-  for (fileind in seq(along = length(NDVI_files_names))) {
+  NDVI_stack <- raster(raster(NDVI_files_names[[1]]))
+  
+  for (fileind in seq(along = NDVI_files_names)) {
     NDVI        <- raster(NDVI_files_names[fileind])
     UI          <- raster(UI_files_names[fileind])
     Rely        <- raster(RELY_files_names[fileind])
@@ -53,7 +54,8 @@ frg_compmean <- function(OutOrig_Path,
     gc()
   }
   
-  NDVI_avg <- mean(NDVI_stack)
+  NDVI_avg <- calc(NDVI_stack, mean, na.rm = TRUE)
+  browser()
   
   
   
