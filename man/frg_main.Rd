@@ -2,38 +2,31 @@
 % Please edit documentation in R/frg_main.R
 \name{frg_main}
 \alias{frg_main}
-\title{FRG_Main}
+\title{frg_main}
 \usage{
 frg_main()
 }
 \value{
-Main GUI of the Tool
+Opens the Main GUI of the Tool and allow selection of the processing step
 }
 \description{
 Main Function of the Fire Regeneration Monitoring Tool
 }
 \details{
-This is the main function of the Fire Regeneration Monitoring Tool. \cr
-It builds the main GUI and handles events corresponding to the different buttons, calling the corresponding functions. \cr
-Also loads all required libraries, sources necessary routines and sets the main processing frg_conf.  \cr
+This is the main function of the Fire Regeneration Monitoring Tool.
+It builds the main GUI and handles events corresponding to the different buttons, calling the corresponding functions.
+Also loads all required libraries, sources necessary routines and sets the main processing frg_conf.
 The main processing functions of the FRG Tool can be accessed from the Main GUI. In particular:
-
-\itemize {
-\item Create Burned Area Shapefile: \cr
-            Allows creating the input burnt areas shapefile, starting from data present in the EFFIS database (esposito) \cr
-\item Analyse burned ares: \cr
-            Allows performing all the processing needed for the extraction and analysis of time series of rescaled indexes \cr
-            for the burnt areas present in the input shapefile
-\item Update Oracle tables: \cr
-           Update the Oracle database tables regarding Regeneration Monitoring using the results of the latest processing   \cr
+\enumerate{
+\item \strong{Create Burned Area Shapefile}:  Allows creating the input burnt areas shapefile,
+starting from data present in the EFFIS database (esposito).
+\item \strong{Analyse burned ares}: Allows performing all the processing needed for the
+extraction and analysis of time series of rescaled indexes for the burnt areas
+present in the input shapefile.
+\item \strong{Update Oracle tables}: Update the Oracle database tables regarding Regeneration
+Monitoring using the results of the latest processing.
 }
-
-IMPORTANT NOTE: The FRG tool requires the NASA MODIS Reprojection Tool (MRT -https://lpdaac.usgs.gov/tools/modis_reprojection_tool) )
-and th gdal an proj4 libraries to be properly installed and configured in the system. Moreover, ENVI+IDL and ARCGIS must be installed on the system ! See the "Installation Instructions.pdf" file
-distributed with the source code for further info !!!
 }
 \author{
 Lorenzo Busetto - email: lorenzo.busetto@jrc.ec.europa.eu
-Created Date: Feb 16, 2012
 }
-
