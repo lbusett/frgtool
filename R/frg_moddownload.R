@@ -39,6 +39,7 @@ frg_moddownload <- function(OutOrig_Path,
   opts$end_date   <- paste(yy, 08, 15, sep = "-")
   opts$out_folder_mod  <- file.path(OutOrig_Path, "hdfs")
   opts$out_folder      <- file.path(OutOrig_Path, "time_series")
+  opts$download_server <- "ftp"
   toJSON(opts) %>% 
     write("inst/ExtData/frg_modistsp_opts_test.json")
   
