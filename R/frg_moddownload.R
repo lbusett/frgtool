@@ -14,10 +14,11 @@
 #'
 #' @param OutOrig_Path string Main folder where the original MODIS mosaics 
 #'     (i.e., one pan european image for each data and data type) will be stored
-#' @param ReDown numeric if = 1, MODIS images needed to create already existing 
-#' mosaic files will be redownloaded, and already existing mosaics will be overwritten
+#' @param ReProc Flag. If = 1, existing preporocessed images will be recomputed 
+#' and overwritten
 #' @param yy Year for which images are to be downloaded and processed
-#' @return
+#'
+#' @return NULL
 #' @author Lorenzo Busetto, PhD (2017) - email lbusett@gmail.com
 #' @import MODIStsp 
 #' @import RJSONIO
@@ -25,27 +26,29 @@
 #' @export
 
 frg_moddownload <- function(OutOrig_Path, 
-                            ReDown, 
+                            ReProc, 
                             yy) {
   
   dir.create(OutOrig_Path, showWarnings = FALSE)
   
-  # Update the processing year and some other options on the 
-  # MODIStsp json file 
+  # Update the processing year and some other options on the   ----
+  # MODIStsp json file
   
-  opts = fromJSON("inst/ExtData/frg_modistsp_opts_test.json") 
-  opts$start_date <- paste(yy, 07, 15, sep = "-")
-  opts$end_date   <- paste(yy, 08, 15, sep = "-")
-  opts$end_date   <- paste(yy, 08, 15, sep = "-")
+  opts                 <- fromJSON("inst/ExtData/frg_modistsp_opts_test.json") 
+  opts$start_date      <- paste(yy, 07, 15, sep = "-")
+  opts$end_date        <- paste(yy, 08, 15, sep = "-")
+  opts$end_date        <- paste(yy, 08, 15, sep = "-")
   opts$out_folder_mod  <- file.path(OutOrig_Path, "hdfs")
   opts$out_folder      <- file.path(OutOrig_Path, "time_series")
-  opts$download_server <- "ftp"
+  opts$download_server <- "http"
+  opts$reprocess       <- ifelse(ReProc == 1, "Yes", "No")
   toJSON(opts) %>% 
     write("inst/ExtData/frg_modistsp_opts_test.json")
   
+  # Launch MODIStsp   ----
   MODIStsp(options_file = "inst/ExtData/frg_modistsp_opts_test.json", gui = FALSE)
   
-  message("--- Download, mosaicing and reprojection complete ! ---")
+  message("--- Download, mosaicing and reprojection for ", yy,  "complete ! ---")
   
   return("DONE")
 }

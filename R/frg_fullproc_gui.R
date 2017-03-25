@@ -8,12 +8,11 @@
 #' started
 #' @return NULL
 #' @author Lorenzo Busetto (2012 - 2017)
-#' email: lbusett@gmail.com
-#'
+#'         email: lbusett@gmail.com
 #' @export
 #' @import gWidgetsRGtk2
-#' @importfrom hash hash values
-
+#' @importFrom hash hash values
+#' 
 frg_fullproc_gui <- function() {
   
   if (file.exists(file.path(FRG_Options$Previous_Dir, "frg_previous.RData"))) {

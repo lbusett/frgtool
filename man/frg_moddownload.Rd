@@ -4,14 +4,14 @@
 \alias{frg_moddownload}
 \title{frg_moddownload}
 \usage{
-frg_moddownload(OutOrig_Path, ReDown, yy)
+frg_moddownload(OutOrig_Path, ReProc, yy)
 }
 \arguments{
 \item{OutOrig_Path}{string Main folder where the original MODIS mosaics
 (i.e., one pan european image for each data and data type) will be stored}
 
-\item{ReDown}{numeric if = 1, MODIS images needed to create already existing
-mosaic files will be redownloaded, and already existing mosaics will be overwritten}
+\item{ReProc}{Flag. If = 1, existing preporocessed images will be recomputed
+and overwritten}
 
 \item{yy}{Year for which images are to be downloaded and processed}
 }

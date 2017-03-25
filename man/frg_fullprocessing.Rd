@@ -7,7 +7,8 @@
 frg_fullprocessing(MOD_Dir, Shape_File, CLC_File_00, Out_Folder, Start_Year,
   End_Year, Method, SNDVI = 1, ReProc, ReDown, ReProcIm, erode = 1,
   min_pix = 10, MedWdt = 3, NKer, sig_level = 0.05, sub_zones = 0,
-  perc_diff)
+  perc_diff, MOD_dwl = FALSE, Comp_SVI = TRUE, Extr_Stat = FALSE,
+  Sig_Anal = FALSE, Perc_Anal = FALSE)
 }
 \arguments{
 \item{MOD_Dir}{string Folder where the original and preprocessed image will be stored (i.e., the one above the 'Originals' folder)}

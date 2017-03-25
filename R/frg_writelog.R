@@ -1,10 +1,8 @@
-#' Title
+#' frg_start_log
 #'
-#' @return
-#' @export
-#'
-#' @examples
-start_log <- function() {
+#' @return NULL
+
+frg_startlog <- function() {
   
   cat(c("--- -------------------------------------------------- ---"), 
       file = OutFile_Conn, sep = "\n", append = FALSE)

@@ -16,8 +16,11 @@ frg_modproc(MOD_Dir, Start_Year, End_Year, ReProcIm, ReDown, UI_check = TRUE,
 
 \item{ReProcIm}{numeric if = 1, already existing MODIS mosaics will be reprocessed}
 
-\item{ReDown}{numeric if = 1, MODIS images needed to create already existing mosaic files will be redownloaded, and
-already existing mosaics will be overwritten}
+\item{ReDown}{numeric if = 1, MODIS images needed to create already existing mosaic
+files will be redownloaded, and already existing mosaics will be overwritten}
+
+\item{UI_check}{flag If = 1 then a chack on pixel usefulness index is done while
+determining pixels to be used to compute average NDVI. default = 1}
 
 \item{max_UI}{Max UI value kept when averaging MODIS data. default = 5}
 }
@@ -28,14 +31,18 @@ Function used to download, mosaic and preprocess MODIS data
 Function used to download, mosaic and preprocess MODIS data.
 \enumerate{
 \item \strong{Download and Mosaicing}:
-Images covering Europe for end July - mid august  of each selected year are downloaded, mosaiced and reprojected
-Resulting images are saved in TIFF format in the Originals subfolder of the output folder selected by the user. Separate subfolders are used\cr
-to store images related to  NDVI, RED and NIR reflectance, QA (Quality Assurance) and Pixel Reliability.
+Images covering Europe for end July - mid august  of each selected
+year are downloaded, mosaiced and reprojected
+Resulting images are saved in TIFF format in the Originals subfolder
+of the output folder selected by the user. Separate subfolders are used
+to store images related to  NDVI, RED and NIR reflectance, QA
+(Quality Assurance) and Pixel Reliability.
 \item \strong{Preprocessing}:
 The preprocessing steps conducted are the following:
-a. MODIS UI (Usefulness Index) values are extracted from the MODIS QA (Quality Assurance) files
-c. The average yearly values for DVI and NDVI are computed starting from the images of DOY 209 and 225. NODATA and bad quality data\cr
-are automatically removed
+a. MODIS UI (Usefulness Index) values are extracted from the MODIS QA
+(Quality Assurance) files
+c. The average yearly values for DVI and NDVI are computed starting from the
+images of DOY 209 and 225. NODATA and bad quality data#'   are automatically removed
 }
 }
 \author{

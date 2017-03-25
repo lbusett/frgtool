@@ -21,3 +21,7 @@ frg_compmean(OutOrig_Path, ReProc, yy, UI_check, max_UI)
 \description{
 frg_compmean
 }
+\author{
+Lorenzo Busetto, PhD (2012)
+email: lbusett@gmail.com
+}

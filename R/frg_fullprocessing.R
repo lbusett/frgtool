@@ -1,32 +1,31 @@
 #' frg_fullprocessing
 #' @description Function used to apply all FRG processing steps
 #'
-#' @param MOD_Dir string Folder where the original and preprocessed image will be stored (i.e., the one above the 'Originals' folder)
-#' @param Shape_File string Input Shapefile of BAs
+#' @param MOD_Dir     string Folder where the original and preprocessed image will be stored (i.e., the one above the 'Originals' folder)
+#' @param Shape_File  string Input Shapefile of BAs
 #' @param CLC_File_00 string ENVI file containing the CORINE land Cover map 2000, recoded to the EFFIS legend
-#' @param Out_Folder string Main Results Folder where results of the analysis will be saved
-#' @param Start_Year numeric Starting year of the analysis
-#' @param End_Year numeric Ending Year of the analysis
-#' @param Method numeric. 2 = Percentage Median difference computation
-#' @param SRDVI numeric. 1 = compute SRDVI; 2 =  Don't Compute SRDVI
-#' @param SNDVI numeric. 1 =  compute SNDVI; 2 = Don't Compute SNDVI
-#' @param ReProc numeric if = 1, already existing Scaled Indexes will be recomputed
-#' @param ReDown numeric if = 1, MODIS images needed to create already existing mosaic files will be redownloaded, and 
-#'        already existing mosaics will be overwritten 
-#' @param ReProcIm numeric if = 1, already existing MODIS mosaics will be reprocessed
-#' @param erode flag if = 1, analysis is conducted only on core pixels (defaults to 1)
-#' @param min_pix numeric minimum number of core pixels needed for a BA to be processed (default to 10)
-#' @param NKer numeric width (in Km) of the moving window used for computation of scaled indexes
-#' @param sig_level numeric Significance level for Wilcoxon test. Default to 0.05
-#' @param sub_zones Obsolete
+#' @param Out_Folder  string Main Results Folder where results of the analysis will be saved
+#' @param Start_Year  numeric Starting year of the analysis
+#' @param End_Year    numeric Ending Year of the analysis
+#' @param Method      numeric. 2 = Percentage Median difference computation
+#' @param SRDVI       numeric. 1 = compute SRDVI; 2 =  Don't Compute SRDVI
+#' @param SNDVI       numeric. 1 =  compute SNDVI; 2 = Don't Compute SNDVI
+#' @param ReProc      numeric if = 1, already existing Scaled Indexes will be recomputed
+#' @param ReDown      numeric if = 1, MODIS images needed to create already existing mosaic files will be redownloaded, and 
+#'                    already existing mosaics will be overwritten 
+#' @param ReProcIm    numeric if = 1, already existing MODIS mosaics will be reprocessed
+#' @param erode       flag if = 1, analysis is conducted only on core pixels (defaults to 1)
+#' @param min_pix     numeric minimum number of core pixels needed for a BA to be processed (default to 10)
+#' @param NKer        numeric width (in Km) of the moving window used for computation of scaled indexes
+#' @param sig_level   numeric Significance level for Wilcoxon test. Default to 0.05
+#' @param sub_zones   Obsolete
 #' @param MedWdt 
-#' @param perc_diffs numeric hash table Reduction Threshold on NDVIR reduction used in significance reduction analysis 
-#' with wilcoxon test
-#' @inheritParams frg_main author
-#' @import dplyr
+#' @param perc_diffs  numeric hash table Reduction Threshold on NDVIR reduction used in significance reduction analysis 
+#'                    with wilcoxon test
+#' @import     dplyr
 #' @importFrom hash hash
 #' @importFrom tcltk tk_messageBox
-#' @import gWidgetsRGtk2
+#' @import     gWidgetsRGtk2
 
 #' @export
 
@@ -44,28 +43,36 @@ frg_fullprocessing <- function(MOD_Dir     ,
                                erode       = 1, 
                                min_pix     = 10, 
                                MedWdt      = 3, 
-                               NKer        , 
+                               NKer, 
                                sig_level   = 0.05, 
                                sub_zones   = 0, 
-                               perc_diff  ) {
+                               perc_diff  , 
+                               # Flags to skip some processing steps in debugging phase - Set all to T
+                               # for complete processing - proceed with caution !
+                               MOD_dwl   = FALSE,
+                               Comp_SVI  = TRUE,
+                               Extr_Stat = FALSE,
+                               Sig_Anal  = FALSE, 
+                               Perc_Anal = FALSE) {
   
-  #- ------------------------------------------------------------------------------------------------- - #
-  #- Initialize Processing: Set processing folders on the basis of user's choice and set some processing parameters 
-  #- ------------------------------------------------------------------------------------------------- - #
-  
+  #- Initialize Processing ---- 
+  #: Set processing folders on the basis of user's choice and set some processing parameters 
   
   Out_Folder <- file.path(Out_Folder, paste("Results", Start_Year, End_Year, 
                                             paste("Ker", NKer, sep = "_"), paste("Perc_Diff", perc_diff, sep = "_"), 
                                             sep = "_"))  # Set Main Statistical Results folder
-  
   selection <- "yes"  # Check if Main Results folder already exist and ask if overwrite
   
   if (file.exists(Out_Folder) & selection == "No") {
     selection <- tk_messageBox(caption = "Overwrite Warning", type = c("yesno"), 
-                               message = "A results folder for the same analysis already exists ! All results will be overwritten !\n Do you want to continue ? ", 
+                               message = "A results folder for the same analysis already exists ! 
+                                          All results will be overwritten !\n Do you want to continue ? ", 
                                default = "no")
   }
+  
   if (selection == "yes") {
+    
+    # Setup required folders ----
     
     Out_Summary_File       <- file.path(Out_Folder, paste("Processing_Summary", ".txt", sep = ""))  # Set Processing log file
     OutFile_Conn           <- Out_Summary_File  # Open log file
@@ -77,23 +84,16 @@ frg_fullprocessing <- function(MOD_Dir     ,
     dir.create(Intermediate_Folder, recursive = T, showWarnings = FALSE)
     dir.create(Results_Summary_Folder, recursive = T, showWarnings = FALSE)
     
-    # Flags to skip some processing steps in debugging phase - Set all to T
-    # for complete processing - proceed with caution !
-    MOD_dwl   <- T
-    Comp_SVI  <- F
-    Extr_Stat <- F
-    Sig_Anal  <- F
-    # Perc_Anal <- T
-    
-    # Set flags indicating which rescaled indexes to calculate
+    # Set flags indicating which rescaled indexes to calculate - now only SNDVI
     comp_ind <- NULL
     if (SNDVI == 1) {comp_ind <- c(comp_ind, "NDVI")}
     
-    # Write first lines of processing summary text file
-    environment(start_log) <- environment()
-    start_log()
+    # Write first lines of processing summary text file -----
     
-    #- Step 1: Call Routines for download and preprocessing MODIS data ---------
+    environment(frg_startlog) <- environment()
+    frg_startlog()
+    
+    #- Step 1: Download and preprocessing MODIS data ---------
     #- Substituted with calls to MODIStsp package in v1.0
     
     if (MOD_dwl == T) {
@@ -103,28 +103,29 @@ frg_fullprocessing <- function(MOD_Dir     ,
                         End_Year   = End_Year, 
                         ReProcIm   = ReProcIm, 
                         ReDown     = ReDown)
-      print("-> MODIS PreProcessing Completed")
-      print("----------------------------------------------------------")
       
     }  # End if on  MODIS processing
     
-    #- ------------------------------------------------------------------------------------------------- - #
-    #- Call Routines for Scaled Indexes Computation ----
-    #- ------------------------------------------------------------------------------------------------- - #
+    # Step 2: Compute scaled indexes (Percentage difference with respect -----
+    # to median of surrounding non-burned pixels  
     
     if (Comp_SVI == T) {
-      print("----------------------------------------------------------")
-      print("------------- Computation of Scaled Indexes --------------")
-      print("----------------------------------------------------------")
-      print(c("-> Scaled Indexes Output Folder: ", Scaled_Folder))
-      er <- "DONE"
-      er <- FRG_MOD_Comp_SVI(MOD_Dir = MOD_Dir, Shape_File = Shape_File, 
-                             CLC_File_00 = CLC_File_00, Out_Folder = Scaled_Folder, 
-                             Start_Year = Start_Year, End_Year = End_Year, NKer = NKer, 
-                             Method = Method, SRDVI = SRDVI, SNDVI = SNDVI, nodata_out = FRG_Options$No_Data_Out_Rast, 
-                             ReProcIm = ReProcIm, Intermediate_Folder = Intermediate_Folder)
-      print(" -> Computation of Scaled Indexes Completed")
-      print("----------------------------------------------------------")
+
+      er <- frg_compSVI(MOD_Dir             = MOD_Dir, 
+                             Shape_File     = Shape_File, 
+                             CLC_File_00    = CLC_File_00, 
+                             Scaled_Folder  = Scaled_Folder, 
+                             Start_Year     = Start_Year, 
+                             End_Year       = End_Year, 
+                             NKer           = NKer, 
+                             Method         = Method, 
+                             SRDVI          = SRDVI, 
+                             SNDVI          = SNDVI, 
+                             nodata_out     = FRG_Options$No_Data_Out_Rast, 
+                             ReProcIm       = ReProcIm, 
+                             Intermediate_Folder = Intermediate_Folder)
+      message(" -> Computation of Scaled Indexes Completed")
+      message("----------------------------------------------------------")
       if (er != "DONE") {
         stop("An Error occurred while computing Scaled Indexes !")
       }
@@ -134,14 +135,14 @@ frg_fullprocessing <- function(MOD_Dir     ,
     #- Start Call Routines for Statistical analysis ----
     #- ------------------------------------------------------------------------------------------------- - #
     if (Extr_Stat == TRUE) {
-      print("----------------------------------------------------------")
-      print("------------------ Statistical Analysis ------------------")
-      print("----------------------------------------------------------")
+      message("----------------------------------------------------------")
+      message("------------------ Statistical Analysis ------------------")
+      message("----------------------------------------------------------")
       
       Out_Stat_Dir <- file.path(Out_Folder)
       dir.create(Out_Stat_Dir, recursive = TRUE, showWarnings = FALSE)
-      print(paste("-> Statistical Results Main Folder: ", Out_Stat_Dir))
-      print("----------------------------------------------------------")
+      message(paste("-> Statistical Results Main Folder: ", Out_Stat_Dir))
+      message("----------------------------------------------------------")
       
       for (Index in comp_ind) {
         
@@ -206,11 +207,11 @@ frg_fullprocessing <- function(MOD_Dir     ,
         
         # Perform TS extraction on the shapefile of areas burned more than once
         dir.create(out_dir, recursive = T, showWarnings = F)
-        print("----------------------------------------------------------")
-        print("------ Extraction of sVI time series for burnt areas - Areas Burnt Multiple Times -----")
-        print("----------------------------------------------------------")
-        print(paste("-> In File for TS extraction: ", TS_filename))
-        print(paste("-> Out File for TS extraction: ", ExtTS_File_Multiple))
+        message("----------------------------------------------------------")
+        message("------ Extraction of sVI time series for burnt areas - Areas Burnt Multiple Times -----")
+        message("----------------------------------------------------------")
+        message(paste("-> In File for TS extraction: ", TS_filename))
+        message(paste("-> Out File for TS extraction: ", ExtTS_File_Multiple))
         # Call the processing routine
         er <- FRG_Extr_Stats_new(SVI_File = TS_filename, Shape_File = as.character(Shape_Files_Inter$Shape_File_Multiple), 
                                  CLC_File_00 = CLC_File_00, ENV_Zones_File = ENV_Zones_File, 
@@ -219,8 +220,8 @@ frg_fullprocessing <- function(MOD_Dir     ,
                                  Shape_File_Orig = Shape_File, LUT_File_Multiple = as.character(Shape_Files_Inter$LUT_File_Multiple))
         
         if (er == "DONE") {
-          print("--- TS Extraction Completed ---")
-          print("----------------------------------------------------------")
+          message("--- TS Extraction Completed ---")
+          message("----------------------------------------------------------")
         } else {
           stop("An Error Occurred while extracting the Time Series")
         }
@@ -242,13 +243,13 @@ frg_fullprocessing <- function(MOD_Dir     ,
       Out_Stats_File_Single <- file.path(Out_Stats_Folder_Single, 
                                          gsub("TS_Extraction", "Stat_Analysis", basename(ExtTS_RData_File)))  # Set Basename for statistics output file
       dir.create(Out_Stats_Folder_Single, recursive = T, showWarnings = F)
-      print("----------------------------------------------------------")
-      print("------ Extract plotting data and perform Statistical Analysis of NDVIR reductions ----")
-      print("------ on areas burned once                                                        ----")
-      print("----------------------------------------------------------")
-      print("")
-      print(paste("-> In File for Analysis: ", ExtTS_RData_File))
-      print(paste("-> Out File for Analysis: ", Out_Stats_File_Single))
+      message("----------------------------------------------------------")
+      message("------ Extract plotting data and perform Statistical Analysis of NDVIR reductions ----")
+      message("------ on areas burned once                                                        ----")
+      message("----------------------------------------------------------")
+      message("")
+      message(paste("-> In File for Analysis: ", ExtTS_RData_File))
+      message(paste("-> Out File for Analysis: ", Out_Stats_File_Single))
       
       # ----------------------------------------------------------------------------------#
       # Extract plotting data for areas burnt once, and perform significance
@@ -274,19 +275,19 @@ frg_fullprocessing <- function(MOD_Dir     ,
       dir.create(Out_Stats_Folder_Multiple, recursive = T, 
                  showWarnings = F)
       
-      print("----------------------------------------------------------")
-      print("------ Extract plotting data on areas burned multiple times                                                        ----")
-      print("----------------------------------------------------------")
-      print("")
-      print(paste("-> In File for Analysis: ", ExtTS_RData_File_Multiple))
-      print(paste("-> Out File for Analysis: ", Out_Stats_File_Multiple))
+      message("----------------------------------------------------------")
+      message("------ Extract plotting data on areas burned multiple times                                                        ----")
+      message("----------------------------------------------------------")
+      message("")
+      message(paste("-> In File for Analysis: ", ExtTS_RData_File_Multiple))
+      message(paste("-> Out File for Analysis: ", Out_Stats_File_Multiple))
       # Call processing routine
       er <- FRG_Comp_Plot_Stat_Multiple(In_File = ExtTS_RData_File_Multiple, 
                                         Out_File = Out_Stats_File_Multiple, min_pix = min_pix, 
                                         sub_zones = sub_zones, erode = erode)
       
-      print("-> Plotting data extraction and statistical analysis Completed")
-      print("----------------------------------------------------------")
+      message("-> Plotting data extraction and statistical analysis Completed")
+      message("----------------------------------------------------------")
       
       #----------------------------------------------------------------------------------#        
       # Copy the main processing results csv files to the 'summaries' folder
@@ -294,9 +295,9 @@ frg_fullprocessing <- function(MOD_Dir     ,
       # ------------------------------------------------------------------------------
       # ----
       
-      print("----------------------------------------------------------")
-      print("-> Create Final output summary tables and shapefiles")
-      print("----------------------------------------------------------")
+      message("----------------------------------------------------------")
+      message("-> Create Final output summary tables and shapefiles")
+      message("----------------------------------------------------------")
       # Copy the plot data and recovery statistics for areas burned once
       
       load(Out_Stats_File_Single)
@@ -467,9 +468,9 @@ frg_fullprocessing <- function(MOD_Dir     ,
     # cat(c("--- -------------------------------------------------- ---"), 
     #     file = OutFile_Conn, sep = "\n", append = TRUE)
     # 
-    print("----------------------------------------------------------")
-    print("------------ ALL PROCESSING COMPLETE ! -------------------")
-    print("----------------------------------------------------------")
+    message("----------------------------------------------------------")
+    message("------------ ALL PROCESSING COMPLETE ! -------------------")
+    message("----------------------------------------------------------")
     
     #   # Check if all output files were created in the 'Summaries for EFFIS'
     #   # folder

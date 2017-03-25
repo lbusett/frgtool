@@ -1,21 +1,22 @@
 #' frg_main
 #' @description Main Function of the Fire Regeneration Monitoring Tool
 #' @details This is the main function of the Fire Regeneration Monitoring Tool. 
-#'It builds the main GUI and handles events corresponding to the different buttons, calling the corresponding functions.
-#'Also loads all required libraries, sources necessary routines and sets the main processing frg_conf.
-#'The main processing functions of the FRG Tool can be accessed from the Main GUI. In particular:
-#'1. **Create Burned Area Shapefile**:  Allows creating the input burnt areas shapefile, 
+#' It builds the main GUI and handles events corresponding to the different buttons, calling the corresponding functions.
+#' Also loads all required libraries, sources necessary routines and sets the main processing frg_conf.
+#' The main processing functions of the FRG Tool can be accessed from the Main GUI. In particular:
+#' 1. **Create Burned Area Shapefile**:  Allows creating the input burnt areas shapefile, 
 #'   starting from data present in the EFFIS database (esposito).
 #'   
-#'2. **Analyse burned ares**: Allows performing all the processing needed for the 
-#'  extraction and analysis of time series of rescaled indexes for the burnt areas 
-#'  present in the input shapefile.
+#' 2. **Analyse burned ares**: Allows performing all the processing needed for the 
+#'   extraction and analysis of time series of rescaled indexes for the burnt areas 
+#'   present in the input shapefile.
 #'  
-#'3. **Update Oracle tables**: Update the Oracle database tables regarding Regeneration 
-#'   Monitoring using the results of the latest processing.
+#' 3. **Update Oracle tables**: Update the Oracle database tables regarding Regeneration 
+#'    Monitoring using the results of the latest processing.
 #'
 #' @return Opens the Main GUI of the Tool and allow selection of the processing step
-#' @author Lorenzo Busetto
+#' @author Lorenzo Busetto, PhD (2012)
+#'         email: lbusett@gmail.com
 #' @import gWidgetsRGtk2
 #' @import gWidgets
 #' @export
@@ -46,12 +47,16 @@ frg_main <- function() {
   
   # setup the processing folders
   main_dir       <- getwd()
-  src_dir_r      <- file.path(getwd(), "R")
-  src_dir_idl    <- file.path(getwd(), "idl")
-  src_dir_python <- file.path(getwd(), "python")
-  cfg_dir        <- file.path(getwd(), "config")
-  prev_dir       <- file.path(getwd(), "previous")
-  dir.create(cfg_dir, recursive = TRUE, showWarnings = FALSE)
+  src_dir_idl    <- file.path(getwd(), "IDL") 
+  idl_exe_dir    <- system2("where", args = "iddl.exe", stdout = TRUE)
+  if (!is.null(attributes(idl_exe_dir)$status)){
+    stop("idl.exe was not found on your PATH. Exiting. Please add the folder containing idl.exe to your
+         Windows Path variable. ")
+  }
+   src_dir_python <- file.path(getwd(), "python")
+   cfg_dir        <- file.path(getwd(), "config")
+   prev_dir       <- file.path(getwd(), "previous")
+   dir.create(cfg_dir, recursive = TRUE, showWarnings = FALSE)
   
   # run project configuration if frg_congif.RData is not present
   while (!file.exists(file.path(cfg_dir, "frg_config.RData"))) {
@@ -66,18 +71,16 @@ frg_main <- function() {
   Create_ShapeFile_script <- file.path(main_dir, "Create_ShapeFile_script", 
                                        "FRG_Create_Shape.exe")
   # # Set Main Processing frg_conf
-  FRG_Options <<- data.frame(main_dir = main_dir, 
-                             Previous_Dir = prev_dir, 
-                             No_Data_In_Rast = as.numeric((frg_conf$nodata)), 
-                             No_Data_Out_Rast = as.numeric((frg_conf$nodata)), 
-                             src_dir_idl = src_dir_idl, 
-                             idl_exe = frg_conf$idl_exe, 
-                             use_temp_folder = 0, 
-                             arcpython = as.character(frg_conf$python_exe), 
+  FRG_Options <<- data.frame(main_dir            = main_dir, 
+                             Previous_Dir        = prev_dir, 
+                             No_Data_In_Rast     = 32767, 
+                             No_Data_Out_Rast    = 32767, 
+                             src_dir_idl         = src_dir_idl, 
+                             arcpython           = as.character(frg_conf$python_exe), 
                              Create_Shape_Script = file.path(main_dir, 
                                                              "Create_ShapeFile_Script", "FRG_Update_Shapefile.exe"),
-                             effis_dir = frg_conf$effis_dir, 
-                             stringsAsFactors = FALSE)
+                             effis_dir           = frg_conf$effis_dir, 
+                             stringsAsFactors    = FALSE)
   
   # Build the Main GUI -------------------
   
