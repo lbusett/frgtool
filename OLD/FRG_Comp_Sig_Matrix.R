@@ -43,8 +43,11 @@ FRG_Comp_Sig_Matrix = function (In_File = In_File , out_file_pmat = out_file_pma
   
   print(paste('-> Performing Statistical Analysis on Post-Fire SVI Time Series from: ', basename(In_File)))   # Status Message
   load(In_File)
-  Index    = attributes(Data)$Index				 ;        SVI_File = attributes(Data)$SVI_File   ;    Shape_File = attributes(Data)$Shape_File
-  CSV_File = attributes(Data)$CSV_File     ;    		CLC_File = attributes(Data)$CLC_File
+  Index    = attributes(Data)$Index				
+  SVI_File = attributes(Data)$SVI_File   
+  Shape_File = attributes(Data)$Shape_File
+  CSV_File = attributes(Data)$CSV_File
+  CLC_File = attributes(Data)$CLC_File
   
   
   # Retrieve time series data
@@ -96,8 +99,8 @@ FRG_Comp_Sig_Matrix = function (In_File = In_File , out_file_pmat = out_file_pma
   
   # Define the output matrixes that will contain information on p-values of wilcoxon rank sum tests. 
   
-  max_plus_years = N_Years - 3						#To compute the limits of the p-values full matrixes: 
-  max_minus_years =-(N_Years - 1)				#To compute the limits of the p-values full matrixes
+  max_plus_years  =  N_Years - 3						#To compute the limits of the p-values full matrixes: 
+  max_minus_years = -(N_Years - 1)				#To compute the limits of the p-values full matrixes
   
   p_matrix_median = NULL ; plot_stat = NULL    # Initialize output variables
   

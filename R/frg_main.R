@@ -48,8 +48,8 @@ frg_main <- function() {
   # setup the processing folders
   main_dir       <- getwd()
   src_dir_idl    <- file.path(getwd(), "IDL") 
-  idl_exe_dir    <- system2("where", args = "iddl.exe", stdout = TRUE)
-  if (!is.null(attributes(idl_exe_dir)$status)){
+  idl_exe_dir    <- system2("where", args = "idl.exe", stdout = TRUE)
+  if (!is.null(attributes(idl_exe_dir)$status)) {
     stop("idl.exe was not found on your PATH. Exiting. Please add the folder containing idl.exe to your
          Windows Path variable. ")
   }

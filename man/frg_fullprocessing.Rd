@@ -4,10 +4,10 @@
 \alias{frg_fullprocessing}
 \title{frg_fullprocessing}
 \usage{
-frg_fullprocessing(MOD_Dir, Shape_File, CLC_File_00, Out_Folder, Start_Year,
+frg_fullprocessing(MOD_Dir, Shape_File, CLC_File_00, Out_Dir, Start_Year,
   End_Year, Method, SNDVI = 1, ReProc, ReDown, ReProcIm, erode = 1,
   min_pix = 10, MedWdt = 3, NKer, sig_level = 0.05, sub_zones = 0,
-  perc_diff, MOD_dwl = FALSE, Comp_SVI = TRUE, Extr_Stat = FALSE,
+  perc_diff, MOD_dwl = FALSE, Comp_SVI = FALSE, Extr_Stat = TRUE,
   Sig_Anal = FALSE, Perc_Anal = FALSE)
 }
 \arguments{
@@ -17,7 +17,7 @@ frg_fullprocessing(MOD_Dir, Shape_File, CLC_File_00, Out_Folder, Start_Year,
 
 \item{CLC_File_00}{string ENVI file containing the CORINE land Cover map 2000, recoded to the EFFIS legend}
 
-\item{Out_Folder}{string Main Results Folder where results of the analysis will be saved}
+\item{Out_Dir}{string Main Results Dir where results of the analysis will be saved}
 
 \item{Start_Year}{numeric Starting year of the analysis}
 

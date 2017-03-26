@@ -4,8 +4,9 @@
 \alias{frg_compSVI}
 \title{frg_compSVI}
 \usage{
-frg_compSVI(MOD_Dir, Shape_File, CLC_File_00, Out_Folder, Start_Year, End_Year,
-  NKer, Method, SRDVI, SNDVI, nodata_out, ReProcIm, Intermediate_Folder)
+frg_compSVI(MOD_Dir, Shape_File, CLC_File_00, Scaled_Folder, Start_Year,
+  End_Year, NKer, Method, SRDVI, SNDVI, nodata_out, ReProcIm,
+  Intermediate_Folder)
 }
 \arguments{
 \item{MOD_Dir}{string Folder where the original and preprocessed image will be stored (i.e., the one above the 'Originals' folder)}
@@ -13,8 +14,6 @@ frg_compSVI(MOD_Dir, Shape_File, CLC_File_00, Out_Folder, Start_Year, End_Year,
 \item{Shape_File}{string Input Shapefile of BAs}
 
 \item{CLC_File_00}{string ENVI file containing the CORINE land Cover map 2000, recoded to the EFFIS legend}
-
-\item{Out_Folder}{string Main Results Folder where results of the analysis will be saved}
 
 \item{Start_Year}{numeric Starting year of the analysis}
 

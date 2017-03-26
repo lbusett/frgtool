@@ -4,12 +4,10 @@
 \alias{frg_createmask}
 \title{frg_createmask}
 \usage{
-frg_createmask(ROI_File, CLC_File_00, exp_path_str, Intermediate_Folder)
+frg_createmask(ROI_File, CLC_File_00, exp_path_str, FireMask_File)
 }
 \arguments{
 \item{CLC_File_00}{string ENVI file containing the CORINE land Cover map 2000, recoded to the EFFIS legend}
-
-\item{Intermediate_Folder}{string Folder for storing intermediate processing results}
 
 \item{ROI_file}{}
 }
@@ -18,7 +16,7 @@ Accessory function to call IDL routine for Mask creation.
 }
 \details{
 Function used to create a batch file (\code{FRG_CreateMask_Batch.pro}) which
-is then used to call the \code{FRG_CREATE_ROI.pro} IDL unction from a command shell.
+is then used to call the \code{FRG_Create_Mask.pro} IDL function from a command shell.
 
 \code{FRG_Create_Mask.pro} is used to create a binary mask to exclude burned areas
 from statistics computaitons. See \code{FRG_Create_Mask.pro} in \code{/IDL/VI_Elaborations}

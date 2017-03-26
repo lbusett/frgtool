@@ -186,7 +186,7 @@ frg_fullproc_gui <- function() {
     Full_Selection$MOD_Dir     <- svalue(MOD_Dir)  
     Full_Selection$Shape_File  <- svalue(Shape_File)  
     Full_Selection$CLC_File_00 <- svalue(CLC_File_00) 
-    Full_Selection$Out_Folder  <- svalue(Out_Folder)  
+    Full_Selection$Out_Dir     <- svalue(Out_Folder)  
     Full_Selection$Start_Year  <- svalue(Start_Year)
     Full_Selection$End_Year    <- svalue(End_Year)
     Full_Selection$NKer        <- svalue(NKer)
@@ -209,7 +209,7 @@ frg_fullproc_gui <- function() {
       frg_fullprocessing(MOD_Dir     = Full_Selection$MOD_Dir, 
                          Shape_File  = Full_Selection$Shape_File, 
                          CLC_File_00 = Full_Selection$CLC_File_00, 
-                         Out_Folder  = Full_Selection$Out_Folder, 
+                         Out_Dir     = Full_Selection$Out_Dir, 
                          Start_Year  = Full_Selection$Start_Year, 
                          End_Year    = Full_Selection$End_Year, 
                          NKer        = Full_Selection$NKer, 

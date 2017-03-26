@@ -39,9 +39,6 @@ frg_modproc <- function(MOD_Dir,
                         max_UI = 5) {
   
   # Create output folder and Initialize processing variables ----
-  dir.create(MOD_Dir, recursive = TRUE, showWarnings = FALSE)
-  OutOrig_Path <- file.path(MOD_Dir, "Originals")
-  
   # Print Messages ----
   message("-------------------------------------------")
   message("---- MODIS Download and PreProcessing -----")
@@ -62,11 +59,8 @@ frg_modproc <- function(MOD_Dir,
     # Compute yearly average values from 209 and 225 images ----
     
     message("----  Computing Average of summer values for ", yy, "-----")
-    er <- frg_compmean(OutOrig_Path = OutOrig_Path, 
-                       ReProc      = ReProcIm, 
-                       yy          = yy, 
-                       UI_check    = UI_check, 
-                       max_UI      = max_UI)
+    
+    er <- frg_compmean(OutOrig_Path, ReProcIm, yy, UI_check, max_UI)
     
   } # End Cycle on years
   

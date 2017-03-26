@@ -4,7 +4,7 @@
 \alias{frg_createmeta}
 \title{frg_createmeta}
 \usage{
-frg_createmeta(Index, Start_Year, End_Year, Method, Out_Folder, Out_Files)
+frg_createmeta(Index, Start_Year, End_Year, Method, Scaled_Folder, out_files)
 }
 \arguments{
 \item{Start_Year}{numeric Starting year of the analysis}
@@ -12,8 +12,6 @@ frg_createmeta(Index, Start_Year, End_Year, Method, Out_Folder, Out_Files)
 \item{End_Year}{numeric Ending Year of the analysis}
 
 \item{Method}{numeric. 2 = Percentage Median difference computation}
-
-\item{Out_Folder}{string Main Results Folder where results of the analysis will be saved}
 }
 \description{
 frg_createmeta

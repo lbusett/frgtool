@@ -43,7 +43,7 @@ frg_compSVI <- function(MOD_Dir, Shape_File, CLC_File_00, Scaled_Folder, Start_Y
   
   # Initialize processing variables ----
   
-
+  
   # Compute number of pixels in Kernel on the basis of the extent in KM of the kenel
   NKer         <- (NKer * 1000/250) + 1  
   # String to Expand IDL path to the folder containing the scripts to be executed
@@ -60,9 +60,9 @@ frg_compSVI <- function(MOD_Dir, Shape_File, CLC_File_00, Scaled_Folder, Start_Y
   # by the user and of the INPUT CLC_00_File (used to determine extent !)
   
   ROI_File <- frg_buildroi(Shape_File, 
-                          CLC_File_00, 
-                          exp_path_str, 
-                          Intermediate_Folder)
+                           CLC_File_00, 
+                           exp_path_str, 
+                           ROI_file)
   
   # Create a 'Mask' envi file using the ROI File created from the burned areas ----
   # shapefile specified by the user. 
@@ -71,108 +71,103 @@ frg_compSVI <- function(MOD_Dir, Shape_File, CLC_File_00, Scaled_Folder, Start_Y
   # indexes.
   
   FireMask_File <- frg_createmask(ROI_File, 
-                                   CLC_File_00, 
-                                   exp_path_str,
-                                   Intermediate_Folder)
+                                  CLC_File_00, 
+                                  exp_path_str,
+                                  Intermediate_Folder, 
+                                  FireMask_File)
   
   # Create an ERODED 'Mask' envi file the ROI File created from the burned areas ----
   # shapefile specified by the user. The mask file is successively used to determine
   # which of the ROI pixels are CORE pixels (i.e., not on the borders)
   
   FireMask_File_Eroded <- frg_createmask_eroded(ROI_File, 
-                                                 FireMask_File, 
-                                                 exp_path_str, 
-                                                 Intermediate_Folder)
+                                                FireMask_File, 
+                                                exp_path_str, 
+                                                FireMask_File_Eroded)
   
-  # Define indexes to be computed and start cycling on indexes ----
-  comp_ind <- NULL
-  if (SNDVI == 1) 
-    comp_ind <- c(comp_ind, "NDVI")
   
-  for (Index in comp_ind) {
+  out_files    <- NULL  
+  in_avg_dir   <- file.path(MOD_Dir, "Originals", Index, "Averages")  # Folder containing the Mean yearly VI images
+  in_avg_files <- list.files(in_avg_dir, pattern = "*.tif$")         # Get List of ENVI header files    
+  
+  # Start Cycling on selected years ----
+  
+  for (yy in Start_Year:End_Year) {
     
-    # Initialize 'Out_Files vector' . 
-    # Used to store output file names to be used for creation of the output
-    #  ENVI META file
+    # Find average file for the selected year
+    in_avg_file   <- file.path(in_avg_dir, in_avg_files[grep(yy, in_avg_files)])
     
-    Out_Files <- NULL  
+    # ---- Define output folder and file name ----
     
-    if (Method == 2 | Method == 3) {
+    out_dir  <- file.path(Scaled_Folder, "Med_SNDVI", "Yearly_Images",yy) 
+    out_file <- file.path(out_dir, paste0("Med_SNDVI_", yy))
+    dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)        
+    
+    # If output file for selected year and index doesn't exist, or ReProc =
+    # Yes, start the processing
+    if (file.exists(out_file) == FALSE | ReProcIm == 1) {
       
-      # Start Cycling on selected years ----
+      # Update status bar
+      message("---- Computing Med_SNDVI for year ", yy," ----")
       
-      for (yy in Start_Year:End_Year) {
-        In_AvgDir <- file.path(MOD_Dir, "Originals", Index, "Average")  # Folder containing the Mean yearly VI images
-        In_File   <- list.files(In_AvgDir, pattern = "*.tif$")         # Get List of ENVI header files
-        In_File   <- file.path(In_AvgDir, In_File[grep(yy, In_File)])  # Find File for the selected year
-        
-        # ---- Define output folder and file name ----
-        
-        Out_Dir  <- file.path(Scaled_Folder, paste0("Med_S", Index), "Yearly_Images")  # Output Folder and File Name
-        Out_File <- file.path(Out_Dir, paste0("Med_S", Index, "_", yy))
-        dir.create(Out_File, showWarnings = FALSE, recursive = TRUE)        
-        
-        # If output file for selected year and index doesn't exist, or ReProc =
-        # Yes, start the processing
-        if (file.exists(Out_File) == FALSE | ReProcIm == 1) {
-          
-          # Update status bar
-          message("---- Computing Med_S", Index, "- for year ", yy," ----")
-          
-          # Build string to call the FRG_Compute_MedScaled_VI.pro IDL script ----
-          
-          str_idl <- paste0("res = FRG_Compute_MedScaled_VI(", 
-                            "CLC_File_00 = '", CLC_File_00, "' , ",
-                            "In_File = '", In_File, "' , ", 
-                            "FireMask_File= '", FireMask_File, "' , ", 
-                            "Out_File = '", Out_File, "' , ", 
-                            "nodata_out = '", nodata_out, "' , ", 
-                            "N_Ker = '", NKer, "' , ", 
-                            "Index = '", Index, "' , ", 
-                            "Year = '", yy, "' )")
-          
-          # Build an IDL batch file using the string defined above ----
-          
-          batch_file <- file.path(FRG_Options$IDL_Dir, "FRG_Compute_Med_SVI_batch.pro")
-          fileConn <- file(batch_file)
-          writeLines(c(exp_path_str, "envi, /restore_base_save_files  ", 
-                       "ENVI_batch_init", str_idl, "exit"), fileConn)
-          close(fileConn)
-          
-          # Launch computation in IDL ----
-          out <- try(system((paste(FRG_Options$idl_exe, batch_file, 
-                                   sep = " ")), invisible = TRUE, show.output.on.console = TRUE))  
-          if (class(out == "try-error")) {
-            stop("An error occurred while computing scaled indexes ! Processing stopped. 
-                 Check 'FRG_Compute_Med_SVI_batch.pro'. Manually compiling and running
-                it from IDL allows debugging ! ")
-          }
-        }  # End of 'if' condition on file existence
-        
-        if (file.exists(Out_File) == T) {
-          Out_Files <- c(Out_Files, Out_File)  # Update list of available sVI files to be used for META file creation
-        } else {
-          stop("An error occurred while computing scaled indexes ! Processing stopped. 
+      # Build string to call the FRG_Compute_MedScaled_VI.pro IDL script ----
+      str_idl <- paste0("res = FRG_Compute_MedScaled_VI(", 
+                        "CLC_File_00 = '",  CLC_File_00,   "' , $ \n",
+                        "In_File = '",      in_avg_file,   "' , $ \n",
+                        "FireMask_File= '", FireMask_File, "' , $ \n",
+                        "Out_File = '",     out_file,      "' , $ \n",
+                        "nodata_out = '",   nodata_out,    "' , $ \n",
+                        "N_Ker = '",        NKer,          "' , $ \n", 
+                        "Index = '",        Index,         "' , $ \n", 
+                        "Year = '",         yy,            "' )"
+      )
+      
+      # Build an IDL batch file using the string defined above ----
+      
+      batch_file <- file.path(FRG_Options$src_dir_idl, 
+                              "/batch_files/FRG_Compute_Med_SVI_batch.pro")
+      fileConn <- file(batch_file)
+      writeLines(c(exp_path_str, 
+                   "envi, /restore_base_save_files  ", 
+                   "ENVI_batch_init", 
+                   str_idl
+                   , "exit"), 
+                 fileConn)
+      close(fileConn)
+      
+      # Launch computation in IDL ----
+      out <- system2("idl.exe", args = batch_file)  
+      if (!is.null(attributes(out)$status)) {
+        stop("An error occurred while computing scaled indexes ! Processing stopped. 
                 Check 'FRG_Compute_Med_SVI_batch.pro'. Manually compiling and running
                 it from IDL allows debugging ! ")
-        }
-        
-      }  # End of Cycle on Years
+      }
       
-      # Write the ENVI META text file ----
-      # It lately allow to access the time series of SVI files as a single time 
-      # series. 
-      
-      frg_createmeta(Index         = Index, 
-                     Start_Year    = Start_Year, 
-                     End_Year      = End_Year, 
-                     Method        = 2, 
-                     Scaled_Folder = Scaled_Folder, 
-                     Out_Files     = Out_Files)
-      
-    }
+      if (file.exists(out_file) == TRUE) {
+        out_files <- c(out_files, out_file)  # Update list of available sVI files to be used for META file creation
+      } else {
+        stop("An error occurred while computing scaled indexes ! Processing stopped. 
+                Check 'FRG_Compute_Med_SVI_batch.pro'. Manually compiling and running
+                it from IDL allows debugging ! ")
+      }
+    } else {
+      out_files <- c(out_files, out_file) 
+      message("---- Scaled VI file already existing for year ", yy, " - skipping ----")
+    } # End of 'if-else' condition on file existence
     
-  }  # End cycle SNDVI vs SRDVI
+  } # End of Cycle on Years
   
-  return("DONE")
+  # End of 'if'-else' condition on file existence' on method
+  
+  # Write the ENVI META text file ----
+  # It lately allow to access the time series of SVI files as a single time 
+  # series. 
+  
+  frg_createmeta(Index, Start_Year, End_Year, 
+                 Method, Scaled_Folder, 
+                 out_files)
+  
+  # End cycle SNDVI vs SRDVI
+  
+  return("DONE")  
 }

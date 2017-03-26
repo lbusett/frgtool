@@ -1,4 +1,4 @@
-#'frg_moddownload
+#'frg_mod_download
 #'@description Function used to download, mosaic and reproject MODIS data
 #'@details The function leverages
 #' functionality form `MODIStsp` package [https://github.com/lbusett/MODIStsp/]
@@ -19,7 +19,7 @@
 #' @author Lorenzo Busetto, PhD (2017)
 #' @export
 
-frg_moddownload <- function(dates , 
+frg_mod_download_old <- function(dates , 
                              OutOrig_Path , 
                              ReDown = ReDown, 
                              yy = yy) {

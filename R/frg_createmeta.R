@@ -6,10 +6,10 @@
 #'
 #' @examples
 frg_createmeta <- function(Index, Start_Year, End_Year, Method, 
-                           Scaled_Folder, Out_Files) {
+                           Scaled_Folder, out_files) {
   
   # Get files dimensions from the header of the first file ----
-  head_file   <- paste(Out_Files[1], ".hdr", sep = "")
+  head_file   <- paste(out_files[1], ".hdr", sep = "")
   fileConn_hd <- file(head_file)
   nsamp       <- (strsplit(readLines(fileConn_hd)[4], "=")[[1]])[2]
   nrow        <- (strsplit(readLines(fileConn_hd)[5], "=")[[1]])[2]
@@ -24,7 +24,7 @@ frg_createmeta <- function(Index, Start_Year, End_Year, Method,
   writeLines(c("ENVI META FILE"), fileConn_meta)  # Write first line
   
   # Write the lines of the META file corresponding to each input file ----
-  for (ff in Out_Files) {
+  for (ff in out_files) {
     writeLines(c(paste0("File : ", ff, sep = ""), 
                  paste0("Bands: 1"), 
                  paste0("Dims: 1-", nsamp, " , 1-", nrow))

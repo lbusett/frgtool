@@ -14,13 +14,7 @@
 #' @export
 
 frg_buildroi <- function(Shape_File, CLC_File_00, 
-                         exp_path_str, Intermediate_Folder) {
-  
-  # Define ROI file name and create folder for ROI storing if needed ----
-  
-  ROI_File <- file.path(Intermediate_Folder, "ENVI_ROI", 
-                        paste0(file_path_sans_ext(basename(Shape_File)), ".ROI"))
-  dir.create(dirname(ROI_File), recursive = TRUE, showWarnings = FALSE)
+                         exp_path_str, ROI_file) {
   
   # Check if ROI already existing, If not, create it 
   

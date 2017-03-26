@@ -1,4 +1,4 @@
-#' frg_createmask
+#' frg_createmask_old
 #' @description Accessory function for Mask creation. Calls the FRG_CREATE_MASK.pro
 #' @details 
 #' @inheritParams frg_comp_SVI
@@ -12,7 +12,7 @@
 #' @export
 #'
 #' @examples
-frg_createmask <- function(ROI_File, CLC_File_00, 
+frg_createmask_old <- function(ROI_File, CLC_File_00, 
                             exp_path_str, Intermediate_Folder) {
   
   dir.create(file.path(Intermediate_Folder, "ENVI_Mask"), showWarnings = FALSE, 

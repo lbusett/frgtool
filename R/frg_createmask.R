@@ -2,7 +2,7 @@
 #' @description Accessory function to call IDL routine for Mask creation.
 #' @details 
 #' Function used to create a batch file (`FRG_CreateMask_Batch.pro`) which 
-#' is then used to call the `FRG_CREATE_ROI.pro` IDL unction from a command shell.  
+#' is then used to call the `FRG_Create_Mask.pro` IDL function from a command shell.  
 #' 
 #' `FRG_Create_Mask.pro` is used to create a binary mask to exclude burned areas
 #' from statistics computaitons. See `FRG_Create_Mask.pro` in `/IDL/VI_Elaborations`
@@ -15,15 +15,11 @@
 #' @export
 
 frg_createmask <- function(ROI_File, CLC_File_00, 
-                           exp_path_str, Intermediate_Folder) {
+                           exp_path_str, FireMask_File) {
   
-  # Define Mask file name and create folder for mask storing if needed ----
-  FireMask_File <- file.path(Intermediate_Folder, "ENVI_Mask", 
-                             paste0(file_path_sans_ext(basename(ROI_File)), "_ENVI_Mask"))
-  dir.create(dirname(FireMask_File))
   
-  # Check if ROI already existing, If not, create it 
-  selection <- "yes"  # for debugging - set to "yes" to rebuild mask even if already existing
+  # Check if mask already existing, If not, create it 
+  selection <- "no"  # for debugging - set to "yes" to rebuild mask even if already existing
   
   if (!file.exists(FireMask_File) | selection == "yes") {
     

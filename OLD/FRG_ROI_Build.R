@@ -1,5 +1,5 @@
 
-#' frg_buildroi
+#' frg_buildroi_old
 #' @description # - Accessory function for ROI creation. Calls the FRG_CREATE_ROI.pro
 # IDL function. See it for further documentation
 #' @inheritParams frg_compSVI
@@ -12,7 +12,7 @@
 #' @export
 #'
 #' @examples
-frg_buildroi <- function(Shape_File = Shape_File, CLC_File_00 = CLC_File_00, 
+frg_buildroi_old <- function(Shape_File = Shape_File, CLC_File_00 = CLC_File_00, 
                           exp_path_str = exp_path_str, Intermediate_Folder = Intermediate_Folder) {
   
   dir.create(file.path(Intermediate_Folder, "ENVI_ROI"), showWarnings = FALSE, 
