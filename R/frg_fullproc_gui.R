@@ -204,7 +204,7 @@ frg_fullproc_gui <- function() {
                                             "frg_previous.RData"))  # Save  widgets values in the FRG_CS_Previous.RData file
       # Start the processing
       dispose(Main_W)  # Selection finished - close the GUI
-      enabled(Main_GUI) <- FALSE
+      # enabled(Main_GUI) <- FALSE
       
       frg_fullprocessing(MOD_Dir     = Full_Selection$MOD_Dir, 
                          Shape_File  = Full_Selection$Shape_File, 

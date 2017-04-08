@@ -103,6 +103,7 @@ frg_main <- function() {
   
   process_but      <- gbutton("Process Burnt Areas Data", cont = but_group, 
                                handler = function(h, ...) {
+                                 dispose(main_gui)
                                  res <- frg_fullproc_gui()
                                })
   
