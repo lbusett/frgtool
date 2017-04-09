@@ -26,10 +26,8 @@
 #' @export
 
 frg_moddownload <- function(OutOrig_Path, 
-                            ReProc, 
+                            ReDown, 
                             yy) {
-  
-  dir.create(OutOrig_Path, showWarnings = FALSE)
   
   # Update the processing year and some other options on the   ----
   # MODIStsp json file
@@ -41,7 +39,7 @@ frg_moddownload <- function(OutOrig_Path,
   opts$out_folder_mod  <- file.path(OutOrig_Path, "hdfs")
   opts$out_folder      <- file.path(OutOrig_Path, "time_series")
   opts$download_server <- "http"
-  opts$reprocess       <- ifelse(ReProc == 1, "Yes", "No")
+  opts$reprocess       <- ifelse(ReDown == 1, "Yes", "No")
   toJSON(opts) %>% 
     write("inst/ExtData/frg_modistsp_opts_test.json")
   
