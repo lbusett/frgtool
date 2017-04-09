@@ -1,0 +1,42 @@
+IDL Version 8.5, Microsoft Windows (Win32 x86_64 m64).
+(c) 2015, Exelis Visual Information Solutions, Inc., a subsidiary of Harris Corporation.
+Installation number: 601983-1.
+Licensed for use by: Consiglio Nazionale delle Ricerche
+
+% Restored file: ENVI.
+% Restored file: ENVI_M01.
+% Restored file: ENVI_M02.
+% Restored file: ENVI_M03.
+% Restored file: ENVI_M04.
+% Restored file: ENVI_M05.
+% Restored file: ENVI_M06.
+% Restored file: ENVI_M07.
+% Restored file: ENVI_M08.
+% Restored file: ENVI_D01.
+% Restored file: ENVI_D02.
+% Restored file: ENVI_D03.
+% Restored file: ENVI_CW.
+% Restored file: ENVI_IDL.
+% Restored file: ENVI_IOW.
+% Restored file: ENVI_RV.
+% Compiled module: FRG_CREATE_ROI.
+% Loaded DLM: MAP_PE.
+% Loaded DLM: SHAPEFILE.
+Analyzing ROI            0 of        16959
+Analyzing ROI         1000 of        16959
+Analyzing ROI         2000 of        16959
+Analyzing ROI         3000 of        16959
+Analyzing ROI         4000 of        16959
+Analyzing ROI         5000 of        16959
+Analyzing ROI         6000 of        16959
+Analyzing ROI         7000 of        16959
+Analyzing ROI         8000 of        16959
+Analyzing ROI         9000 of        16959
+Analyzing ROI        10000 of        16959
+Analyzing ROI        11000 of        16959
+Analyzing ROI        12000 of        16959
+Analyzing ROI        13000 of        16959
+Analyzing ROI        14000 of        16959
+Analyzing ROI        15000 of        16959
+Analyzing ROI        16000 of        16959
+--- Saving ROIS to : D:\Temp\tempfrg/Intermed_Proc/ENVI_ROI/Burned_Areas_00_15.ROI

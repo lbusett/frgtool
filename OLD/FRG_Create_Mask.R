@@ -19,7 +19,7 @@ frg_createmask_old <- function(ROI_File, CLC_File_00,
              recursive = TRUE)
   FireMask_File <- file.path(Intermediate_Folder, "ENVI_Mask", paste(sub("[.][^.]*$", 
                                                                          "", basename(ROI_File)), "_ENVI_Mask", sep = ""))
-  selection <- "no"
+  selection <- "yes"
   # if (file.exists(FireMask_File)) { selection = tk_messageBox(caption =
   # 'Overwrite Warning', type = c ('yesno'), message = 'A Mask file for
   # the selected ROI file already exists !\n Do you want to overwrite it

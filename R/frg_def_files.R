@@ -15,10 +15,11 @@ frg_def_files <- function(Out_Dir, Start_Year, End_Year, MOD_Dir, Shape_File) {
   ff <- list()
   
   # Set Main Results Dir
-  Out_Dir <- file.path(Out_Dir, paste("Results", Start_Year, End_Year, 
-                                as.character(Sys.Date()), 
-                                sep = "_"))
+  # Out_Dir <- file.path(Out_Dir, paste("Results", Start_Year, End_Year, 
+  #                               as.character(Sys.Date()), 
+  #                               sep = "_"))
   ff[["Out_Dir"]]      <- file.path(Out_Dir)
+  ff[["MOD_Dir"]]      <- file.path(MOD_Dir)
   ff[["OutFile_Conn"]] <- file.path(Out_Dir, paste("Process_Summary", ".txt", sep = ""))  # Set Processing log file
   ff[["Intermed_Dir"]] <- file.path(Out_Dir, "Intermed_Proc")  # Set Dir for storing intermediate processing results
   ff[["Summary_Dir"]]  <- file.path(Out_Dir, "Summaries_for_EFFIS")  # Set Dir for storing EFFIS summaries results

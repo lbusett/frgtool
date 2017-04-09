@@ -129,7 +129,7 @@ FRG_Full_Processing = function(MOD_Dir= MOD_Dir, Shape_File = Shape_File, CLC_Fi
       print('----------------------------------------------------------')
       print('------------- Computation of Scaled Indexes --------------')
       print('----------------------------------------------------------')
-      print(c('-> Scaled Indexes Output Folder: ',Scaled_Folder))
+      
       er = 'DONE'
       er = FRG_MOD_Comp_SVI(MOD_Dir = MOD_Dir, Shape_File = Shape_File, CLC_File_00 = CLC_File_00, 
                           Out_Folder = Scaled_Folder, Start_Year = Start_Year, End_Year = End_Year, 

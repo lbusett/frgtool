@@ -30,7 +30,7 @@
 #'
 #' @export
 #' 
-frg_modproc <- function(MOD_Dir, 
+frg_modproc <- function(OutOrig_Path, 
                         Start_Year, 
                         End_Year, 
                         ReProcIm, 
@@ -43,14 +43,14 @@ frg_modproc <- function(MOD_Dir,
   message("-------------------------------------------")
   message("---- MODIS Download and PreProcessing -----")
   message("-------------------------------------------")
-  message("----> Main MODIS Folder: ", MOD_Dir)
+  message("----> Main MODIS Folder: ", OutOrig_Path)
   message("-------------------------------------------")
   message("---- Downloading, and Preprocessing of MODIS data ---> RUNNING <--- ")
   
   # Download MODIS images using MODIStsp for each selected year ------ 
   # options file is saved in inst/Ext/frg_modistsp_opts.json 
   
-  for (yy in seq(Start_Year, End_Year, 1)){
+  for (yy in seq(Start_Year, End_Year, 1)) {
     
     er <- frg_moddownload(OutOrig_Path = OutOrig_Path, 
                           ReDown       = ReDown, 

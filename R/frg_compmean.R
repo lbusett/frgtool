@@ -3,7 +3,7 @@
 #' @param ReProc 
 #' @param UI_check 
 #' @param max_UI 
-#' @importFrom raster mean
+#' @importFrom raster mean blockSize getValues writeStart writeStop writeValues stack
 #' @author Lorenzo Busetto, PhD (2012)
 #'         email: lbusett@gmail.com
 
@@ -37,7 +37,7 @@ frg_compmean <- function(OutOrig_Path,
     # Accessory function for average computation in chunks ----
     frg_maskmeanNDVI <- function(NDVI, UI, Rely, max_UI, filename) {
       out <- raster(NDVI)
-      bs <- blockSize(out)
+      bs  <- blockSize(out)
       out <- writeStart(out, filename, overwrite = TRUE, NAflag = 32767)
       for (i in 1:bs$n) {
         vi_data_1 <- getValues(NDVI[[1]], row = bs$row[i], nrows = bs$nrows[i]) *
@@ -68,5 +68,3 @@ frg_compmean <- function(OutOrig_Path,
   }
   return('DONE')
 }
-
-

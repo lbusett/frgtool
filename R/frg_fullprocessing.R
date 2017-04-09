@@ -26,6 +26,7 @@
 #' @importFrom hash hash
 #' @importFrom tcltk tk_messageBox
 #' @importFrom tools file_path_sans_ext
+#' @importFrom utils read.csv2 write.table
 #' @import     gWidgetsRGtk2
 
 #' @export
@@ -37,7 +38,7 @@ frg_fullprocessing <- function(MOD_Dir     , Shape_File  , CLC_File_00 , Out_Dir
                                sub_zones= 0, perc_diff  , 
                                # Flags to skip some processing steps in debugging phase - Set all to T
                                # for complete processing - proceed with caution !
-                               MOD_dwl   = FALSE, Comp_SVI  = FALSE, Extr_Stat = TRUE,
+                               MOD_dwl   = FALSE,  Comp_SVI  = TRUE, Extr_Stat = TRUE,
                                Sig_Anal  = FALSE, Perc_Anal = FALSE) {
   
   #- Initialize Processing ---- 
@@ -66,9 +67,11 @@ frg_fullprocessing <- function(MOD_Dir     , Shape_File  , CLC_File_00 , Out_Dir
     
     if (MOD_dwl == T) {
       
-      er <- frg_modproc(ff$Out_Orig_Path, 
-                        Start_Year, End_Year, 
-                        ReProcIm, ReDown)
+      er <- frg_modproc(ff$OutOrig_Path, 
+                        Start_Year, 
+                        End_Year, 
+                        ReProcIm, 
+                        ReDown)
       
     }  # End if on  MODIS processing
     
@@ -80,7 +83,9 @@ frg_fullprocessing <- function(MOD_Dir     , Shape_File  , CLC_File_00 , Out_Dir
       er <- frg_compSVI(ff$MOD_Dir, Shape_File, CLC_File_00, ff$Scaled_Dir, 
                         Start_Year, End_Year, NKer, Method, SRDVI, SNDVI, 
                         nodata_out = FRG_Options$No_Data_Out_Rast, 
-                        ReProcIm, ff$Intermed_Dir)
+                        ReProcIm, ff$Intermed_Dir, 
+                        ff$ROI_File,
+                        ff$FireMask_File, ff$FireMask_File_Er)
       
       message(" -> Computation of Scaled Indexes Completed")
       message("----------------------------------------------------------")
@@ -114,10 +119,10 @@ frg_fullprocessing <- function(MOD_Dir     , Shape_File  , CLC_File_00 , Out_Dir
       er <- frg_extract_svi(SVI_File   = ff$TS_filename, 
                             Shape_File = as.character(Shape_Files_Inter$Shape_File_Single), 
                             CLC_File_00, ENV_Zones_File, 
-                            Out_File = ff$ExtTS_File_Single, 
-                            erode = 1, ff$FireMask_File_Er, 
+                            Out_File   = ff$ExtTS_File_Single, 
+                            erode      = 1, ff$FireMask_File_Er, 
                             ff$Intermed_Dir, 
-                            Overlap = "Single", 
+                            Overlap    = "Single", 
                             Shape_File_Orig = Shape_File, 
                             LUT_File_Multiple = "")
       
@@ -126,15 +131,15 @@ frg_fullprocessing <- function(MOD_Dir     , Shape_File  , CLC_File_00 , Out_Dir
       message("----------------------------------------------------------")
       message("------ Extraction of sVI time series for burnt areas - Areas Burnt Multiple Times -----")
       message("----------------------------------------------------------")
-      message(paste("-> In File for TS extraction: ", TS_filename))
-      message(paste("-> Out File for TS extraction: ", ExtTS_File_Multiple))
+      message(paste("-> In File for TS extraction: ", ff$TS_filename))
+      message(paste("-> Out File for TS extraction: ", ff$ExtTS_File_Multiple))
       # Perform TS extraction on the shapefile of areas burned multiple times ----
       # 
-      er <- frg_extract_svi(SVI_File = TS_filename, 
+      er <- frg_extract_svi(SVI_File   = ff$TS_filename, 
                             Shape_File = as.character(Shape_Files_Inter$Shape_File_Multiple), 
                             CLC_File_00, ENV_Zones_File, 
-                            Out_File = ExtTS_File_Multiple, 
-                            erode = 1, FireMask_File_Eroded, 
+                            Out_File   = ff$ExtTS_File_Multiple, 
+                            erode      = 1, ff$FireMask_File_Er, 
                             ff$Intermed_Dir, 
                             Overlap = "Multiple", 
                             Shape_File_Orig = Shape_File, 
@@ -198,11 +203,9 @@ frg_fullprocessing <- function(MOD_Dir     , Shape_File  , CLC_File_00 , Out_Dir
       message("-> Plotting data extraction and statistical analysis Completed")
       message("----------------------------------------------------------")
       
-      #----------------------------------------------------------------------------------#        
-      # Copy the main processing results csv files to the 'summaries' Dir
+      
+      # Copy the main processing results csv files to the 'summaries' Dir -----
       # and create the summary subsetted shapefiles
-      # ------------------------------------------------------------------------------
-      # ----
       
       message("----------------------------------------------------------")
       message("-> Create Final output summary tables and shapefiles")
@@ -323,8 +326,7 @@ frg_fullprocessing <- function(MOD_Dir     , Shape_File  , CLC_File_00 , Out_Dir
       file.copy(from = out_file_LUT, to = Summary_Dir, 
                 recursive = FALSE, overwrite = TRUE)
       
-      # ------------------------------------------------------------------------------
-      # ----
+      
     }  # End if on Sig_anal
     
     # Write output lines for the considered index in the processing summary

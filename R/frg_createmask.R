@@ -45,7 +45,7 @@ frg_createmask <- function(ROI_File, CLC_File_00,
     close(fileConn)
     
     # Execute FRG_Create_Mask.pro  ----
-    out <- system2("idl.exe", args = batch_file)
+    out <- system2("idl.exe", args = batch_file, stdout = "log_IDL")
     
     if (!is.null(attributes(out)$status)) {
       stop("An error occurred while creating the burned areas mask. 
@@ -55,5 +55,5 @@ frg_createmask <- function(ROI_File, CLC_File_00,
   } else {
     message("---- Mask file already existing - skipping ----")
   }
-  return(FireMask_File)
+  
 }

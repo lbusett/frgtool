@@ -111,39 +111,39 @@ FRG_Extr_Stats_new = function(SVI_File = SVI_File, Shape_File = Shape_File, CLC_
   if (!(file.exists(Out_RData)) | selection == 'yes') {
 
   # Open required raster files
-  # svi_files   <- tools::file_path_sans_ext(list.files(sVI_Folder, pattern = ".hdr$", full.names = TRUE))
-  # svi_stack   <- raster::stack(svi_files)
-  # clc_rast    <- raster::raster(CLC_File_00)
-  # erode_rast  <- raster::raster(Erode_File)
-  # envzon_rast <- raster::raster(ENV_Zones_File)
-  # 
-  # # set nodatavalue for input SVI file
-  # raster::NAvalue(svi_stack) <- -999
-  # dates <- ymd(paste0(str_split(names(svi_stack),"_", simplify = TRUE)[,3],"-01-01"))
-  # svi_stack <- setZ(svi_stack, dates,"time")
-  # 
-  # 
-  # # Open required shape files
-  # totburn_shp <- as(sf::st_read(Shape_File),"Spatial")
-  # nfires      <- dim(totburn_shp)[1]
-  # print(Shape_File)
-  # tempraster = tempfile(tmpdir = tempdir(), fileext = ".tiff")
-  # id_field <- ifelse(Overlap == "Single", "OBJECTID", "OVERLAP_ID")
-  # gdal_rasterize(Shape_File, tempraster, tr = raster::res(svi_stack), te = extent(svi_stack)[c(1, 3, 2, 4)],
-  #                a = id_field, ot = "Int32")
-  # 
-  # ts_data <- frg_fastzonal(in_rts         = svi_stack,
-  #                          zone_object    = tempraster,
-  #                          mask_object    = erode_rast,
-  #                          clc_object     = clc_rast,
-  #                          envzone_object = envzon_rast,
-  #                          id_field       = "ID",
-  #                          small          = "FALSE",
-  #                          verbose        = TRUE)
-  # write.csv(ts_data, file = Out_IDL_CSV)
-  # save(ts_data, file = Out_RData)
-  # save(ts_data, file = paste0(Out_RData,"bis.R"))
-  # Data <- ts_data
+  svi_files   <- tools::file_path_sans_ext(list.files(sVI_Folder, pattern = ".hdr$", full.names = TRUE))
+  svi_stack   <- raster::stack(svi_files)
+  clc_rast    <- raster::raster(CLC_File_00)
+  erode_rast  <- raster::raster(Erode_File)
+  envzon_rast <- raster::raster(ENV_Zones_File)
+
+  # set nodatavalue for input SVI file
+  raster::NAvalue(svi_stack) <- -999
+  dates <- ymd(paste0(str_split(names(svi_stack),"_", simplify = TRUE)[,3],"-01-01"))
+  svi_stack <- setZ(svi_stack, dates,"time")
+
+
+  # Open required shape files
+  totburn_shp <- as(sf::st_read(Shape_File),"Spatial")
+  nfires      <- dim(totburn_shp)[1]
+  print(Shape_File)
+  tempraster = tempfile(tmpdir = tempdir(), fileext = ".tiff")
+  id_field <- ifelse(Overlap == "Single", "OBJECTID", "OVERLAP_ID")
+  gdal_rasterize(Shape_File, tempraster, tr = raster::res(svi_stack), te = extent(svi_stack)[c(1, 3, 2, 4)],
+                 a = id_field, ot = "Int32")
+
+  ts_data <- frg_fastzonal(in_rts         = svi_stack,
+                           zone_object    = tempraster,
+                           mask_object    = erode_rast,
+                           clc_object     = clc_rast,
+                           envzone_object = envzon_rast,
+                           id_field       = "ID",
+                           small          = "FALSE",
+                           verbose        = TRUE)
+  write.csv(ts_data, file = Out_IDL_CSV)
+  save(ts_data, file = Out_RData)
+  save(ts_data, file = paste0(Out_RData,"bis.R"))
+  Data <- ts_data
   
   print(paste('-> Creating RData file joining MODIS and Shapefile info'))
 

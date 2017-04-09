@@ -7,7 +7,7 @@
 frg_fullprocessing(MOD_Dir, Shape_File, CLC_File_00, Out_Dir, Start_Year,
   End_Year, Method, SNDVI = 1, ReProc, ReDown, ReProcIm, erode = 1,
   min_pix = 10, MedWdt = 3, NKer, sig_level = 0.05, sub_zones = 0,
-  perc_diff, MOD_dwl = FALSE, Comp_SVI = FALSE, Extr_Stat = TRUE,
+  perc_diff, MOD_dwl = TRUE, Comp_SVI = TRUE, Extr_Stat = TRUE,
   Sig_Anal = FALSE, Perc_Anal = FALSE)
 }
 \arguments{

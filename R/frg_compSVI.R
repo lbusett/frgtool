@@ -34,15 +34,15 @@
 #' @export
 frg_compSVI <- function(MOD_Dir, Shape_File, CLC_File_00, Scaled_Folder, Start_Year, 
                         End_Year, NKer, Method, SRDVI, SNDVI, nodata_out, ReProcIm, 
-                        Intermediate_Folder) {
+                        Intermediate_Folder, ROI_File, 
+                        FireMask_File, FireMask_File_Eroded, 
+                        Index = "NDVI") {
   
   message("----------------------------------------------------------")
   message("------------- Computation of Scaled Indexes --------------")
   message("----------------------------------------------------------")
-  message(c("-> Scaled Indexes Output Folder: ", Scaled_Folder))
   
   # Initialize processing variables ----
-  
   
   # Compute number of pixels in Kernel on the basis of the extent in KM of the kenel
   NKer         <- (NKer * 1000/250) + 1  
@@ -59,10 +59,7 @@ frg_compSVI <- function(MOD_Dir, Shape_File, CLC_File_00, Scaled_Folder, Start_Y
   # Ceate a ROI file on the basis of the ORIGINAL SHAPEFILE specified -----
   # by the user and of the INPUT CLC_00_File (used to determine extent !)
   
-  ROI_File <- frg_buildroi(Shape_File, 
-                           CLC_File_00, 
-                           exp_path_str, 
-                           ROI_file)
+  frg_buildroi(Shape_File, CLC_File_00, exp_path_str, ROI_File)
   
   # Create a 'Mask' envi file using the ROI File created from the burned areas ----
   # shapefile specified by the user. 
@@ -70,20 +67,14 @@ frg_compSVI <- function(MOD_Dir, Shape_File, CLC_File_00, Scaled_Folder, Start_Y
   # computation of statistics needed for the calculation of the scaled
   # indexes.
   
-  FireMask_File <- frg_createmask(ROI_File, 
-                                  CLC_File_00, 
-                                  exp_path_str,
-                                  Intermediate_Folder, 
-                                  FireMask_File)
+  frg_createmask(ROI_File, CLC_File_00, exp_path_str, FireMask_File)
   
   # Create an ERODED 'Mask' envi file the ROI File created from the burned areas ----
   # shapefile specified by the user. The mask file is successively used to determine
   # which of the ROI pixels are CORE pixels (i.e., not on the borders)
   
-  FireMask_File_Eroded <- frg_createmask_eroded(ROI_File, 
-                                                FireMask_File, 
-                                                exp_path_str, 
-                                                FireMask_File_Eroded)
+  frg_createmask_eroded(ROI_File, FireMask_File, 
+                        exp_path_str, FireMask_File_Eroded)
   
   
   out_files    <- NULL  
@@ -136,7 +127,7 @@ frg_compSVI <- function(MOD_Dir, Shape_File, CLC_File_00, Scaled_Folder, Start_Y
       close(fileConn)
       
       # Launch computation in IDL ----
-      out <- system2("idl.exe", args = batch_file)  
+      out <- system2("idl.exe", args = batch_file, stdout = "log_IDL")  
       if (!is.null(attributes(out)$status)) {
         stop("An error occurred while computing scaled indexes ! Processing stopped. 
                 Check 'FRG_Compute_Med_SVI_batch.pro'. Manually compiling and running

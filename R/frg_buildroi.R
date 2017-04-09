@@ -14,13 +14,13 @@
 #' @export
 
 frg_buildroi <- function(Shape_File, CLC_File_00, 
-                         exp_path_str, ROI_file) {
+                         exp_path_str, ROI_File) {
   
   # Check if ROI already existing, If not, create it 
   
   selection <- "no"  # for debugging - set to "yes" to rebuild rois even if already existing
   if (!file.exists(ROI_File) | selection == "yes") {
-    message("---- IDL-> Creating ROI File: ", ROI_File, " ----")
+    message("---- IDL-> Creating ROI File: ", ROI_File, " Please Wait ! ----")
     
     # Build the command to run the FRG_Create_ROI.pro IDL funtion ----
     str_idl <- paste0(
@@ -43,7 +43,7 @@ frg_buildroi <- function(Shape_File, CLC_File_00,
     
     # Execute FRG_Create_ROI_batch.pro  ----
     
-    out <- system2("idl.exe", args = batch_file)
+    out <- system2("idl.exe", args = batch_file, stdout = "log_IDL")
     
     # Error message on problems in execution of FRG_Create_ROI_batch.pro
     if (!is.null(attributes(out)$status)) {
