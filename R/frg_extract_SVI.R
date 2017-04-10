@@ -18,7 +18,7 @@
 #' @param Overlap string If == 'Single', extract time series for areas burned once.
 #'        if =='Multiple, extract time series for areas burned multiple times
 #' @param Shape_File_Orig string Filename of the original input BAs shapefile
-#' @param LUT_File_Multiple string Filename of the LUT table created by FRG_Process_Shapefile.py
+#' @param LUT_File_Multiple string Filenlame of the LUT table created by FRG_Process_Shapefile.py
 #'
 #' @return 'DONE' if all went OK, otherwise error message
 #'
@@ -93,7 +93,8 @@ frg_extract_svi <- function(SVI_File, Shape_File, CLC_File_00, ENV_Zones_File,
                              # envzone_object = envzon_rast, 
                              id_field = "ID", 
                              small = FALSE,
-                             verbose = TRUE) 
+                             verbose = TRUE, 
+                             end_band = 3) 
     # write.csv(ts_data, file = Out_IDL_CSV)
     # save(ts_data, file = Out_RData) 
     
@@ -106,35 +107,12 @@ frg_extract_svi <- function(SVI_File, Shape_File, CLC_File_00, ENV_Zones_File,
     message("---- Joining MODIS and Shapefile info ----")
     message("-----------------------------------------")
     
-    BAreas_Name <- strsplit(basename(Shape_File_Orig), ".shp")[[1]]
-    BAreas_Dir  <- dirname(Shape_File_Orig)
+    # BAreas_Name <- strsplit(basename(Shape_File_Orig), ".shp")[[1]]
+    # BAreas_Dir  <- dirname(Shape_File_Orig)
     BAreas_shp  <- as(st_read(Shape_File_Orig, stringsAsFactors = FALSE, quiet = TRUE),"Spatial")
     Data_Shape  <- BAreas_shp@data  # Get attributes data from the shp
     
-    # Accessory function used to compute Burnt area for each CLC class from
-    # the number of pixels in the ROI (Used only for BAs for which Info is not already
-    # present in the shapefile
     
-    estimate_Area <- function(Data_tmp) {
-      
-      full_Area  <- 250 * 250 * (length(Data_tmp$N_PIX))/10000
-      tot_Area   <- 250 * 250 * (length(Data_tmp$N_PIX[which(Data_tmp$CLC_Class %in% 
-                                                               c(2, 3, 4, 5, 6))]))/10000
-      bro_Area   <- 250 * 250 * (length(Data_tmp$N_PIX[which(Data_tmp$CLC_Class %in% 
-                                                               c(2))]))/10000
-      con_Area   <- 250 * 250 * (length(Data_tmp$N_PIX[which(Data_tmp$CLC_Class %in% 
-                                                               c(3))]))/10000
-      mix_Area   <- 250 * 250 * (length(Data_tmp$N_PIX[which(Data_tmp$CLC_Class %in% 
-                                                               c(4))]))/10000
-      scler_Area <- 250 * 250 * (length(Data_tmp$N_PIX[which(Data_tmp$CLC_Class %in% 
-                                                               c(5))]))/10000
-      trans_Area <- 250 * 250 * (length(Data_tmp$N_PIX[which(Data_tmp$CLC_Class %in% 
-                                                               c(6))]))/10000
-      est_Area   <- data.frame(tot_Area = tot_Area, bro_Area = bro_Area, 
-                               con_Area = con_Area, mix_Area = mix_Area, trans_Area = trans_Area,  
-                               scler_Area = scler_Area, full_Area = full_Area)
-    }
-
     if (Overlap == "Single") {
       
       # Analyze areas burned only once ----
@@ -149,7 +127,7 @@ frg_extract_svi <- function(SVI_File, Shape_File, CLC_File_00, ENV_Zones_File,
       
       # Data <- read.csv(Out_IDL_CSV)
       # Data <- select(Data, -X)
-      n_Years        <- length(unique(ts_data$Year))
+      n_Years           <- length(unique(ts_data$Year))
       names(ts_data)[1] <- "OBJECTID"
       ts_data$OBJECTID  <- as.factor(ts_data$OBJECTID)
       # names(Data)[5:(5+n_Years-1)] =
@@ -173,46 +151,85 @@ frg_extract_svi <- function(SVI_File, Shape_File, CLC_File_00, ENV_Zones_File,
       Area_Forest <- numeric(length(ts_data$OBJECTID))
       IDS         <- unique(Data_Shape$OBJECTID)
       
-
-      ts_data    <- data.table(ts_data, key = c("OBJECTID", "Year"))
+      
+      ts_data    <- data.table(ts_data,    key = c("OBJECTID", "Year"))
       Data_Shape <- data.table(Data_Shape, key = "OBJECTID")
       
+      ts_data_sub <- ts_data[Year == 2005]
+      # Accessory function used to compute Burnt area for each CLC class from
+      # the number of pixels in the ROI (Used only for BAs for which Info is not already
+      # present in the shapefile
       
-      # Retrieve or compute burned area for each CLC class ----
-      pb <- txtProgressBar(min = 1, max = length(IDS), style = 3)
-      for (FireID in 1:length(IDS)) {
-        Sys.sleep(0.005)
-        setTxtProgressBar(pb, FireID)
-        # if (FireID %in% seq(1, 20000, 100)) {
-        #   message("---- Processing Burnt area: ", FireID, "  of: ", length(IDS)," ----")
-        # }
+      estimate_Area <- function(Data_tmp) {
         
-        ID       <- as.numeric(as.character(IDS[FireID]))
-        FireRows <- which(ts_data$OBJECTID == ID)  # Rows of the dataframe corresponding to the selected fire
-        where_id <- which(Data_Shape$OBJECTID == ID)
-        YY       <- Data_Shape$YearSeason[where_id][1]  # Retrieve Fire Year
+        full_Area  <- 250 * 250 * (length(Data_tmp$N_PIX))/10000
+        tot_Area   <- 250 * 250 * (length(Data_tmp$N_PIX[which(Data_tmp$CLC_Class %in% 
+                                                                 c(2, 3, 4, 5, 6))]))/10000
+        bro_Area   <- 250 * 250 * (length(Data_tmp$N_PIX[which(Data_tmp$CLC_Class %in% 
+                                                                 c(2))]))/10000
+        con_Area   <- 250 * 250 * (length(Data_tmp$N_PIX[which(Data_tmp$CLC_Class %in% 
+                                                                 c(3))]))/10000
+        mix_Area   <- 250 * 250 * (length(Data_tmp$N_PIX[which(Data_tmp$CLC_Class %in% 
+                                                                 c(4))]))/10000
+        scler_Area <- 250 * 250 * (length(Data_tmp$N_PIX[which(Data_tmp$CLC_Class %in% 
+                                                                 c(5))]))/10000
+        trans_Area <- 250 * 250 * (length(Data_tmp$N_PIX[which(Data_tmp$CLC_Class %in% 
+                                                                 c(6))]))/10000
+        est_Area   <- data.frame(tot_Area = tot_Area, bro_Area = bro_Area, 
+                                 con_Area = con_Area, mix_Area = mix_Area, trans_Area = trans_Area,  
+                                 scler_Area = scler_Area, full_Area = full_Area)
+      }
+      
+      # setkey(ts_data, "OBJECTID")
+      # setkey(Data_Shape, "OBJECTID")
+      # Retrieve or compute burned area for each CLC class ----
+      # pb <- txtProgressBar(min = 1, max = length(IDS), style = 3)
+      for (FireID in 1:length(IDS)) {
+        
+        # Sys.sleep(0.005)
+        # setTxtProgressBar(pb, FireID)
+        if (FireID %in% seq(1, 20000, 400)) {
+          message("---- Processing Burnt area: ", FireID, "  of: ", length(IDS)," ----")
+        }
+        
+        ID_to_find  <- as.numeric(as.character(IDS[FireID]))
+        
+        # subdata_shp <- Data_Shape[OBJECTID == ID_to_find]
+        subdata_shp <- Data_Shape[J(ID_to_find), nomatch = 0L]
+        # FireRows    <- which(ts_data$OBJECTID == ID_to_find)  # Rows of the dataframe corresponding to the selected fire
+        
+        FireRows    <- ts_data[OBJECTID == ID_to_find, which = TRUE]
+        YY          <- subdata_shp$YearSeason[1]  # Retrieve Fire Year
+        subdata     <- ts_data_sub[J(ID_to_find), nomatch = 0L] 
+        
+        # subdata     <- ts_data[J(ID_to_find,YY), nomatch = 0L] 
         
         # Retrieve Total Area burned in considered CLC_Classes
-        Area_For <- Data_Shape[where_id, "BroadLeave"] + 
-          Data_Shape[where_id, "Coniferous"] + 
-          Data_Shape[where_id, "MixedFores"] + 
-          Data_Shape[where_id, "Sclerophyl"] + 
-          Data_Shape[where_id, "Transition"]
+        Area_For <- as.numeric(subdata_shp[, "BroadLeave"] + 
+                                 subdata_shp[, "Coniferous"] + 
+                                 subdata_shp[, "MixedFores"] + 
+                                 subdata_shp[, "Sclerophyl"] + 
+                                 subdata_shp[, "Transition"])
         
         # If Area_Forest = 0 then, noinfo in shape and area is estimated from
         # number of pixels.
         # 
+        # 
         if (Area_For == 0) {
-          est_Area <- estimate_Area(ts_data[FireRows, ])/n_Years
+          est_Area <- estimate_Area(subdata)
           Area_For <- est_Area$tot_Area
-          Data_Shape$BroadLeave[where_id] <- est_Area$bro_Area
-          Data_Shape$Coniferous[where_id] <- est_Area$con_Area
-          Data_Shape$MixedFores[where_id] <- est_Area$mix_Area
-          Data_Shape$Sclerophyl[where_id] <- est_Area$scler_Area
-          Data_Shape$Transition[where_id] <- est_Area$trans_Area
+          Data_Shape[OBJECTID == ID_to_find, 
+                     c("BroadLeave", "Coniferous", "MixedFores", "Sclerophyl","Transition")] <- 
+            est_Area[,2:6]
+          
+          # Data_Shape[OBJECTID == ID_to_find]$BroadLeave <- est_Area$bro_Area
+          # Data_Shape[OBJECTID == ID_to_find]$Coniferous <- est_Area$con_Area
+          # Data_Shape[OBJECTID == ID_to_find]$MixedFores <- est_Area$mix_Area
+          # Data_Shape[OBJECTID == ID_to_find]$Sclerophyl <- est_Area$scler_Area
+          # Data_Shape[OBJECTID == ID_to_find]$Transition <- est_Area$trans_Area
         }
         
-        Area_Tot <- Data_Shape$Area_HA[where_id][1]  # Retrieve Total Area burned
+        Area_Tot <- subdata_shp$Area_HA[1]  # Retrieve Total Area burned
         
         # If Area_Tot = 0 then, noinfo in shape and area estimated from number of pixels.
         if (Area_Tot == 0) {
@@ -225,7 +242,7 @@ frg_extract_svi <- function(SVI_File, Shape_File, CLC_File_00, ENV_Zones_File,
         
       }
       
-      # Add retrieved area and FireYears to "Data
+      # Add retrieveQd area and FireYears to "Data
       ts_data$FireYear    <- FireYear    # Assign FireYear
       ts_data$Area_All    <- Area_All    # Assign total area of the intersectr
       ts_data$Area_Forest <- Area_Forest # Assign total area burnt in forest land cover types
@@ -242,10 +259,10 @@ frg_extract_svi <- function(SVI_File, Shape_File, CLC_File_00, ENV_Zones_File,
                                              "Schlerophyllus Vegetation", "Transitional Vegetation", 
                                              "Other Natural Land", "Wetlands", "Water Bodies", "Other"))
       
-      ts_data$ENV_ZONE <- factor(ts_data$ENV_ZONE, levels = c(1:13), labels = c("ALN", 
-                                                                                "BOR", "NEM", "ATN", "ALS", "CON", "ATC", "PAN", "LUS", 
-                                                                                "ANA", "MDM", "MDN", "MDS"))
-      
+      # ts_data$ENV_ZONE <- factor(ts_data$ENV_ZONE, levels = c(1:13), labels = c("ALN", 
+      #                                                                           "BOR", "NEM", "ATN", "ALS", "CON", "ATC", "PAN", "LUS", 
+      #                                                                           "ANA", "MDM", "MDN", "MDS"))
+      # 
       # recode(Data$ENV_ZONE , # Recode ENV_ZONE according to legend '1 =
       # 'ALN'; 2 = 'BOR'; 3 = 'NEM'; 4 = 'ATN'; 5 = 'ALS'; 6 = 'CON'; 7 =
       # 'ATC'; 8 = 'PAN'; 9 = 'LUS'; 10 = 'ANA'; 11 = 'MDM'; 12 = 'MDN'; 13 =
@@ -280,9 +297,11 @@ frg_extract_svi <- function(SVI_File, Shape_File, CLC_File_00, ENV_Zones_File,
       # Process areas burned multiple times ----
       #- -
       
-      BAreas_Name     <- strsplit(basename(Shape_File), ".shp")[[1]]  # Open shapefile of areas burned multiple times
-      BAreas_Dir      <- dirname(Shape_File)  # (Used to determine burnt surface in the overlaps )
-      BAreas_shp_mult <- readOGR(BAreas_Dir, BAreas_Name)
+      # BAreas_Name     <- strsplit(basename(Shape_File), ".shp")[[1]]  # Open shapefile of areas burned multiple times
+      # BAreas_Dir      <- dirname(Shape_File)  # (Used to determine burnt surface in the overlaps )
+      # BAreas_shp_mult <- readOGR(BAreas_Dir, BAreas_Name)
+      # 
+      BAreas_shp_mult <-as(st_read(Shape_File, stringsAsFactors = FALSE, quiet = TRUE),"Spatial")
       Data_Shape_mult <- BAreas_shp_mult@data  # Get attributes data from the shp
       
       # Load the statistics file computed by IDL (Derived from Application of
@@ -326,47 +345,96 @@ frg_extract_svi <- function(SVI_File, Shape_File, CLC_File_00, ENV_Zones_File,
       # Compute the FireYear and Area variable for each fire (From the
       # sahpefile data) and add it to the DataFrame FireYear corresponds to
       # the FIreYear of the earlier fire that originated the overlap
+      estimate_Area <- function(Data_tmp) { 
+        # Accessory function used to compute Burnt area for each CLC class from 
+        # the number of pixels in the ROI Used ALWAYS for areas burned multiple 
+        # times, since no Info is already available regarding the area burned 
+        # in different classes within an overlap 
+        
+        full_Area  <- 250 * 250 * (length(Data_tmp$N_PIX))/10000 
+        Area_For   <- 250 * 250 * (length(Data_tmp$N_PIX[which(Data_tmp$CLC_Class %in%  
+                                                                 c(2, 3, 4, 5, 6))]))/10000 
+        bro_Area   <- 250 * 250 * (length(Data_tmp$N_PIX[which(Data_tmp$CLC_Class %in%  
+                                                                 c(2))]))/10000 
+        con_Area   <- 250 * 250 * (length(Data_tmp$N_PIX[which(Data_tmp$CLC_Class %in%  
+                                                                 c(3))]))/10000 
+        mix_Area   <- 250 * 250 * (length(Data_tmp$N_PIX[which(Data_tmp$CLC_Class %in%  
+                                                                 c(4))]))/10000 
+        scler_Area <- 250 * 250 * (length(Data_tmp$N_PIX[which(Data_tmp$CLC_Class %in%  
+                                                                 c(5))]))/10000 
+        trans_Area <- 250 * 250 * (length(Data_tmp$N_PIX[which(Data_tmp$CLC_Class %in%  
+                                                                 c(6))]))/10000 
+        est_Area  <- data.frame(Area_For = Area_For, bro_Area = bro_Area,  
+                                con_Area = con_Area, mix_Area = mix_Area, trans_Area = trans_Area,  
+                                scler_Area = scler_Area, full_Area = full_Area) 
+      } 
+      
+      
       FireYear    <- numeric(length(ts_data$OVERLAP_ID))
       Area_All    <- numeric(length(ts_data$OVERLAP_ID))
       Area_Forest <- numeric(length(ts_data$OVERLAP_ID))
       IDS         <- unique(ts_data$OVERLAP_ID)
-      ts_data     <- data.table(ts_data, key = "OVERLAP_ID")
+      ts_data     <- data.table(ts_data, key = "OVERLAP_ID", "Year")
       Data_Shape  <- data.table(Data_Shape, key = "OVERLAP_ID")
+      ts_data_sub <- ts_data[Year == 2005]
       
-
-      pb <- txtProgressBar(min = 1, max = length(IDS), style = 3)
+      
+      # pb <- txtProgressBar(min = 1, max = length(IDS), style = 3)
       for (FireID in 1:length(IDS)) {
         
-        Sys.sleep(0.005)
-        setTxtProgressBar(pb, FireID)
-        # if (FireID %in% seq(1, 20000, 100)) 
-        #   (message(FireID, "  ", length(IDS)))
-        #   
+        # Sys.sleep(0.005)
+        # setTxtProgressBar(pb, FireID)
+        if (FireID %in% seq(1, 20000, 400)) {
+          message("---- Processing Burnt area: ", FireID, "  of: ", length(IDS)," ----")
+        }
+        
+        ID_to_find  <- as.numeric(as.character(IDS[FireID]))
+        
+        subdata_shp <- Data_Shape[OVERLAP_ID == ID_to_find]
+        # FireRows    <- which(ts_data$OVERLAP_ID == ID_to_find)  # Rows of the dataframe corresponding to the selected fire
+        FireRows    <- ts_data[OVERLAP_ID == ID_to_find, which = TRUE]
+        # Retrieve Total Area burned in considered CLC_Classes
+        Area_For <- as.numeric(subdata_shp[, "BroadLeave"] + 
+                                 subdata_shp[, "Coniferous"] + 
+                                 subdata_shp[, "MixedFores"] + 
+                                 subdata_shp[, "Sclerophyl"] + 
+                                 subdata_shp[, "Transition"])
+        
+        
+        
         # Rows of the dataframe corresponding to the selected fire
-        FireRows <- which(ts_data$OVERLAP_ID == IDS[FireID])
+        # FireRows <- which(ts_data$OVERLAP_ID == IDS[FireID])
         # Get fire year of the first fire originating the overlap
         min_FireYear <- min(Data_LUT[which(Data_LUT$OVERLAP_ID == 
-                                             IDS[FireID]), ]$YearSeason)  
-        YY <- min_FireYear  # Set Fire Year to the year of the first fire
+                                             ID_to_find), ]$YearSeason)  
+        YY      <- min_FireYear  # Set Fire Year to the year of the first fire
+        # subdata <- ts_data_sub[OVERLAP_ID == ID_to_find & Year == YY] 
+        subdata     <- ts_data_sub[J(ID_to_find), nomatch = 0L] 
+        
         # Estimate burned area in the different LC classes, as the product of the
         # number of pixel*250*250
-        est_Area <- estimate_Area(ts_data[FireRows, ])/n_Years  
-        where_id <- which(Data_Shape$OVERLAP_ID == IDS[FireID])
-        Data_Shape$Area_HA[where_id] <- Data_Shape_mult$Area_Int[BAreas_shp_mult$OVERLAP_ID == 
-                                                                   IDS[FireID]][1]  # Area burned in all land cover types
-        Data_Shape$BroadLeave[where_id] <- est_Area$bro_Area
-        Data_Shape$Coniferous[where_id] <- est_Area$con_Area
-        Data_Shape$MixedFores[where_id] <- est_Area$mix_Area
-        Data_Shape$Sclerophyl[where_id] <- est_Area$scler_Area
-        Data_Shape$Transition[where_id] <- est_Area$trans_Area
+        est_Area <- estimate_Area(subdata)
+        # where_id <- which(Data_Shape$OVERLAP_ID == IDS[FireID])
+        Data_Shape[OVERLAP_ID == ID_to_find]$Area_HA  <- 
+          Data_Shape_mult$Area_Int[BAreas_shp_mult$OVERLAP_ID ==  ID_to_find][1]  # Area burned in all land cover types
+        # Data_Shape[OVERLAP_ID == ID_to_find]$BroadLeave <- est_Area$bro_Area
+        # Data_Shape[OVERLAP_ID == ID_to_find]$Coniferous <- est_Area$con_Area
+        # Data_Shape[OVERLAP_ID == ID_to_find]$MixedFores <- est_Area$mix_Area
+        # Data_Shape[OVERLAP_ID == ID_to_find]$Sclerophyl <- est_Area$scler_Area
+        # Data_Shape[OVERLAP_ID == ID_to_find]$Transition <- est_Area$trans_Area
+        
+        Data_Shape[OVERLAP_ID == ID_to_find, 
+                   c("BroadLeave", "Coniferous", "MixedFores", "Sclerophyl","Transition")] <- 
+          est_Area[,2:6]
+        
         # Assign FireYear
-        FireYear[FireRows]    <- YY
-        browser()
+        FireYear[FireRows]  <- YY
+        
         # Assign total area burnt in forest land cover types
         Area_Forest[FireRows] <- est_Area$Area_For
-        # Assign total area burnt in forest land cover types
+        # Assign total area burnt in forest land cover types - it is the area of the intersect considered !
         Area_All[FireRows]    <- Data_Shape_mult$Area_Int[
-                                       BAreas_shp_mult$OVERLAP_ID == IDS[FireID]][1]  
+          BAreas_shp_mult$OVERLAP_ID == ID_to_find][1]  
       }
       
       ts_data$FireYear    <- FireYear  # Assign FireYear
@@ -433,7 +501,7 @@ frg_extract_svi <- function(SVI_File, Shape_File, CLC_File_00, ENV_Zones_File,
     }
   } else {
     message("---- -> RData file joining MODIS and Shapefile info already existing: ", 
-                basename(Out_RData), "----")
+            basename(Out_RData), "----")
   }
   
   # Completed

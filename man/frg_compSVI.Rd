@@ -5,8 +5,8 @@
 \title{frg_compSVI}
 \usage{
 frg_compSVI(MOD_Dir, Shape_File, CLC_File_00, Scaled_Folder, Start_Year,
-  End_Year, NKer, Method, SRDVI, SNDVI, nodata_out, ReProcIm,
-  Intermediate_Folder)
+  End_Year, NKer, SRDVI, SNDVI, nodata_out, ReProcIm, ROI_File, FireMask_File,
+  FireMask_File_Er, Index = "NDVI", Method = 2)
 }
 \arguments{
 \item{MOD_Dir}{string Folder where the original and preprocessed image will be stored (i.e., the one above the 'Originals' folder)}
@@ -21,13 +21,13 @@ frg_compSVI(MOD_Dir, Shape_File, CLC_File_00, Scaled_Folder, Start_Year,
 
 \item{NKer}{numeric width (in Km) of the moving window used for computation of scaled indexes}
 
-\item{Method}{numeric. 2 = Percentage Median difference computation}
-
 \item{SRDVI}{numeric. 1 = compute SRDVI; 2 =  Don't Compute SRDVI}
 
 \item{SNDVI}{numeric. 1 =  compute SNDVI; 2 = Don't Compute SNDVI}
 
 \item{ReProcIm}{numeric if = 1, already existing MODIS mosaics will be reprocessed}
+
+\item{Method}{numeric. 2 = Percentage Median difference computation}
 
 \item{Intermediate_Folder}{string Folder for storing intermediate processing results}
 }

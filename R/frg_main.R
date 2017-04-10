@@ -94,20 +94,20 @@ frg_main <- function() {
                                     do.buttons = FALSE, horizontal = FALSE, anchor = c(0, 0), width = 200, 
                                     height = 200)
   but_group        <- ggroup(horizontal = FALSE, container = main_gui)
-  create_shape_but <- gbutton(" Create Burned Areas Shapefile", cont = but_group, 
+  create_shape_but <- gbutton(" Create Burned Areas Shapefile", container = but_group, 
                                handler = function(h, ...) {
                                  res <- try(system(as.character(FRG_Options$Create_Shape_Script), 
                                                    wait = FALSE, invisible = FALSE))
                                  message("An error occurred while creating the burned areas shapefile (")
                                })
   
-  process_but      <- gbutton("Process Burnt Areas Data", cont = but_group, 
+  process_but      <- gbutton("Process Burnt Areas Data", container = but_group, 
                                handler = function(h, ...) {
                                  dispose(main_gui)
                                  res <- frg_fullproc_gui()
                                })
   
-  update_oracle_but <- gbutton("Update Oracle tables", cont = but_group, 
+  update_oracle_but <- gbutton("Update Oracle tables", container = but_group, 
                                handler = function(h, ...) {
                                  res <- FRG_Update_Oracle()
                                })
@@ -116,9 +116,9 @@ frg_main <- function() {
          markup = FALSE, editable = FALSE, handler = NULL, container = but_group)
   
   acc_group <- ggroup(horizontal = TRUE, container = but_group)
-  exit_but  <- gbutton("Quit ", cont = acc_group, handler = function(h, ...) {
+  exit_but  <- gbutton("Quit ", container = acc_group, handler = function(h, ...) {
                       res <- FRG_Dispose(main_gui)})
-  help_but  <- gbutton("Help ", cont = acc_group, handler = function(h, ...) {
+  help_but  <- gbutton("Help ", container = acc_group, handler = function(h, ...) {
                       system2("open", file.path(main_dir, "frgtool_manual.pdf"))})
   Main_GUI  <<- main_gui
   visible(main_gui, TRUE)

@@ -29,7 +29,7 @@ if =='Multiple, extract time series for areas burned multiple times}
 
 \item{Shape_File_Orig}{string Filename of the original input BAs shapefile}
 
-\item{LUT_File_Multiple}{string Filename of the LUT table created by FRG_Process_Shapefile.py}
+\item{LUT_File_Multiple}{string Filenlame of the LUT table created by FRG_Process_Shapefile.py}
 
 \item{erode_file}{string Filename of the ENVI mask containing the ERODED ROIS (generated automatically in FRG_Compute_SVI.R)}
 }

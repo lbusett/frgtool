@@ -19,24 +19,125 @@ Licensed for use by: Consiglio Nazionale delle Ricerche
 % Restored file: ENVI_IDL.
 % Restored file: ENVI_IOW.
 % Restored file: ENVI_RV.
-% Compiled module: FRG_CREATE_ROI.
+% Compiled module: FRG_COMPUTE_MEDSCALED_VI.
 % Loaded DLM: MAP_PE.
-% Loaded DLM: SHAPEFILE.
-Analyzing ROI            0 of        16959
-Analyzing ROI         1000 of        16959
-Analyzing ROI         2000 of        16959
-Analyzing ROI         3000 of        16959
-Analyzing ROI         4000 of        16959
-Analyzing ROI         5000 of        16959
-Analyzing ROI         6000 of        16959
-Analyzing ROI         7000 of        16959
-Analyzing ROI         8000 of        16959
-Analyzing ROI         9000 of        16959
-Analyzing ROI        10000 of        16959
-Analyzing ROI        11000 of        16959
-Analyzing ROI        12000 of        16959
-Analyzing ROI        13000 of        16959
-Analyzing ROI        14000 of        16959
-Analyzing ROI        15000 of        16959
-Analyzing ROI        16000 of        16959
---- Saving ROIS to : D:\Temp\tempfrg/Intermed_Proc/ENVI_ROI/Burned_Areas_00_15.ROI
+% Loaded DLM: TIFF.
+% Restored file: ENVI_EX1.
+% Compiled module: PROGRESSBAR__DEFINE.
+% Compiled module: FSC_COLOR.
+Tile 1 of: 16
+% Compiled module: UNDEFINE.
+Class 2
+Class 3
+Class 4
+Class 5
+Class 6
+Class 7
+Tile 2 of: 16
+Class 2
+Class 3
+Class 4
+Class 5
+Class 6
+Class 7
+Tile 3 of: 16
+Class 2
+Class 3
+Class 4
+Class 5
+Class 6
+Class 7
+Tile 4 of: 16
+Class 2
+Class 3
+Class 4
+Class 5
+Class 6
+Class 7
+Tile 5 of: 16
+Class 2
+Class 3
+Class 4
+Class 5
+Class 6
+Class 7
+Tile 6 of: 16
+Class 2
+Class 3
+Class 4
+Class 5
+Class 6
+Class 7
+Tile 7 of: 16
+Class 2
+Class 3
+Class 4
+Class 5
+Class 6
+Class 7
+Tile 8 of: 16
+Class 2
+Class 3
+Class 4
+Class 5
+Class 6
+Class 7
+Tile 9 of: 16
+Class 2
+Class 3
+Class 4
+Class 5
+Class 6
+Class 7
+Tile 10 of: 16
+Class 2
+Class 3
+Class 4
+Class 5
+Class 6
+Class 7
+Tile 11 of: 16
+Class 2
+Class 3
+Class 4
+Class 5
+Class 6
+Class 7
+Tile 12 of: 16
+Class 2
+Class 3
+Class 4
+Class 5
+Class 6
+Class 7
+Tile 13 of: 16
+Class 2
+Class 3
+Class 4
+Class 5
+Class 6
+Class 7
+Tile 14 of: 16
+Class 2
+Class 3
+Class 4
+Class 5
+Class 6
+Class 7
+Tile 15 of: 16
+Class 2
+Class 3
+Class 4
+Class 5
+Class 6
+Class 7
+Tile 16 of: 16
+Class 2
+Class 3
+Class 4
+Class 5
+Class 6
+Class 7
+Writing Output Files
+% Program caused arithmetic error: Floating divide by 0
+% Program caused arithmetic error: Floating illegal operand

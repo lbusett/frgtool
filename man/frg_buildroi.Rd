@@ -4,7 +4,7 @@
 \alias{frg_buildroi}
 \title{frg_buildroi}
 \usage{
-frg_buildroi(Shape_File, CLC_File_00, exp_path_str, ROI_file)
+frg_buildroi(Shape_File, CLC_File_00, exp_path_str, ROI_File)
 }
 \arguments{
 \item{Shape_File}{string Input Shapefile of BAs}

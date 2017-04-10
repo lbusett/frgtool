@@ -59,17 +59,16 @@ frg_fastzonal = function(in_rts,
   if (length(sel_bands) > 0) {
     
     zone_object <- raster(zone_object) %>% 
-                   crop(extent(in_rts[[1]]))
+      crop(extent(in_rts[[1]]))
     
     # Setup chunks ----
     n_cells   <- nrow(zone_object) * ncol(zone_object)
-    ncols     <- ncol(zone_object)
     n_chunks  <- floor(n_cells / maxchunk)
     ts_data   <- list()
     
     # Start data extraction ----
     for (f in seq(along = sel_bands)) {
-      
+       # for (f in 1:1) {  
       full_data <- list()
       date      <- dates[f]
       if (verbose) {message(paste0("Extracting data for year: ",year(date)))}
@@ -86,12 +85,12 @@ frg_fastzonal = function(in_rts,
           endrow   <- ifelse(chunk == 1, nrows - 1, nrows)
           
           full_data[[chunk]] <- data.table(
-              value      = getValues(in_rts[[sel_bands[f]]], startrow, endrow),
-              NAME       = getValues(zone_object   , startrow, endrow), 
-              CLC_Class  = getValues(clc_object    , startrow, endrow), 
-              # ENV_ZONE   = getValues(envzone_object, startrow, endrow), 
-              mask_data  = getValues(mask_object   , startrow, endrow), 
-              Year       = year(date), 
+            value      = getValues(in_rts[[sel_bands[f]]], startrow, endrow),
+            NAME       = getValues(zone_object   , startrow, endrow), 
+            CLC_Class  = getValues(clc_object    , startrow, endrow), 
+            # ENV_ZONE   = getValues(envzone_object, startrow, endrow), 
+            mask_data  = getValues(mask_object   , startrow, endrow), 
+            Year       = year(date), 
             key = 'NAME') %>% 
             # remove data outside polygons (== zones = 0 )  and of 
             # non-core pixels Eroded mask = 0
@@ -130,5 +129,5 @@ frg_fastzonal = function(in_rts,
   }
   
   # Send back the result to the caller
-  ts_data
+  return(ts_data)
 }

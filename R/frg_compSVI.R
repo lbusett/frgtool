@@ -32,12 +32,13 @@
 #' @author Lorenzo Busetto (2016)
 #'         email: lbusett@8gmail.com
 #' @export
+#' 
 frg_compSVI <- function(MOD_Dir, Shape_File, CLC_File_00, Scaled_Folder, Start_Year, 
-                        End_Year, NKer, Method, SRDVI, SNDVI, nodata_out, ReProcIm, 
-                        Intermediate_Folder, ROI_File, 
-                        FireMask_File, FireMask_File_Eroded, 
-                        Index = "NDVI") {
-  
+                        End_Year, NKer, SRDVI, SNDVI, nodata_out, ReProcIm, 
+                        ROI_File, 
+                        FireMask_File, FireMask_File_Er, 
+                        Index = "NDVI", Method = 2) {
+
   message("----------------------------------------------------------")
   message("------------- Computation of Scaled Indexes --------------")
   message("----------------------------------------------------------")
@@ -74,7 +75,7 @@ frg_compSVI <- function(MOD_Dir, Shape_File, CLC_File_00, Scaled_Folder, Start_Y
   # which of the ROI pixels are CORE pixels (i.e., not on the borders)
   
   frg_createmask_eroded(ROI_File, FireMask_File, 
-                        exp_path_str, FireMask_File_Eroded)
+                        exp_path_str, FireMask_File_Er)
   
   
   out_files    <- NULL  
@@ -114,7 +115,7 @@ frg_compSVI <- function(MOD_Dir, Shape_File, CLC_File_00, Scaled_Folder, Start_Y
       )
       
       # Build an IDL batch file using the string defined above ----
-      
+    # browser()  
       batch_file <- file.path(FRG_Options$src_dir_idl, 
                               "/batch_files/FRG_Compute_Med_SVI_batch.pro")
       fileConn <- file(batch_file)

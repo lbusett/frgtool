@@ -49,36 +49,26 @@ frg_def_files <- function(Out_Dir, Start_Year, End_Year, MOD_Dir, Shape_File) {
   ff[["TS_filename"]] <- file.path(ff$Scaled_Dir, "Med_SNDVI", 
                                    paste0("Med_SNDVI", "_", Start_Year, "_", End_Year, "_META")) 
   
+  # Set Basename for statistics output file
+  ff[["Stats_File_Single"]]   <- file.path(ff$out_dir_stats, "Burned_Once",     basename(ff$ExtTS_File_Single))
+  ff[["Stats_File_Multiple"]] <- file.path(ff$out_dir_stats, "Burned_Multiple", basename(ff$ExtTS_File_Multiple))
+  
   
   # Create all required Dirs (if needed) ----
   
-  dir.create(ff$Scaled_Dir,                recursive = TRUE, showWarnings = FALSE)
-  dir.create(ff$Intermed_Dir,              recursive = TRUE, showWarnings = FALSE)
-  dir.create(ff$Summary_Dir,               recursive = TRUE, showWarnings = FALSE)
-  dir.create(ff$OutOrig_Path,              recursive = TRUE, showWarnings = FALSE)
-  dir.create(dirname(ff$ROI_File),         recursive = TRUE, showWarnings = FALSE)
-  dir.create(dirname(ff$FireMask_File),    recursive = TRUE, showWarnings = FALSE)
-  dir.create(dirname(ff$FireMask_File_Er), recursive = TRUE, showWarnings = FALSE)
-  dir.create(ff$out_dir_extrsvi,           recursive = TRUE, showWarnings = FALSE)
-  dir.create(ff$out_dir_stats,             recursive = TRUE, showWarnings = FALSE)
+  dir.create(ff$Scaled_Dir,                   recursive = TRUE, showWarnings = FALSE)
+  dir.create(ff$Intermed_Dir,                 recursive = TRUE, showWarnings = FALSE)
+  dir.create(ff$Summary_Dir,                  recursive = TRUE, showWarnings = FALSE)
+  dir.create(ff$OutOrig_Path,                 recursive = TRUE, showWarnings = FALSE)
+  dir.create(dirname(ff$ROI_File),            recursive = TRUE, showWarnings = FALSE)
+  dir.create(dirname(ff$FireMask_File),       recursive = TRUE, showWarnings = FALSE)
+  dir.create(dirname(ff$FireMask_File_Er),    recursive = TRUE, showWarnings = FALSE)
+  dir.create(ff$out_dir_extrsvi,              recursive = TRUE, showWarnings = FALSE)
+  dir.create(ff$out_dir_stats,                recursive = TRUE, showWarnings = FALSE)
+  dir.create(dirname(ff$Stats_File_Single),   recursive = TRUE, showWarnings = FALSE)
+  dir.create(dirname(ff$Stats_File_Multiple), recursive = TRUE, showWarnings = FALSE)
 
-  
-  # Set Basename for statistics output file
-  # ff[["Stats_File_Single"]] <- file.path(ff$Out_Stats_Dir, 
-  #                                            file_path_sans_ext(basename(ExtTS_RData_File_Single)))  
-  # 
-  # ff[["Stats_Dir_Multiple"]] <- file.path(dirname(dirname(dirname(ExtTS_RData_File_Multiple))), 
-  #                                     "Stat_Analysis", "Burned_Multiple", sep = "")
-  # ff[["Stats_File_Multiple"]] <- file.path(Out_Stats_Dir_Multiple, 
-  #                                              file_path_sans_ext(basename(ExtTS_RData_File_Single)))  # Set Basename for statistics file
-  # dir.create(Out_Stats_Dir_Multiple, recursive = T, 
-  #            showWarnings = F)
-  # 
-  # 
-  # 
-  # dir.create(ff$Out_Stats_Dir_Single, recursive = T, showWarnings = F)  
-  
-  #Send out the `ff` list
+  #Send back the `ff` list ----
   return(ff)
   
 }

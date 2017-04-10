@@ -1,6 +1,0 @@
-Main_Dir = 'E:/busetlo/Documents/Projects/Fire_Regeneration/Source_Code/R-FRG'
-Data_Dir = 'E:/Projects_Data/Fire_Regeneration Data',
-Previous_Dir = 'E:/busetlo/Documents/Projects/Fire_Regeneration/Source_Code/R-FRG/previous',
-No_Data_In_Rast = -999,
-No_Data_Out_Rast = -999,
-IDL_Dir = 'E:/busetlo/Documents/Projects/Fire_Regeneration/Source_Code/IDL-FRG'
