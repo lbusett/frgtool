@@ -48,15 +48,21 @@ frg_main <- function() {
   # setup the processing folders
   main_dir       <- getwd()
   src_dir_idl    <- file.path(getwd(), "IDL") 
-  idl_exe_dir    <- system2("where", args = "idl.exe", stdout = TRUE)
+  if (Sys.info()['sysname'] == "Linux") {
+    idl_exe_dir    <- system2("which", args = "idl", stdout = TRUE)
+  } else {
+    idl_exe_dir    <- system2("where", args = "idl.exe", stdout = TRUE)
+  }
+  
   if (!is.null(attributes(idl_exe_dir)$status)) {
     stop("idl.exe was not found on your PATH. Exiting. Please add the folder containing idl.exe to your
          Windows Path variable. ")
   }
-   src_dir_python <- file.path(getwd(), "python")
-   cfg_dir        <- file.path(getwd(), "config")
-   prev_dir       <- file.path(getwd(), "previous")
-   dir.create(cfg_dir, recursive = TRUE, showWarnings = FALSE)
+  
+  src_dir_python <- file.path(getwd(), "python")
+  cfg_dir        <- file.path(getwd(), "config")
+  prev_dir       <- file.path(getwd(), "previous")
+  dir.create(cfg_dir, recursive = TRUE, showWarnings = FALSE)
   
   # run project configuration if frg_congif.RData is not present
   while (!file.exists(file.path(cfg_dir, "frg_config.RData"))) {
@@ -91,8 +97,8 @@ frg_main <- function() {
   }
   
   main_gui         <- gbasicdialog(title = "Fire Regeneration Monitoring Tool", 
-                                    do.buttons = FALSE, horizontal = FALSE, anchor = c(0, 0), width = 200, 
-                                    height = 200)
+                                   do.buttons = FALSE, horizontal = FALSE, anchor = c(0, 0), width = 200, 
+                                   height = 200)
   but_group        <- ggroup(horizontal = FALSE, container = main_gui)
   create_shape_but <- gbutton(" Create Burned Areas Shapefile", container = but_group, 
                                handler = function(h, ...) {

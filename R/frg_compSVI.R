@@ -60,7 +60,10 @@ frg_compSVI <- function(MOD_Dir, Shape_File, CLC_File_00, Scaled_Folder, Start_Y
   # Ceate a ROI file on the basis of the ORIGINAL SHAPEFILE specified -----
   # by the user and of the INPUT CLC_00_File (used to determine extent !)
   
-  frg_buildroi(Shape_File, CLC_File_00, exp_path_str, ROI_File)
+  ROI_File <- frg_buildroi(Shape_File, 
+                           CLC_File_00, 
+                           exp_path_str, 
+                           ff$ROI_file)
   
   # Create a 'Mask' envi file using the ROI File created from the burned areas ----
   # shapefile specified by the user. 
@@ -68,7 +71,11 @@ frg_compSVI <- function(MOD_Dir, Shape_File, CLC_File_00, Scaled_Folder, Start_Y
   # computation of statistics needed for the calculation of the scaled
   # indexes.
   
-  frg_createmask(ROI_File, CLC_File_00, exp_path_str, FireMask_File)
+  FireMask_File <- frg_createmask(ROI_File, 
+                                  CLC_File_00, 
+                                  exp_path_str,
+                                  ff$Intermed_Dir, 
+                                  ff$FireMask_File)
   
   # Create an ERODED 'Mask' envi file the ROI File created from the burned areas ----
   # shapefile specified by the user. The mask file is successively used to determine
