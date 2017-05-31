@@ -9,7 +9,7 @@ library(raster)
 
 # st_crs(adm) = st_crs(st_read("/home/lb/Google_Drive/FRG/Input_Shapefiles/Burned_Areas_00_15.shp"))
 
-in_orig    <- "/home/lb/Google_Drive/FRG/Input_Shapefiles/Burned_Areas_00_15.shp" %>% 
+in_orig    <- "/home/lb/Google_Drive/FRG/Input_Shapefiles/" %>% 
   st_read(stringsAsFactors = FALSE) 
 st_crs(in_orig) <- 3035 
 # st_intersection(adm)
@@ -40,16 +40,24 @@ in_orig <- st_cast(in_orig, "MULTIPOLYGON")
 # union_orig <- st_union(in_orig) %>% 
 #   as("Spatial")
 
-start.time <- Sys.time()
+
 
 # all_features  <- st_union(st_cast(in_orig[which(in_orig$ID != id), ], "MULTIPOLYGON"))
-lgt = NA
-out_single = list()
-out_multi = list()
-count_single <- 1
-count_multi  <- 1
-for (id_ind in seq_along(along.with = in_orig$ID)) {
-  print(id_ind)
+
+start.time <- Sys.time()
+cl <- parallel::makeCluster(4)  
+doParallel::registerDoParallel(cl)  
+
+n_IDs = length(in_orig$ID)
+# pb <- tcltk::tkProgressBar("Parallel task", min = 1, max = 100)
+results <- foreach::foreach(id_ind = 1:100, .packages = c("tcltk", "sf")) %dopar% {
+  
+  if (!exists("pb2")) {
+    pb2 <- tcltk::tkProgressBar("Parallel task", min = 1, max = 100)
+  }
+  tcltk::setTkProgressBar(pb2, id_ind)
+  Sys.sleep(0.05)
+  
   id = in_orig$ID[id_ind]
   single_geom <- in_orig[which(in_orig$ID == id), ]
   all_others  <- in_orig[which(in_orig$ID != id), ]
@@ -60,7 +68,8 @@ for (id_ind in seq_along(along.with = in_orig$ID)) {
   if (n_inters > 0) {
     
     intersections <- st_intersection(single_geom, all_others)
-    intersections <- intersections[which(st_dimension(intersections) == 2),]
+    intersections <- intersections[which(st_dimension(intersections) == 2),] %>% 
+      select(c(1:22, geoms))
     
     if (length(intersections$ID) != 0 ) {
       
@@ -84,33 +93,45 @@ for (id_ind in seq_along(along.with = in_orig$ID)) {
         }
         difference    <- st_difference(single_geom, st_union(intersections))
         
-        
         if (length(difference$ID != 0)) {
-          out_single[[count_single]] <- difference #st_cast(difference, "MULTIPOLYGON")
-          out_multi[[count_multi]]   <- intersections #st_cast(intersections, "MULTIPOLYGON")
-          count_single               <- count_single + 1
-          count_multi                <- count_multi + 1
+          return(list(single = st_cast(difference, "MULTIPOLYGON"), multi = st_cast(intersections, "MULTIPOLYGON")))
         }
         
       } else {
-        out_single[[count_single]] <- single_geom
-        count_single               <- count_single + 1
+        return(list(single = st_cast(single_geom, "MULTIPOLYGON"), multi = NULL)) 
         
       }
-      # difference
     } else {
-      out_single[[count_single]] <- single_geom
-      count_single               <- count_single + 1
+      return(list(single = st_cast(single_geom, "MULTIPOLYGON"), multi = NULL))
     }
   } else {
-    out_single[[count_single]] <- single_geom
-    count_single               <- count_single + 1
-    # single_geom
+    return(list(single = st_cast(single_geom, "MULTIPOLYGON"), multi = NULL))
   }
 }  
-
+stopCluster(cl)
 end.time <- Sys.time()
-start.time - end.time
+end.time - start.time 
+
+out_single = list()
+out_multi = list()
+count_single <- 1
+count_multi  <- 1
+
+for (i in 1: 100) {
+  
+  single <- results[[i]]$single
+  if (length(multi$ID) != 0) {
+    out_single[[i]] <- results[[i]]$single
+    count_single <- count_single +1
+  }
+  
+  multi <- results[[i]]$multi
+  if (length(multi$ID) != 0) {
+    out_multi[[count_multi]] <- multi
+    count_multi <- count_multi +1
+  }
+  
+}
 
 
 out_single_all <- out_single %>% 
