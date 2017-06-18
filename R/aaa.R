@@ -19,12 +19,28 @@ polys <- st_as_sf(xy, coords = c(2,3)) %>%
   as("Spatial")
 
 aaa <- (SpatialPolygons2PolySet(polys))
-bb = combinePolys(aaa)
+bb = PolySet2SpatialLines(aaa) %>% 
+  st_as_sf() %>% 
+  st_cast("POLYGON")
 
 
-int.armadillo <- combinePolys(joinPolys(aaa, aaa, "INT"))
+int.armadillo <- (joinPolys(aaa,"INT"))
 
-plotPolys(int.armadillo, col=int.armadillo$PID, lwd=2)
+bbb = PolySet2SpatialPolygons(int.armadillo) %>% 
+  st_as_sf() %>% 
+  st_cast("MULTIPOLYGON") %>% 
+  st_cast("POLYGON") %>% 
+  mutate(id = 1:625) %>% 
+  mutate(id = factor(id))
+
+kk = st_as_sf(polys)
+ccc = st_difference(kk, bbb)
+
+plot(bbb[1], col = bbb$id)
+
+intersections <- gIntersection(polys,polys)
+
+plotPolys(int.armadillo, border=int.armadillo$SID, lwd=2)
 
                  SpatialPolygons2PolySet(piece), operation="INT")
 
