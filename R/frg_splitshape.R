@@ -7,9 +7,33 @@ library(raster)
 #   Prepare the shapefile - remove invalid geoms and cast all to multipolygo####
 in_multi <- "/home/lb/Google_Drive/My_Files/Burned_Areas_00_15_Multiple_Fires.shp"
 st_read()
-in_orig    <- "/home/lb/Google_Drive/FRG/Input_Shapefiles/Burned_Areas_00_15.shp" %>% 
+in_orig    <- "D:/gdrive/FRG/Input_Shapefiles/Burned_Areas_00_15.shp" %>% 
   st_read(stringsAsFactors = FALSE) 
 st_crs(in_orig) <- 3035 
+
+in_rast <- "D:/Temp/tempfrg/Scaled_Indexes/Med_SNDVI/Yearly_Images/2012/Med_SNDVI_2012"
+rast_shape <- fasterize(in_orig, rast_template, fun = "sum")
+
+tr <- blockSize(rast_shape)
+tr
+s <- raster(rast_shape)
+s <- writeStart(rast_shape,
+                filename  = "D:/Temp/tempfrg/Input_Shapefiles/raster/burned_areas_2015_rast.tif",
+                overwrite = TRUE,
+                datatype  = "INT1U",
+                options = "COMPRESS=DEFLATE")
+
+for (i in 1:tr$n) {
+  v <- getValuesBlock(rast_shape, row = tr$row[i], nrows = tr$nrows[i])
+  s <- writeValues(s, v, tr$row[i])
+}
+s <- writeStop(s)
+
+writeRaster(rast_shape,
+            filename = "D:/Temp/tempfrg/Input_Shapefiles/raster/burned_areas_2015_rast.tif",
+            datatype = "INT1U", options = "COMPRESS=DEFLATE")
+
+
 for (i in seq_along(in_orig$id)) in_orig[i,] <- st_cast(in_orig[i,], "MULTIPOLYGON")
 valid = st_is_valid(in_orig)
 if (max(valid) != 0) {
