@@ -9,11 +9,9 @@
 def main(Burned_Areas_Full_shp, Intermediate_Folder):
 
     # Define useful variables
-    Temp_Out_Folder = Intermediate_Folder + "\\Burnt_Area_Overlap_Analysis\\"
-    # Accessory shape - contains all overlapping BAs, replicated
-    Burned_Areas_Intersects_shp = Temp_Out_Folder + "Burnt_Areas_Intersects.shp"
-    # Paths of the outputs
-    Burned_Areas_Single_shp   = Intermediate_Folder+'\\'+os.path.splitext(os.path.basename(Burned_Areas_Full_shp))[0]+'_Single_Fires.shp'          # Will contain shapefile of areas burned only once
+    Temp_Out_Folder = Intermediate_Folder+'\\Burnt_Area_Overlap_Analysis\\'
+    Burned_Areas_Intersects_shp =Temp_Out_Folder+"Burnt_Areas_Intersects.shp"                   # Accessory shape - contains all overlapping BAs, replicated
+    Burned_Areas_Single_shp = Intermediate_Folder+'\\'+os.path.splitext(os.path.basename(Burned_Areas_Full_shp))[0]+'_Single_Fires.shp'          # Will contain shapefile of areas burned only once
     Burned_Areas_Multiple_shp = Intermediate_Folder+'\\'+os.path.splitext(os.path.basename(Burned_Areas_Full_shp))[0]+'_Multiple_Fires.shp'       # Will contain shpefile of areas burned multiple times
 
 ##    Burned_Areas_Single_shp_summary = Results_Summary_Folder+'\\Shapefiles\\'+os.path.splitext(os.path.basename(Burned_Areas_Full_shp))[0]+'_Single_Fires.shp'          # Will contain shapefile of areas burned only once

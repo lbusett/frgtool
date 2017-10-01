@@ -13,7 +13,7 @@
 
 FRG_Create_Shape = function(){
   
-  out = system (as.character(FRG_Options$Create_Shape_Script) , wait = FALSE,invisible = FALSE)
+  out = system(as.character(FRG_Options$Create_Shape_Script) , wait = FALSE,invisible = FALSE)
 }
 
 #   Main_W =  gbasicdialog("Create Shapefile from Oracle Tables", horizontal = FALSE, do.buttons = FALSE, spacing = 10)

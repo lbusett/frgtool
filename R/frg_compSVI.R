@@ -34,10 +34,11 @@
 #' @export
 #' 
 frg_compSVI <- function(MOD_Dir, Shape_File, CLC_File_00, Scaled_Folder, Start_Year, 
-                        End_Year, NKer, SRDVI, SNDVI, nodata_out, ReProcIm, 
+                        End_Year, NKer, SRDVI, SNDVI, nodata_out, 
                         ROI_File, 
                         FireMask_File, FireMask_File_Er, 
-                        Index = "NDVI", Method = 2) {
+                        Index = "NDVI", Method = 2, 
+                        force_update) {
 
   message("----------------------------------------------------------")
   message("------------- Computation of Scaled Indexes --------------")
@@ -63,7 +64,8 @@ frg_compSVI <- function(MOD_Dir, Shape_File, CLC_File_00, Scaled_Folder, Start_Y
   ROI_File <- frg_buildroi(Shape_File, 
                            CLC_File_00, 
                            exp_path_str, 
-                           ff$ROI_file)
+                           ff$ROI_file, 
+                           force_update)
   
   # Create a 'Mask' envi file using the ROI File created from the burned areas ----
   # shapefile specified by the user. 
@@ -75,14 +77,16 @@ frg_compSVI <- function(MOD_Dir, Shape_File, CLC_File_00, Scaled_Folder, Start_Y
                                   CLC_File_00, 
                                   exp_path_str,
                                   ff$Intermed_Dir, 
-                                  ff$FireMask_File)
+                                  ff$FireMask_File, 
+                                  force_update)
   
   # Create an ERODED 'Mask' envi file the ROI File created from the burned areas ----
   # shapefile specified by the user. The mask file is successively used to determine
   # which of the ROI pixels are CORE pixels (i.e., not on the borders)
   
   frg_createmask_eroded(ROI_File, FireMask_File, 
-                        exp_path_str, FireMask_File_Er)
+                        exp_path_str, FireMask_File_Er, 
+                        force_update)
   
   
   out_files    <- NULL  
@@ -104,7 +108,7 @@ frg_compSVI <- function(MOD_Dir, Shape_File, CLC_File_00, Scaled_Folder, Start_Y
     
     # If output file for selected year and index doesn't exist, or ReProc =
     # Yes, start the processing
-    if (file.exists(out_file) == FALSE | ReProcIm == 1) {
+    if (file.exists(out_file) == FALSE | force_update) {
       
       # Update status bar
       message("---- Computing Med_SNDVI for year ", yy," ----")
@@ -164,7 +168,8 @@ frg_compSVI <- function(MOD_Dir, Shape_File, CLC_File_00, Scaled_Folder, Start_Y
   
   frg_createmeta(Index, Start_Year, End_Year, 
                  Method, Scaled_Folder, 
-                 out_files)
+                 out_files, 
+                 force_update)
   
   # End cycle SNDVI vs SRDVI
   

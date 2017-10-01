@@ -44,8 +44,10 @@ frg_moddownload <- function(OutOrig_Path,
     write("inst/ExtData/frg_modistsp_opts_test.json")
   
   # Launch MODIStsp   ----
-  MODIStsp(options_file = "inst/ExtData/frg_modistsp_opts_test.json", gui = FALSE)
+  MODIStsp(options_file = "inst/ExtData/frg_modistsp_opts_test.json",
+           gui = FALSE)
   
+    
   message("--- Download, mosaicing and reprojection for ", yy,  "complete ! ---")
   
   return("DONE")

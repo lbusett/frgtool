@@ -1,6 +1,11 @@
 #' @title frg_fullproc_gui
 #' @description Function used to create the GUI for selecting the parameters for 
-#' full FRG procesing
+#' full FRG processing.
+#' @param force_update `logical` If TRUE, intermediate processing outputs (e.g., 
+#'   creation of burnt areas shapefile, computation of SVI, etc. are re-run 
+#'   even if intermecdiate processing outputs are already present in the 
+#'   specified output folders. Useful to make a "clean run" of the tool, 
+#'   Default: FALSE) 
 #' @details Main GUI of the tool - used only to set the processing options and 
 #' call the appropraite routines for updating results (FRG_Full_Processing.R)
 #' If the user chooses 'Start' and all processing parameters are OK, the selected
@@ -13,7 +18,7 @@
 #' @import gWidgetsRGtk2
 #' @importFrom hash hash values
 #' 
-frg_fullproc_gui <- function() {
+frg_fullproc_gui <- function(force_update = FALSE) {
   
   if (file.exists(file.path(FRG_Options$Previous_Dir, "frg_previous.RData"))) {
     load(file.path(FRG_Options$Previous_Dir, "frg_previous.RData"))
@@ -218,7 +223,8 @@ frg_fullproc_gui <- function() {
                          SNDVI       = 1, 
                          ReProc      = Full_Selection$ReProc, 
                          ReDown      = Full_Selection$ReDown, 
-                         ReProcIm    = Full_Selection$ReProcIm)
+                         ReProcIm    = Full_Selection$ReProcIm,
+                         force_update)
       
       enabled(Main_GUI) <- TRUE
       

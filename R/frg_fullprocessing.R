@@ -31,15 +31,31 @@
 #' @importFrom rgdal setCPLConfigOption
 #' @export
 
-frg_fullprocessing <- function(MOD_Dir     , Shape_File  , CLC_File_00 , Out_Dir    , 
-                               Start_Year  , End_Year    , Method      , SNDVI      = 1, 
-                               ReProc      , ReDown      , ReProcIm    , erode      = 1, 
-                               min_pix = 10, MedWdt = 3  , NKer        ,  sig_level = 0.05, 
-                               sub_zones= 0, perc_diff  , 
+frg_fullprocessing <- function(MOD_Dir     ,
+                               Shape_File  ,
+                               CLC_File_00 ,
+                               Out_Dir     , 
+                               Start_Year  ,
+                               End_Year    ,
+                               Method      ,
+                               SNDVI    = 1, 
+                               ReProc      ,
+                               ReDown      ,
+                               ReProcIm    ,
+                               erode    = 1, 
+                               min_pix = 10,
+                               MedWdt = 3  ,
+                               NKer        ,
+                               sig_level = 0.05, 
+                               sub_zones= 0,
+                               perc_diff  , 
                                # Flags to skip some processing steps in debugging phase - Set all to T
                                # for complete processing - proceed with caution !
-                               MOD_dwl   = FALSE,  Comp_SVI  = FALSE, Extr_Stat = FALSE,
-                               Sig_Anal  = TRUE) {
+                               MOD_dwl   = TRUE,
+                               Comp_SVI  = TRUE,
+                               Extr_Stat = TRUE,
+                               Sig_Anal  = TRUE, 
+                               force_update) {
   
   #- Initialize Processing ---- 
   #: Set processing Dirs on the basis of user's choice and set some processing parameters 
@@ -47,10 +63,11 @@ frg_fullprocessing <- function(MOD_Dir     , Shape_File  , CLC_File_00 , Out_Dir
   selection <- "yes"  # Check if Main Results Dir already exist and ask if overwrite
   
   if (file.exists(Out_Dir) & selection == "No") {
-    selection <- tk_messageBox(caption = "Overwrite Warning", type = c("yesno"), 
-                               message = "A results Dir for the same analysis already exists ! 
-                                          All results will be overwritten !\n Do you want to continue ? ", 
-                               default = "no")
+    selection <- tk_messageBox(
+      caption = "Overwrite Warning", type = c("yesno"), 
+      message = "A results Dir for the same analysis already exists ! 
+      All results will be overwritten !\n Do you want to continue ? ", 
+      default = "no")
   }
   
   if (selection == "yes") {
@@ -65,13 +82,14 @@ frg_fullprocessing <- function(MOD_Dir     , Shape_File  , CLC_File_00 , Out_Dir
     #- Step 1: Download and preprocessing MODIS data ---------
     #- Substituted with calls to MODIStsp package in v1.0
     
-    if (MOD_dwl == T) {
+    if (MOD_dwl == TRUE) {
       
       er <- frg_modproc(ff$OutOrig_Path, 
                         Start_Year, 
                         End_Year, 
                         ReProcIm, 
-                        ReDown)
+                        ReDown, 
+                        force_update)
       
     }  # End if on  MODIS processing
     
@@ -85,11 +103,11 @@ frg_fullprocessing <- function(MOD_Dir     , Shape_File  , CLC_File_00 , Out_Dir
                         Start_Year  = Start_Year,  End_Year      = End_Year, 
                         NKer = NKer , 
                         SRDVI = SRDVI, SNDVI = SNDVI, 
-                        nodata_out       = FRG_Options$No_Data_Out_Rast, 
-                        ReProcIm         = ReProcIm, 
+                        nodata_out       = FRG_Options$No_Data_Out_Rast,
                         ROI_File         = ff$ROI_File,
                         FireMask_File    = ff$FireMask_File, 
-                        FireMask_File_Er = ff$FireMask_File_Er)
+                        FireMask_File_Er = ff$FireMask_File_Er, 
+                        force_update)
       
       message(" -> Computation of Scaled Indexes Completed")
       message("----------------------------------------------------------")
@@ -110,11 +128,29 @@ frg_fullprocessing <- function(MOD_Dir     , Shape_File  , CLC_File_00 , Out_Dir
       # Process the Burnt area shapefile to create the shapefile of areas ----
       # burnt once of areas burnt multiple times 
       
-      # Shape_Files_Inter = FRG_Process_Shapefile(Shape_File = Shape_File,
-      # Intermed_Dir = Intermed_Dir, CLC_File_00=CLC_File_00)
-      Shape_Files_Inter <- data.frame(Shape_File_Single = "D:/Temp/tempfrg/Intermed_Proc/Shapefiles/Burned_Areas_00_15_Single_Fires.shp", 
-                                      Shape_File_Multiple = "D:/Temp/tempfrg/Intermed_Proc/Shapefiles/Burned_Areas_00_15_Multiple_Fires.shp", 
-                                      LUT_File_Multiple = "D:/Temp/tempfrg/Intermed_Proc/Shapefiles/Burned_Areas_00_15_Intersect_LUT_csv.csv")
+      Shape_File_Single = file.path(ff$Intermed_Dir, "Shapefiles/",
+                                    paste0(tools::file_path_sans_ext(Shape_File), 
+                                           "_Single_Fires.shp"))
+      Shape_File_Multiple = file.path(ff$Intermed_Dir, "Shapefiles/",
+                                      paste0(tools::file_path_sans_ext(Shape_File), 
+                                             "_Multiple_Fires.shp"))
+      LUT_File_Multiple = file.path(ff$Intermed_Dir, "Shapefiles/",
+                                    paste0(tools::file_path_sans_ext(Shape_File), 
+                                           "_Intersect_LUT_csv.csv"))
+      
+      if (!((file_exists(Shape_File_Single) & 
+             file_exists(Shape_File_Multiple) & 
+             file_exists(LUT_File_Multiple)) | 
+            force_update)) {
+        
+        Shape_Files_Inter = FRG_Process_Shapefile(Shape_File   = Shape_File,
+                                                  Intermed_Dir = ff$Intermed_Dir,
+                                                  CLC_File_00  = CLC_File_00)
+      } else {
+        Shape_Files_Inter <- data.frame(Shape_File_Single = Shape_File_Single, 
+                                        Shape_File_Multiple = Shape_File_Multiple, 
+                                        LUT_File_Multiple = LUT_File_Multiple)
+      }
       
       # Set Output files for Time Series Extraction on single and multiple ----
       # burnt areas
@@ -183,10 +219,10 @@ frg_fullprocessing <- function(MOD_Dir     , Shape_File  , CLC_File_00 , Out_Dir
     # Copy the main processing results csv files to the 'summaries' Dir -----
     # and create the summary subsetted shapefiles
     
-    Shape_Files_Inter <- data.frame(Shape_File_Single = "D:/Temp/tempfrg/Intermed_Proc/Shapefiles/Burned_Areas_00_15_Single_Fires.shp", 
-                                    Shape_File_Multiple = "D:/Temp/tempfrg/Intermed_Proc/Shapefiles/Burned_Areas_00_15_Multiple_Fires.shp", 
-                                    LUT_File_Multiple = "D:/Temp/tempfrg/Intermed_Proc/Shapefiles/Burned_Areas_00_15_Intersect_LUT_csv.csv")
-    
+    # Shape_Files_Inter <- data.frame(Shape_File_Single = "D:/Temp/tempfrg/Intermed_Proc/Shapefiles/Burned_Areas_00_15_Single_Fires.shp", 
+    #                                 Shape_File_Multiple = "D:/Temp/tempfrg/Intermed_Proc/Shapefiles/Burned_Areas_00_15_Multiple_Fires.shp", 
+    #                                 LUT_File_Multiple = "D:/Temp/tempfrg/Intermed_Proc/Shapefiles/Burned_Areas_00_15_Intersect_LUT_csv.csv")
+    # 
     # TODO : Extract this to a function !!!!
     message("----------------------------------------------------------")
     message("-> Create Final output summary tables and shapefiles  ----")

@@ -8,6 +8,7 @@
 #' of burned areas, which allows to identify non-border (CORE) burnt pixels.
 #' See `FRG_Create_Mask_Eroded.pro` in `/IDL/VI_Elaborations` for further documentation
 #' @param ROI_file 
+#' @param force_update
 #' @inheritParams frg_compSVI
 #' @inheritParams frg_fullprocessing
 #' @importFrom tools file_path_sans_ext
@@ -15,13 +16,14 @@
 #' @export
 
 frg_createmask_eroded <- function(ROI_File, FireMask_File, exp_path_str, 
-                                  FireMask_File_Eroded) {
+                                  FireMask_File_Eroded, 
+                                  force_update) {
   
 
-  # Check if mask already existing, If not, create it 
-  selection <- "no"  # for debugging - set to "yes" to rebuild mask even if already existing
+  # Check if mask already existing, If yes, do not recreate it unless 
+  # force_update == TRUE
   
-  if (!file.exists(FireMask_File_Eroded) | selection == "yes") {
+  if (!file.exists(FireMask_File_Eroded) | force_update) {
     
     # Update status bar
     message("---- Creating Eroded Burnt Areas Mask File: ", FireMask_File_Eroded, " ----")  

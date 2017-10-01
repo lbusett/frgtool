@@ -7,18 +7,18 @@
 #' @author Lorenzo Busetto, PhD (2012)
 #'         email: lbusett@gmail.com
 
-frg_compmean <- function(OutOrig_Path, 
-                         ReProc, 
-                         yy, 
+frg_compmean <- function(OutOrig_Path,
+                         yy,
                          UI_check,
-                         max_UI) {
+                         max_UI, 
+                         force_update) {
   
   # Crete output folders if necessary ----
   out_dir_avg      <- file.path(OutOrig_Path,'NDVI','Averages')				
   outfilename_avg  <- file.path(out_dir_avg, paste0("NDVI_Average_",yy,".tif"))
   dir.create(out_dir_avg, showWarnings = FALSE, recursive = T)
   
-  if (!file.exists(outfilename_avg) | ReProc == TRUE) {
+  if (!file.exists(outfilename_avg) | force_update == TRUE) {
     
     # Get file names for NDVI, UI and Reliability for the selected year ----
     NDVI_Dir <- file.path(OutOrig_Path,"time_series/VI_16Days_250m_v6/NDVI")

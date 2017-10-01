@@ -31,7 +31,7 @@
 "nodata_change": "Yes",
 "scale_val": "No",
 "delete_hdf": "No",
-"reprocess": "No",
+"reprocess": "Yes",
 "bbox": [ 2.6e+06, 1.4e+06, 7.3e+06, 5.45e+06 ],
 "out_folder": "D:\\Temp\\tempfrg\\MODIS_data\\/Originals/time_series",
 "out_folder_mod": "D:\\Temp\\tempfrg\\MODIS_data\\/Originals/hdfs",

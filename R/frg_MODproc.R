@@ -36,7 +36,8 @@ frg_modproc <- function(OutOrig_Path,
                         ReProcIm, 
                         ReDown, 
                         UI_check = TRUE, 
-                        max_UI = 5) {
+                        max_UI = 5, 
+                        force_update) {
   
   # Create output folder and Initialize processing variables ----
   # Print Messages ----
@@ -60,7 +61,11 @@ frg_modproc <- function(OutOrig_Path,
     
     message("----  Computing Average of summer values for ", yy, "-----")
     
-    er <- frg_compmean(OutOrig_Path, ReProcIm, yy, UI_check, max_UI)
+    er <- frg_compmean(OutOrig_Path,
+                       yy,
+                       UI_check,
+                       max_UI, 
+                       force_update)
     
   } # End Cycle on years
   

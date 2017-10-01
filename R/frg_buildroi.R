@@ -14,12 +14,13 @@
 #' @export
 
 frg_buildroi <- function(Shape_File, CLC_File_00, 
-                         exp_path_str, ROI_File) {
+                         exp_path_str, ROI_File, 
+                         force_update) {
   
   # Check if ROI already existing, If not, create it 
   
-  selection <- "no"  # for debugging - set to "yes" to rebuild rois even if already existing
-  if (!file.exists(ROI_File) | selection == "yes") {
+  # for debugging - set to "yes" to rebuild rois even if already existing
+  if (!file.exists(ROI_File) | force_update) {
     message("---- IDL-> Creating ROI File: ", ROI_File, " Please Wait ! ----")
     
     # Build the command to run the FRG_Create_ROI.pro IDL funtion ----
@@ -32,7 +33,8 @@ frg_buildroi <- function(Shape_File, CLC_File_00,
     # Create the batch file needed to run the FRG_Create_ROI.pro IDL funtion ----
     # from a command shell
     
-    batch_file <- file.path(FRG_Options$src_dir_idl, "batch_files/FRG_Create_ROI_batch.pro")
+    batch_file <- file.path(FRG_Options$src_dir_idl,
+                            "batch_files/FRG_Create_ROI_batch.pro")
     fileConn   <- file(batch_file)
     writeLines(c(exp_path_str, 
                  "envi, /restore_base_save_files  ", 
