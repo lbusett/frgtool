@@ -10,8 +10,8 @@ in_rast_template <- raster(raster("D:/Temp/tempfrg/Scaled_Indexes/Med_SNDVI/Year
 frg_create_shapefiles <- function(in_burned_file, in_rast_template) {
   
   in_burned  <- in_burned_file %>% 
-    st_read(stringsAsFactors = FALSE) 
-  st_crs(in_burned) <- 3035 
+    sf::st_read(stringsAsFactors = FALSE) 
+  sf::st_crs(in_burned) <- 3035 
   
   #   ____________________________________________________________________________
   #   rasterize the burned area shape and save to tif, then write it to tiff  ####
@@ -35,8 +35,8 @@ frg_create_shapefiles <- function(in_burned_file, in_rast_template) {
   }
   s <- writeStop(s)
   
-  #   ____________________________________________________________________________
-  #   Re-polygonyze the rasterized shape to have one polygon for each         ####
+  #   __________________________________________________________________________
+  #   Re-polygonyze the rasterized shape to have one polygon for each      ####
   #   intersection, with value equal to the number of overlaps (i.e., number
   #   of times the area burned in the analyzed period)
   
@@ -45,38 +45,75 @@ frg_create_shapefiles <- function(in_burned_file, in_rast_template) {
                                   quiet = FALSE,
                                   overwrite = T)
 
-  #   ____________________________________________________________________________
-  #   Process areas burned onces                                                  ####
+  valid = st_is_valid(final_polys)
+    if (max(valid) != 0) {
+    final_polys[which(valid == FALSE),] = st_cast(st_buffer(
+      final_polys[which(valid == FALSE),], 0.01), "MULTIPOLYGON")
+  }
+  test  <- sf::st_intersection(final_polys, final_polys)
+  test2 <- sf::st_intersects(final_polys, final_polys)
+  #   _________________________________________________________________________
+  #   Process areas burned onces                                           ####
   
-  burned_once <- final_polys %>% 
-    filter(n_inters == 1)
-  
-  # Validate geometries
+  burned_once <- final_polys %.>% 
+    dplyr::filter(., n_inters == 1) %.>% 
+    sf::st_cast(., "POLYGON") %.>% 
+    dplyr::mutate(., area = as.numeric(sf::st_area(.))) %.>% 
+    dplyr::filter(., area >= 62500)
+
+  # Validate geometries ----
   valid = st_is_valid(in_burned)
   if (max(valid) != 0) {
-    in_burned[which(valid == FALSE),] = st_cast(st_buffer(in_burned[which(valid == FALSE),], 0.01), "MULTIPOLYGON")
+    in_burned[which(valid == FALSE),] = st_cast(st_buffer(
+      in_burned[which(valid == FALSE),], 0.01), "MULTIPOLYGON")
   }
-  
+  sf::st_crs(burned_once) <- 3035 
   valid = st_is_valid(burned_once)
   if (max(valid) != 0) {
-    burned_once[which(valid == FALSE),] = st_cast(st_buffer(burned_once[which(valid == FALSE),], 0.01), "MULTIPOLYGON")
+    burned_once[which(valid == FALSE),] = st_cast(st_buffer(
+      burned_once[which(valid == FALSE),], 0.01), "POLYGON")
   }
-  st_crs(burned_once) <- 3035 
-  # Re-intersect with original shape to retrieve attributes
-  intersected <- sf::st_intersection(burned_once, in_burned)
+  sf::st_crs(burned_once) <- 3035 
+  
+  
+  # Re-intersect with original shape to retrieve attributes ----
+  intersected <- sf::st_intersection(burned_once, in_burned["ID"]) %>% 
+    sf::st_cast(., "POLYGON") %.>% 
+    dplyr::mutate(., area = as.numeric(sf::st_area(.))) %.>% 
+    dplyr::filter(., area > 62500) %.>%
+    dplyr::arrange(., ID)
+ 
+  b <- intersected[1:100,]
+  a <- group_by( b , ID) %.>% 
+    aggregate(., by = list(b$ID), FUN = sum) 
+    
+  
+  
+  a <- data.table(intersected, key = "ID")[16:17]
+  a$geometry <- sf::st_cast(a$geometry, "POLYGON")
+  b <- a[, geometry := sf::st_union(sf::st_cast(a$geometry, "POLYGON")), by = "ID"]
+  
+  
+  b = sprawl::dissolve_shape(a, "ID") 
+  
+  n = 10
+   plot(in_burned[n,1], col = "transparent", border = "red")
+   plot(comp_shape[n,1], col = "transparent", border = "blue", add = T)
+   plot(intersected[n,1], add = T)
+    
   tmp <- intersected
   
   a = intersected %>% 
     dplyr::group_by(ID) %>%
       summarize_at(c(1:22), first) 
   
-  a$area <- st_area(a)
-  a <- filter(a, as.numeric(area) >= 1000)
+  # a$area <- st_area(a)
+  # a <- filter(a, as.numeric(area) >= 1000)
   
 }
 
 
-
+comp_shape <- sf::st_read("D:/Temp/tempfrg/Intermed_Proc/Shapefiles/Burned_Areas_00_15_Single_Fires.shp")
 
 
 

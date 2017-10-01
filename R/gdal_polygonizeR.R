@@ -61,7 +61,8 @@ gdal_polygonizeR <- function(x,
 
     system2('python', args = (paste0(sprintf('"%1$s" "%2$s" -f "%3$s" "%4$s.shp"',
                                              pypath, rastpath, gdalformat, outshape),
-                                     " -fieldname n_inters -8")))
+                                     # " -fieldname n_inters -8")))
+                                     " -fieldname n_inters")))
    
      if (isTRUE(readpoly)) {
       shp <- sf::st_read(paste0(outshape, ".shp"))
