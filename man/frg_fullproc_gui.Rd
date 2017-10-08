@@ -4,11 +4,18 @@
 \alias{frg_fullproc_gui}
 \title{frg_fullproc_gui}
 \usage{
-frg_fullproc_gui()
+frg_fullproc_gui(force_update = FALSE)
+}
+\arguments{
+\item{force_update}{\code{logical} If TRUE, intermediate processing outputs (e.g.,
+creation of burnt areas shapefile, computation of SVI, etc. are re-run
+even if intermecdiate processing outputs are already present in the
+specified output folders. Useful to make a "clean run" of the tool,
+Default: FALSE)}
 }
 \description{
 Function used to create the GUI for selecting the parameters for
-full FRG procesing
+full FRG processing.
 }
 \details{
 Main GUI of the tool - used only to set the processing options and

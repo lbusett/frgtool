@@ -33,9 +33,9 @@
 #'         email: lbusett@8gmail.com
 #' @export
 #' 
-frg_compSVI <- function(MOD_Dir, Shape_File, CLC_File_00, Scaled_Folder, Start_Year, 
+frg_compSVI <- function(mod_dir, Shape_File, CLC_File_00, Scaled_Folder, Start_Year, 
                         End_Year, NKer, SRDVI, SNDVI, nodata_out, 
-                        ROI_File, 
+                        roi_file, 
                         FireMask_File, FireMask_File_Er, 
                         Index = "NDVI", Method = 2, 
                         force_update) {
@@ -61,11 +61,11 @@ frg_compSVI <- function(MOD_Dir, Shape_File, CLC_File_00, Scaled_Folder, Start_Y
   # Ceate a ROI file on the basis of the ORIGINAL SHAPEFILE specified -----
   # by the user and of the INPUT CLC_00_File (used to determine extent !)
   
-  ROI_File <- frg_buildroi(Shape_File, 
+  roi_file <- frg_buildroi(Shape_File, 
                            CLC_File_00, 
                            exp_path_str, 
-                           ff$ROI_file, 
-                           force_update)
+                           roi_file, 
+                           force_update = force_update)
   
   # Create a 'Mask' envi file using the ROI File created from the burned areas ----
   # shapefile specified by the user. 
@@ -73,24 +73,26 @@ frg_compSVI <- function(MOD_Dir, Shape_File, CLC_File_00, Scaled_Folder, Start_Y
   # computation of statistics needed for the calculation of the scaled
   # indexes.
   
-  FireMask_File <- frg_createmask(ROI_File, 
+  FireMask_File <- frg_createmask(roi_file, 
                                   CLC_File_00, 
                                   exp_path_str,
-                                  ff$Intermed_Dir, 
-                                  ff$FireMask_File, 
-                                  force_update)
+                                  Intermed_Dir, 
+                                  FireMask_File, 
+                                  force_update = force_update)
   
   # Create an ERODED 'Mask' envi file the ROI File created from the burned areas ----
   # shapefile specified by the user. The mask file is successively used to determine
   # which of the ROI pixels are CORE pixels (i.e., not on the borders)
   
-  frg_createmask_eroded(ROI_File, FireMask_File, 
-                        exp_path_str, FireMask_File_Er, 
-                        force_update)
+  frg_createmask_eroded(roi_file,
+                        FireMask_File, 
+                        exp_path_str,
+                        FireMask_File_Er, 
+                        force_update = force_update)
   
   
   out_files    <- NULL  
-  in_avg_dir   <- file.path(MOD_Dir, "Originals", Index, "Averages")  # Folder containing the Mean yearly VI images
+  in_avg_dir   <- file.path(mod_dir, "Originals", Index, "Averages")  # Folder containing the Mean yearly VI images
   in_avg_files <- list.files(in_avg_dir, pattern = "*.tif$")         # Get List of ENVI header files    
   
   # Start Cycling on selected years ----
@@ -112,7 +114,7 @@ frg_compSVI <- function(MOD_Dir, Shape_File, CLC_File_00, Scaled_Folder, Start_Y
       
       # Update status bar
       message("---- Computing Med_SNDVI for year ", yy," ----")
-      
+      browser()
       # Build string to call the FRG_Compute_MedScaled_VI.pro IDL script ----
       str_idl <- paste0("res = FRG_Compute_MedScaled_VI(", 
                         "CLC_File_00 = '",  CLC_File_00,   "' , $ \n",
@@ -169,7 +171,7 @@ frg_compSVI <- function(MOD_Dir, Shape_File, CLC_File_00, Scaled_Folder, Start_Y
   frg_createmeta(Index, Start_Year, End_Year, 
                  Method, Scaled_Folder, 
                  out_files, 
-                 force_update)
+                 force_update = force_update)
   
   # End cycle SNDVI vs SRDVI
   

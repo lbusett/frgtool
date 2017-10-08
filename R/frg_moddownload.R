@@ -31,20 +31,24 @@ frg_moddownload <- function(OutOrig_Path,
   
   # Update the processing year and some other options on the   ----
   # MODIStsp json file
-  
-  opts                 <- fromJSON("inst/ExtData/frg_modistsp_opts_test.json") 
+  opts_file <- system.file("ExtData/frg_modistsp_opts_test.json",
+                           package = "frgtool")
+  opts                 <- fromJSON(opts_file) 
   opts$start_date      <- paste(yy, 07, 15, sep = "-")
-  opts$end_date        <- paste(yy, 08, 15, sep = "-")
   opts$end_date        <- paste(yy, 08, 15, sep = "-")
   opts$out_folder_mod  <- file.path(OutOrig_Path, "hdfs")
   opts$out_folder      <- file.path(OutOrig_Path, "time_series")
   opts$download_server <- "http"
   opts$reprocess       <- ifelse(ReDown == 1, "Yes", "No")
+  opts$start_x         <- 18
+  opts$end_x           <- 18
+  opts$start_y         <- 4
+  opts$end_y           <- 4
   toJSON(opts) %>% 
-    write("inst/ExtData/frg_modistsp_opts_test.json")
+    write(opts_file)
   
   # Launch MODIStsp   ----
-  MODIStsp(options_file = "inst/ExtData/frg_modistsp_opts_test.json",
+  MODIStsp(options_file = opts_file,
            gui = FALSE)
   
     

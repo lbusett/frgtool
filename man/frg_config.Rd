@@ -2,21 +2,22 @@
 % Please edit documentation in R/frg_config.R
 \name{frg_config}
 \alias{frg_config}
-\title{FUNCTION_TITLE}
+\title{Set frg condfiguration options}
 \usage{
-frg_config(cfg_dir)
+frg_config(cfg_dir = system.file(package = "frgtool"))
 }
 \arguments{
-\item{cfg_dir}{PARAM_DESCRIPTION}
+\item{cfg_dir}{\code{character} path were the config file should be saved. If NULL,
+the file is saved in the main folder of the package as frg_config.RData,
+Default: NULL}
 }
 \value{
-OUTPUT_DESCRIPTION
+The function is called for its side effects
 }
 \description{
-FUNCTION_DESCRIPTION
-}
-\details{
-DETAILS
+Helper function to set some \code{frgtool} configuration options and
+save them to \code{frg_config.RData}:
+1.
 }
 \author{
 Lorenzo Busetto, phD (2017) \href{mailto:lbusett@gmail.com}{lbusett@gmail.com}

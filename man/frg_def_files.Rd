@@ -4,7 +4,7 @@
 \alias{frg_def_files}
 \title{frg_def_files}
 \usage{
-frg_def_files(Out_Dir, Start_Year, End_Year, MOD_Dir, Shape_File)
+frg_def_files(Out_Dir, Start_Year, End_Year, mod_dir, Shape_File)
 }
 \arguments{
 \item{Out_Dir}{}
@@ -13,7 +13,7 @@ frg_def_files(Out_Dir, Start_Year, End_Year, MOD_Dir, Shape_File)
 
 \item{End_Year}{}
 
-\item{MOD_Dir}{}
+\item{mod_dir}{}
 
 \item{Shape_File}{}
 }

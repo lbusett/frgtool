@@ -66,7 +66,7 @@ frg_main <- function(force_update = FALSE) {
     while (!check) {
       effispath <- readline(
         prompt = "Specify the path to the effis folder where the files to be used to update the ORACLE tables should be copied: ") #nolint
-      if (!devtools::dir.exists(effispath)) {
+      if (!dir.exists(effispath)) {
         message("The selected folder is not valid. Please try again!")
       } else {
         message("frgtool --> `effispath` set to: ", effispath)
@@ -148,7 +148,7 @@ frg_main <- function(force_update = FALSE) {
     container = but_group, 
     handler = function(h, ...) {
       gWidgets::dispose(main_gui)
-      res <- frgtool::frg_fullproc_gui(force_update)
+      res <- frgtool::frg_fullproc_gui(force_update = force_update)
     })
   
   update_oracle_but <- gWidgets::gbutton(

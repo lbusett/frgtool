@@ -4,19 +4,19 @@
 \alias{frg_compmean}
 \title{frg_compmean}
 \usage{
-frg_compmean(OutOrig_Path, ReProc, yy, UI_check, max_UI)
+frg_compmean(OutOrig_Path, yy, UI_check, max_UI, force_update)
 }
 \arguments{
 \item{OutOrig_Path}{string Main folder where the original MODIS mosaics
 (i.e., one pan european image for each data and data type) will be stored}
-
-\item{ReProc}{}
 
 \item{yy}{Year for which images are to be downloaded and processed}
 
 \item{UI_check}{}
 
 \item{max_UI}{}
+
+\item{ReProc}{}
 }
 \description{
 frg_compmean

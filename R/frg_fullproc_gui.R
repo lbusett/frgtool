@@ -23,7 +23,7 @@ frg_fullproc_gui <- function(force_update = FALSE) {
   if (file.exists(file.path(FRG_Options$Previous_Dir, "frg_previous.RData"))) {
     load(file.path(FRG_Options$Previous_Dir, "frg_previous.RData"))
   } else {
-    Full_Selection <- data.frame(MOD_Dir = "", 
+    Full_Selection <- data.frame(mod_dir = "", 
                                  Start_Year = 2001, 
                                  End_Year = 2013, 
                                  ReDown = 1, 
@@ -78,15 +78,15 @@ frg_fullproc_gui <- function(force_update = FALSE) {
   Out_Lab       <- glabel(text = "Main Folder for download of MODIS data", 
                           container = MOD_SelGroup, editable = FALSE)  # Label
   size(Out_Lab) <- c(280, 8)  # Set label width
-  MOD_Dir       <- gedit(text = format(Full_Selection$MOD_Dir, justify = "right"), 
+  mod_dir       <- gedit(text = format(Full_Selection$mod_dir, justify = "right"), 
                          container = MOD_SelGroup)  # Selected file 
-  size(MOD_Dir) <- c(600, 20)  # Set field width
+  size(mod_dir) <- c(600, 20)  # Set field width
   MOD_Choose    <- gbutton("Browse", handler = function(h, ...) {
     choice <- gfile(type = "selectdir", 
                     text = "Select the Main Folder for MODIS data...")  # File selection widget
     if (!is.na(choice)) {
-      svalue(MOD_Dir) <- choice  ## On new selection, set value of the label widget
-      Full_Selection$MOD_Dir <- format(choice, justify = "right")  # \tOn new selection,  Set value of the selected variable\t
+      svalue(mod_dir) <- choice  ## On new selection, set value of the label widget
+      Full_Selection$mod_dir <- format(choice, justify = "right")  # \tOn new selection,  Set value of the selected variable\t
     }
   }, container = MOD_SelGroup)
   addSpace(MOD_SelGroup, 20)
@@ -188,7 +188,7 @@ frg_fullproc_gui <- function(force_update = FALSE) {
   Start_But <- gbutton("Start", handler = function(button, ...) {
     
     # If Start selected, retrieve widgets values
-    Full_Selection$MOD_Dir     <- svalue(MOD_Dir)  
+    Full_Selection$mod_dir     <- svalue(mod_dir)  
     Full_Selection$Shape_File  <- svalue(Shape_File)  
     Full_Selection$CLC_File_00 <- svalue(CLC_File_00) 
     Full_Selection$Out_Dir     <- svalue(Out_Folder)  
@@ -211,7 +211,7 @@ frg_fullproc_gui <- function(force_update = FALSE) {
       dispose(Main_W)  # Selection finished - close the GUI
       # enabled(Main_GUI) <- FALSE
       
-      frg_fullprocessing(MOD_Dir     = Full_Selection$MOD_Dir, 
+      frg_fullprocessing(mod_dir     = Full_Selection$mod_dir, 
                          Shape_File  = Full_Selection$Shape_File, 
                          CLC_File_00 = Full_Selection$CLC_File_00, 
                          Out_Dir     = Full_Selection$Out_Dir, 
@@ -224,7 +224,7 @@ frg_fullproc_gui <- function(force_update = FALSE) {
                          ReProc      = Full_Selection$ReProc, 
                          ReDown      = Full_Selection$ReDown, 
                          ReProcIm    = Full_Selection$ReProcIm,
-                         force_update)
+                         force_update =  force_update)
       
       enabled(Main_GUI) <- TRUE
       

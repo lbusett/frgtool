@@ -4,30 +4,40 @@
 \alias{frg_main}
 \title{frg_main}
 \usage{
-frg_main()
+frg_main(force_update = FALSE)
+}
+\arguments{
+\item{force_update}{\code{logical} If TRUE, intermediate processing outputs (e.g.,
+creation of burnt areas shapefile, computation of SVI, etc. are re-run
+even if intermecdiate processing outputs are already present in the
+specified output folders. Useful to make a "clean run" of the tool,
+Default: FALSE)}
 }
 \value{
-Opens the Main GUI of the Tool and allow selection of the processing step
+Opens the Main GUI of the Tool and allow selection of the processing
+step to be run.
 }
 \description{
 Main Function of the Fire Regeneration Monitoring Tool
 }
 \details{
 This is the main function of the Fire Regeneration Monitoring Tool.
-It builds the main GUI and handles events corresponding to the different buttons, calling the corresponding functions.
-Also loads all required libraries, sources necessary routines and sets the main processing frg_conf.
-The main processing functions of the FRG Tool can be accessed from the Main GUI. In particular:
+It builds the main GUI and handles events corresponding to the different buttons,
+calling the corresponding functions. Also loads all required libraries,
+sources necessary routines and sets the main processing variables.
+The main processing functions of the FRG Tool can be accessed from the Main GUI.
+In particular:
 \enumerate{
-\item \strong{Create Burned Area Shapefile}:  Allows creating the input burnt areas shapefile,
-starting from data present in the EFFIS database (esposito).
+\item \strong{Create Burned Area Shapefile}:  Allows creating the input burnt areas
+shapefile, starting from data present in the EFFIS database (esposito).
 \item \strong{Analyse burned ares}: Allows performing all the processing needed for the
 extraction and analysis of time series of rescaled indexes for the burnt areas
 present in the input shapefile.
-\item \strong{Update Oracle tables}: Update the Oracle database tables regarding Regeneration
-Monitoring using the results of the latest processing.
+\item \strong{Update Oracle tables}: Update the EFFIS Oracle database tables regarding
+Regeneration Monitoring using the results of the latest processing.
 }
 }
 \author{
-Lorenzo Busetto, PhD (2012)
+Lorenzo Busetto, PhD (2017)
 email: lbusett@gmail.com
 }

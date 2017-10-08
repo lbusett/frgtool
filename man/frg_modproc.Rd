@@ -5,7 +5,7 @@
 \title{frg_modproc}
 \usage{
 frg_modproc(OutOrig_Path, Start_Year, End_Year, ReProcIm, ReDown,
-  UI_check = TRUE, max_UI = 5)
+  UI_check = TRUE, max_UI = 5, force_update)
 }
 \arguments{
 \item{Start_Year}{numeric Starting year of the analysis}
@@ -22,7 +22,7 @@ determining pixels to be used to compute average NDVI. default = 1}
 
 \item{max_UI}{Max UI value kept when averaging MODIS data. default = 5}
 
-\item{MOD_Dir}{string Folder where the original and preprocessed image will be stored}
+\item{mod_dir}{string Folder where the original and preprocessed image will be stored}
 }
 \description{
 Function used to download, mosaic and preprocess MODIS data

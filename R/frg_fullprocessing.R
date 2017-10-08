@@ -1,7 +1,7 @@
 #' frg_fullprocessing
 #' @description Function used to apply all FRG processing steps
 #'
-#' @param MOD_Dir     string Folder where the original and preprocessed image will be stored (i.e., the one above the 'Originals' folder)
+#' @param mod_dir     string Folder where the original and preprocessed image will be stored (i.e., the one above the 'Originals' folder)
 #' @param Shape_File  string Input Shapefile of BAs
 #' @param CLC_File_00 string ENVI file containing the CORINE land Cover map 2000, recoded to the EFFIS legend
 #' @param Out_Dir  string Main Results Dir where results of the analysis will be saved
@@ -31,7 +31,7 @@
 #' @importFrom rgdal setCPLConfigOption
 #' @export
 
-frg_fullprocessing <- function(MOD_Dir     ,
+frg_fullprocessing <- function(mod_dir     ,
                                Shape_File  ,
                                CLC_File_00 ,
                                Out_Dir     , 
@@ -51,7 +51,7 @@ frg_fullprocessing <- function(MOD_Dir     ,
                                perc_diff  , 
                                # Flags to skip some processing steps in debugging phase - Set all to T
                                # for complete processing - proceed with caution !
-                               MOD_dwl   = TRUE,
+                               MOD_dwl   = FALSE,
                                Comp_SVI  = TRUE,
                                Extr_Stat = TRUE,
                                Sig_Anal  = TRUE, 
@@ -73,7 +73,7 @@ frg_fullprocessing <- function(MOD_Dir     ,
   if (selection == "yes") {
     
     # Runf helper to create file names and folder
-    ff <- frg_def_files(Out_Dir, Start_Year, End_Year, MOD_Dir, Shape_File)
+    ff <- frg_def_files(Out_Dir, Start_Year, End_Year, mod_dir, Shape_File)
     # Write first lines of processing summary text file -----
     
     environment(frg_startlog) <- environment()
@@ -81,7 +81,7 @@ frg_fullprocessing <- function(MOD_Dir     ,
     
     #- Step 1: Download and preprocessing MODIS data ---------
     #- Substituted with calls to MODIStsp package in v1.0
-    
+    browser()
     if (MOD_dwl == TRUE) {
       
       er <- frg_modproc(ff$OutOrig_Path, 
@@ -89,7 +89,7 @@ frg_fullprocessing <- function(MOD_Dir     ,
                         End_Year, 
                         ReProcIm, 
                         ReDown, 
-                        force_update)
+                        force_update = force_update)
       
     }  # End if on  MODIS processing
     
@@ -98,16 +98,16 @@ frg_fullprocessing <- function(MOD_Dir     ,
     
     if (Comp_SVI == T) {
       
-      er <- frg_compSVI(MOD_Dir     = ff$MOD_Dir,  Shape_File    = Shape_File, 
+      er <- frg_compSVI(mod_dir     = ff$mod_dir,  Shape_File    = Shape_File, 
                         CLC_File_00 = CLC_File_00, Scaled_Folder = ff$Scaled_Dir, 
                         Start_Year  = Start_Year,  End_Year      = End_Year, 
                         NKer = NKer , 
-                        SRDVI = SRDVI, SNDVI = SNDVI, 
+                        SRDVI = 0, SNDVI = SNDVI, 
                         nodata_out       = FRG_Options$No_Data_Out_Rast,
-                        ROI_File         = ff$ROI_File,
+                        roi_file         = ff$roi_file,
                         FireMask_File    = ff$FireMask_File, 
                         FireMask_File_Er = ff$FireMask_File_Er, 
-                        force_update)
+                        force_update = force_update)
       
       message(" -> Computation of Scaled Indexes Completed")
       message("----------------------------------------------------------")
@@ -336,7 +336,7 @@ frg_fullprocessing <- function(MOD_Dir     ,
     #       sep = "\n", append = TRUE)
     #   cat(c("--- -------------------------------------------------- ---"), 
     #       file = OutFile_Conn, sep = "\n", append = TRUE)
-    #   cat(paste("--- Main MODIS Output Folder: ", MOD_Dir), file = OutFile_Conn, 
+    #   cat(paste("--- Main MODIS Output Folder: ", mod_dir), file = OutFile_Conn, 
     #       sep = "\n", append = TRUE)
     #   cat(paste("--- Main Results Output Folder ", Out_Folder), file = OutFile_Conn, 
     #       sep = "\n", append = TRUE)

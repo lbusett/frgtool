@@ -15,7 +15,7 @@
 #'   c. The average yearly values for DVI and NDVI are computed starting from the
 #'   images of DOY 209 and 225. NODATA and bad quality data#'   are automatically removed
 #'                   
-#' @param MOD_Dir    string Folder where the original and preprocessed image will be stored
+#' @param mod_dir    string Folder where the original and preprocessed image will be stored
 #' @param Start_Year numeric Starting year of the analysis
 #' @param End_Year   numeric Ending Year of the analysis
 #' @param ReProcIm   numeric if = 1, already existing MODIS mosaics will be reprocessed
@@ -65,7 +65,7 @@ frg_modproc <- function(OutOrig_Path,
                        yy,
                        UI_check,
                        max_UI, 
-                       force_update)
+                       force_update = force_update)
     
   } # End Cycle on years
   

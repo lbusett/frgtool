@@ -21,7 +21,7 @@ frg_config = function(cfg_dir = system.file(package = "frgtool")) {
       title = "Confirm", do.buttons = TRUE
     )
   }
-  browser()
+  
   # set up a GUI for configuration
   if (choice == TRUE) {
     

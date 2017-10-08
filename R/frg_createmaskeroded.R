@@ -7,7 +7,7 @@
 #' `FRG_Create_Mask_Eroded.pro` is used to create an eroded version of the binary mask 
 #' of burned areas, which allows to identify non-border (CORE) burnt pixels.
 #' See `FRG_Create_Mask_Eroded.pro` in `/IDL/VI_Elaborations` for further documentation
-#' @param ROI_file 
+#' @param roi_file 
 #' @param force_update
 #' @inheritParams frg_compSVI
 #' @inheritParams frg_fullprocessing
@@ -15,7 +15,7 @@
 #' @return NULL
 #' @export
 
-frg_createmask_eroded <- function(ROI_File, FireMask_File, exp_path_str, 
+frg_createmask_eroded <- function(roi_file, FireMask_File, exp_path_str, 
                                   FireMask_File_Eroded, 
                                   force_update) {
   

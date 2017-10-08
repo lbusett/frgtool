@@ -4,7 +4,8 @@
 \alias{frg_createmeta}
 \title{frg_createmeta}
 \usage{
-frg_createmeta(Index, Start_Year, End_Year, Method, Scaled_Folder, out_files)
+frg_createmeta(Index, Start_Year, End_Year, Method, Scaled_Folder, out_files,
+  force_update)
 }
 \arguments{
 \item{Start_Year}{numeric Starting year of the analysis}

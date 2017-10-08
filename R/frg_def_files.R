@@ -4,7 +4,7 @@
 #' @param Out_Dir 
 #' @param Start_Year 
 #' @param End_Year 
-#' @param MOD_Dir 
+#' @param mod_dir 
 #' @param Shape_File 
 #'
 #' @return ff list contains all main file names and folders
@@ -13,7 +13,7 @@
 frg_def_files <- function(Out_Dir,
                           Start_Year,
                           End_Year,
-                          MOD_Dir,
+                          mod_dir,
                           Shape_File) {
   
   ff <- list()
@@ -23,22 +23,22 @@ frg_def_files <- function(Out_Dir,
   #                               as.character(Sys.Date()), 
   #                               sep = "_"))
   ff[["Out_Dir"]]      <- file.path(Out_Dir)
-  ff[["MOD_Dir"]]      <- file.path(MOD_Dir)
+  ff[["mod_dir"]]      <- file.path(mod_dir)
   ff[["OutFile_Conn"]] <- file.path(Out_Dir, paste("Process_Summary", ".txt", sep = ""))  # Set Processing log file
   ff[["Intermed_Dir"]] <- file.path(Out_Dir, "Intermed_Proc")  # Set Dir for storing intermediate processing results
   ff[["Summary_Dir"]]  <- file.path(Out_Dir, "Summaries_for_EFFIS")  # Set Dir for storing EFFIS summaries results
   ff[["Scaled_Dir"]]   <- file.path(Out_Dir, "Scaled_Indexes")  # Define Dir were Scaled Indexes time series will be saved
-  ff[["OutOrig_Path"]] <- file.path(MOD_Dir, "Originals")
+  ff[["OutOrig_Path"]] <- file.path(mod_dir, "Originals")
   
-  ff[["ROI_File"]]     <- file.path(ff$Intermed_Dir, "ENVI_ROI", 
+  ff[["roi_file"]]     <- file.path(ff$Intermed_Dir, "ENVI_ROI", 
                      paste0(file_path_sans_ext(basename(Shape_File)), ".ROI"))
   
   ff[["FireMask_File"]] <- file.path(ff$Intermed_Dir, "ENVI_Mask", # Define Mask file name and create Dir for mask storing if needed ----
-                                  paste0(file_path_sans_ext(basename(ff$ROI_File)), 
+                                  paste0(file_path_sans_ext(basename(ff$roi_file)), 
                                          "_ENVI_Mask"))
   
   ff[["FireMask_File_Er"]] <- file.path(ff$Intermed_Dir, "ENVI_Mask",  # Define Mask file name and create Dir for mask storing if needed ----
-                                  paste0(file_path_sans_ext(basename(ff$ROI_File)), 
+                                  paste0(file_path_sans_ext(basename(ff$roi_file)), 
                                          "_ENVI_Mask_Eroded"))
   
   ff[["out_dir_extrsvi"]]     <- file.path(ff$Out_Dir, "Med_SNDVI", "TS_Extraction")
@@ -64,7 +64,7 @@ frg_def_files <- function(Out_Dir,
   dir.create(ff$Intermed_Dir,                 recursive = TRUE, showWarnings = FALSE)
   dir.create(ff$Summary_Dir,                  recursive = TRUE, showWarnings = FALSE)
   dir.create(ff$OutOrig_Path,                 recursive = TRUE, showWarnings = FALSE)
-  dir.create(dirname(ff$ROI_File),            recursive = TRUE, showWarnings = FALSE)
+  dir.create(dirname(ff$roi_file),            recursive = TRUE, showWarnings = FALSE)
   dir.create(dirname(ff$FireMask_File),       recursive = TRUE, showWarnings = FALSE)
   dir.create(dirname(ff$FireMask_File_Er),    recursive = TRUE, showWarnings = FALSE)
   dir.create(ff$out_dir_extrsvi,              recursive = TRUE, showWarnings = FALSE)
