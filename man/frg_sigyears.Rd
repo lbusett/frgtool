@@ -4,24 +4,23 @@
 \alias{frg_sigyears}
 \title{FRG_Comp_Sig_Matrix}
 \usage{
-frg_sigyears(file_in = file_in, file_out = file_out,
-  sig_level = sig_level, MedWdt = MedWdt, median_analysis = TRUE)
+frg_sigyears(file_in, file_out, opts, median_analysis = TRUE)
 }
 \arguments{
 \item{file_in}{string RData file created by FRG_Comp_Sig_Matrix}
 
 \item{file_out}{string Name of the final Statistical Analysis output RData file}
 
-\item{sig_level}{numeric Significance level used for Wilcoxon test}
+\item{opts$MedWdt}{numeric Number of pre-fire years considered as reference}
 
-\item{MedWdt}{numeric Number of pre-fire years considered as reference}
+\item{opts$sig_level}{numeric Significance level used for Wilcoxon test}
 }
 \value{
 Saves a file containing the p-values matrix and the 'plot_stats' data frame in the 'p_matrixes' subfolder
 }
 \description{
 Function used to compute the number of consecutive years with significant VIR reductions for the different BAS, considering the selected number  \cr
-of before fire years (MedWdt). Also, joins 'plotting' information computed in FRG_Comp_Sig_Matrix with 'Significance' information \cr
+of before fire years (opts$MedWdt). Also, joins 'plotting' information computed in FRG_Comp_Sig_Matrix with 'Significance' information \cr
 in the 'recov_stat' data frame and computes the Recovery Times.
 All informations derived (plot_stat + recov_stat) from the analysis are saved in the final Statistical Analysis output RData file
 }

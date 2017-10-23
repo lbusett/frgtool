@@ -1,4 +1,4 @@
-#'@title FRG_Update_Oracle
+#'@title frg_update_oracle
 #'@description Function used to update the Oracle database tables using processing results of FRG
 #'@details This function is used to update the Oracle database tables using processing results of FRG 
 #'
@@ -11,7 +11,7 @@
 #' Created Date: Nov 8, 2012
 #' @export
 
-FRG_Update_Oracle = function(effis_folder){
+frg_update_oracle = function(effis_folder){
   
   Main_W =  gbasicdialog("Update FRG Oracle Tables", horizontal = FALSE, do.buttons = FALSE, spacing = 10)
   Files_Group = gframe(text = "Select Folder containing FRG processing results /cr to be used to update ORACLE tables", horizontal = FALSE, container=Main_W)
@@ -31,7 +31,7 @@ FRG_Update_Oracle = function(effis_folder){
   Start_But <- gbutton("Start", handler=function(button,...){ 
     
     err = 'OK'
-    effis_folder = FRG_Options$effis_folder
+    effis_folder = opts$effis_folder
     enabled(Main_GUI) = FALSE
     
 

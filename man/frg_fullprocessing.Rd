@@ -4,20 +4,17 @@
 \alias{frg_fullprocessing}
 \title{frg_fullprocessing}
 \usage{
-frg_fullprocessing(mod_dir, Shape_File, CLC_File_00, Out_Dir, Start_Year,
-  End_Year, Method, SNDVI = 1, ReProc, ReDown, ReProcIm, erode = 1,
-  min_pix = 10, MedWdt = 3, NKer, sig_level = 0.05, sub_zones = 0,
-  perc_diff, MOD_dwl = FALSE, Comp_SVI = TRUE, Extr_Stat = TRUE,
-  Sig_Anal = TRUE, force_update)
+frg_fullprocessing(opts, force_update, MOD_dwl = FALSE, Comp_SVI = TRUE,
+  Extr_Stat = TRUE, Sig_Anal = TRUE)
 }
 \arguments{
 \item{mod_dir}{string Folder where the original and preprocessed image will be stored (i.e., the one above the 'Originals' folder)}
 
-\item{Shape_File}{string Input Shapefile of BAs}
+\item{opts$shape_file}{string Input Shapefile of BAs}
 
-\item{CLC_File_00}{string ENVI file containing the CORINE land Cover map 2000, recoded to the EFFIS legend}
+\item{opts$clc_file}{string ENVI file containing the CORINE land Cover map 2000, recoded to the EFFIS legend}
 
-\item{Out_Dir}{string Main Results Dir where results of the analysis will be saved}
+\item{opts$out_dir}{string Main Results Dir where results of the analysis will be saved}
 
 \item{Start_Year}{numeric Starting year of the analysis}
 
@@ -25,11 +22,13 @@ frg_fullprocessing(mod_dir, Shape_File, CLC_File_00, Out_Dir, Start_Year,
 
 \item{Method}{numeric. 2 = Percentage Median difference computation}
 
+\item{SRDVI}{numeric. 1 = compute SRDVI; 2 =  Don't Compute SRDVI}
+
 \item{SNDVI}{numeric. 1 =  compute SNDVI; 2 = Don't Compute SNDVI}
 
 \item{ReProc}{numeric if = 1, already existing Scaled Indexes will be recomputed}
 
-\item{ReDown}{numeric if = 1, MODIS images needed to create already existing mosaic files will be redownloaded, and
+\item{opts$redown}{numeric if = 1, MODIS images needed to create already existing mosaic files will be redownloaded, and
 already existing mosaics will be overwritten}
 
 \item{ReProcIm}{numeric if = 1, already existing MODIS mosaics will be reprocessed}
@@ -38,15 +37,13 @@ already existing mosaics will be overwritten}
 
 \item{min_pix}{numeric minimum number of core pixels needed for a BA to be processed (default to 10)}
 
-\item{MedWdt}{}
-
 \item{NKer}{numeric width (in Km) of the moving window used for computation of scaled indexes}
 
 \item{sig_level}{numeric Significance level for Wilcoxon test. Default to 0.05}
 
 \item{sub_zones}{Obsolete}
 
-\item{SRDVI}{numeric. 1 = compute SRDVI; 2 =  Don't Compute SRDVI}
+\item{MedWdt}{}
 
 \item{perc_diffs}{numeric hash table Reduction Threshold on NDVIR reduction used in significance reduction analysis
 with wilcoxon test}

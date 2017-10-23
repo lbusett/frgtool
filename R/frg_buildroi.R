@@ -13,29 +13,27 @@
 #' @return NULL
 #' @export
 
-frg_buildroi <- function(Shape_File, 
-                         CLC_File_00, 
+frg_buildroi <- function(opts, 
                          exp_path_str, 
-                         roi_file, 
-                         force_update = force_update) {
+                         force_update) {
   
   # Check if ROI already existing, If not, create it 
   
   # for debugging - set to "yes" to rebuild rois even if already existing
-  if (!file.exists(roi_file) | force_update) {
-    message("---- IDL-> Creating ROI File: ", roi_file, " Please Wait ! ----")
+  if (!file.exists(opts$roi_file) | force_update) {
+    message("---- IDL-> Creating ROI File: ", opts$roi_file, " Please Wait ! ----")
     
     # Build the command to run the FRG_Create_ROI.pro IDL funtion ----
     str_idl <- paste0(
-      "res = FRG_Create_ROI(Shape_File = '",  Shape_File,  "' , $ \n",
-      "                     CLC_00_File = '", CLC_File_00, "' , $ \n",
-      "                     roi_file = '",    roi_file,    "')"
+      "res = FRG_Create_ROI(Shape_File    = '", opts$orig_shapefile,  "' , $ \n",
+      "                     CLC_00_File   = '", opts$clc_file,       "' , $ \n",
+      "                     roi_file      = '", opts$roi_file,       "')"
     )
     
     # Create the batch file needed to run the FRG_Create_ROI.pro IDL funtion ----
     # from a command shell
     
-    batch_file <- file.path(FRG_Options$src_dir_idl,
+    batch_file <- file.path(opts$src_dir_idl,
                             "batch_files/FRG_Create_ROI_batch.pro")
     fileConn   <- file(batch_file)
     writeLines(c(exp_path_str, 
@@ -47,15 +45,16 @@ frg_buildroi <- function(Shape_File,
     
     # Execute FRG_Create_ROI_batch.pro  ----
     
-    out <- system2("idl.exe", args = batch_file, stdout = "log_IDL")
+    out <- system2("idl.exe", args = batch_file)
     
     # Error message on problems in execution of FRG_Create_ROI_batch.pro
-    if (!is.null(attributes(out)$status)) {
+    if (!is.null(attributes(out)$status) | !file.exists(opts$roi_file)) {
       stop("An error occurred while creating ROIs. Check '/IDL/FRG_Create_ROI_batch.pro'.
             Manually compiling and running it from IDL allows debugging ! ")
     }
   } else {
     message("---- ROI file already existing - skipping ----")
+    message("---- ------------------------------------ ----")
   }
-  return(roi_file)
+  return(opts$roi_file)
 }

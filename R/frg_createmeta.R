@@ -5,8 +5,8 @@
 #' @export
 #'
 #' @examples
-frg_createmeta <- function(Index, Start_Year, End_Year, Method, 
-                           Scaled_Folder, out_files, 
+frg_createmeta <- function(opts,
+                           out_files, 
                            force_update) {
   
   # Get files dimensions from the header of the first file ----
@@ -17,13 +17,13 @@ frg_createmeta <- function(Index, Start_Year, End_Year, Method,
   close(fileConn_hd)
   
   # Define META FILE name ----
-  meta_filename <- paste("Med_S", Index, "_",
-                         Start_Year, "_",
-                         End_Year, "_META.dat",
+  meta_filename <- paste("Med_S", opts$index, "_",
+                         opts$start_year, "_",
+                         opts$end_year, "_META.dat",
                          sep = "")
   if (!file.exists(meta_filename | force_update)){
-    meta_filename <- file.path(file.path(Scaled_Folder,
-                                         paste0("Med_S", Index),
+    meta_filename <- file.path(file.path(opts$scaled_dir,
+                                         paste0("Med_S", opts$index),
                                          meta_filename))
     
     # Write the META file ----

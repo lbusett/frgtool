@@ -1,4 +1,4 @@
-#'frg_moddownload
+#'frg_download_modis
 #'@description Function used to download, mosaic and reproject MODIS data
 #'@details The function leverages
 #' functionality form `MODIStsp` package [https://github.com/lbusett/MODIStsp/]
@@ -12,10 +12,7 @@
 #' access the full time series in `ENVI` and `R` are stored in the `time_series`
 #' subfolder
 #'
-#' @param OutOrig_Path string Main folder where the original MODIS mosaics 
-#'     (i.e., one pan european image for each data and data type) will be stored
-#' @param ReProc Flag. If = 1, existing preporocessed images will be recomputed 
-#' and overwritten
+#' @param opts
 #' @param yy Year for which images are to be downloaded and processed
 #'
 #' @return NULL
@@ -25,30 +22,29 @@
 #' @importFrom magrittr %>% 
 #' @export
 
-frg_moddownload <- function(OutOrig_Path, 
-                            ReDown, 
-                            yy) {
+frg_download_modis <- function(opts, 
+                               yy) {
   
   # Update the processing year and some other options on the   ----
   # MODIStsp json file
-  opts_file <- system.file("ExtData/frg_modistsp_opts_test.json",
+  mstp_opts_file <- system.file("ExtData/frg_modistsp_opts_test.json",
                            package = "frgtool")
-  opts                 <- fromJSON(opts_file) 
-  opts$start_date      <- paste(yy, 07, 15, sep = "-")
-  opts$end_date        <- paste(yy, 08, 15, sep = "-")
-  opts$out_folder_mod  <- file.path(OutOrig_Path, "hdfs")
-  opts$out_folder      <- file.path(OutOrig_Path, "time_series")
-  opts$download_server <- "http"
-  opts$reprocess       <- ifelse(ReDown == 1, "Yes", "No")
-  opts$start_x         <- 18
-  opts$end_x           <- 18
-  opts$start_y         <- 4
-  opts$end_y           <- 4
-  toJSON(opts) %>% 
-    write(opts_file)
+  mstp_opts                 <- fromJSON(mstp_opts_file) 
+  mstp_opts$start_date      <- paste(yy, 07, 15, sep = "-")
+  mstp_opts$end_date        <- paste(yy, 08, 15, sep = "-")
+  mstp_opts$out_folder_mod  <- file.path(opts$out_origpath, "hdfs")
+  mstp_opts$out_folder      <- file.path(opts$out_origpath, "time_series")
+  mstp_opts$download_server <- "http"
+  mstp_opts$reprocess       <- ifelse(mstp_opts$redown == 1, "Yes", "No")
+  mstp_opts$start_x         <- 18
+  mstp_opts$end_x           <- 18
+  mstp_opts$start_y         <- 4
+  mstp_opts$end_y           <- 4
+  toJSON(mstp_opts) %>% 
+    write(mstp_opts_file)
   
   # Launch MODIStsp   ----
-  MODIStsp(options_file = opts_file,
+  MODIStsp(options_file = mstp_opts_file,
            gui = FALSE)
   
     

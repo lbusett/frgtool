@@ -5,7 +5,7 @@
 \title{FRG_RecovStat_Matrix}
 \usage{
 FRG_RecovStat_Matrix(file_in = file_in, plot_stat = plot_stat,
-  Data_Median = Data_Median, MedWdt = MedWdt)
+  Data_Median = Data_Median, MedWdt)
 }
 \arguments{
 \item{file_in}{}
@@ -14,7 +14,7 @@ FRG_RecovStat_Matrix(file_in = file_in, plot_stat = plot_stat,
 
 \item{Data_Median}{}
 
-\item{MedWdt}{}
+\item{opts$MedWdt}{}
 }
 \description{
 FRG_RecovStat_Matrix

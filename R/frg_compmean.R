@@ -1,5 +1,4 @@
 #' frg_compmean
-#' @inheritParams frg_moddownload 
 #' @param ReProc 
 #' @param UI_check 
 #' @param max_UI 
@@ -7,23 +6,23 @@
 #' @author Lorenzo Busetto, PhD (2012)
 #'         email: lbusett@gmail.com
 
-frg_compmean <- function(OutOrig_Path,
+frg_compmean <- function(opts,
                          yy,
                          UI_check,
                          max_UI, 
                          force_update) {
   
   # Crete output folders if necessary ----
-  out_dir_avg      <- file.path(OutOrig_Path,'NDVI','Averages')				
+  out_dir_avg      <- file.path(opts$out_origpath,'NDVI','Averages')				
   outfilename_avg  <- file.path(out_dir_avg, paste0("NDVI_Average_",yy,".tif"))
   dir.create(out_dir_avg, showWarnings = FALSE, recursive = T)
   
   if (!file.exists(outfilename_avg) | force_update == TRUE) {
     
     # Get file names for NDVI, UI and Reliability for the selected year ----
-    NDVI_Dir <- file.path(OutOrig_Path,"time_series/VI_16Days_250m_v6/NDVI")
-    UI_Dir   <- file.path(OutOrig_Path,"time_series/VI_16Days_250m_v6/QA_usef")
-    Rely_Dir <- file.path(OutOrig_Path,"time_series/VI_16Days_250m_v6/Rely")
+    NDVI_Dir <- file.path(opts$out_origpath,"time_series/VI_16Days_250m_v6/NDVI")
+    UI_Dir   <- file.path(opts$out_origpath,"time_series/VI_16Days_250m_v6/QA_usef")
+    Rely_Dir <- file.path(opts$out_origpath,"time_series/VI_16Days_250m_v6/Rely")
     
     NDVI_files_names <- list.files(NDVI_Dir,pattern = "tif$", full.names = TRUE)
     NDVI_files_names <- NDVI_files_names[grep(yy, NDVI_files_names)]
@@ -38,6 +37,7 @@ frg_compmean <- function(OutOrig_Path,
     frg_maskmeanNDVI <- function(NDVI, UI, Rely, max_UI, filename) {
       out <- raster(NDVI)
       bs  <- blockSize(out)
+      
       out <- writeStart(out, filename, overwrite = TRUE, NAflag = 32767)
       for (i in 1:bs$n) {
         vi_data_1 <- getValues(NDVI[[1]], row = bs$row[i], nrows = bs$nrows[i]) *

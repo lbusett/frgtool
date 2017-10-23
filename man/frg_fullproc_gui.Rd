@@ -4,7 +4,7 @@
 \alias{frg_fullproc_gui}
 \title{frg_fullproc_gui}
 \usage{
-frg_fullproc_gui(force_update = FALSE)
+frg_fullproc_gui(opts, force_update = FALSE)
 }
 \arguments{
 \item{force_update}{\code{logical} If TRUE, intermediate processing outputs (e.g.,

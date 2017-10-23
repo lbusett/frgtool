@@ -4,10 +4,10 @@
 \alias{frg_process_shapefile}
 \title{frg_process_shapefile}
 \usage{
-frg_process_shapefile(Shape_File, Intermediate_Folder)
+frg_process_shapefile(opts)
 }
 \arguments{
-\item{Shape_File}{PARAM_DESCRIPTION}
+\item{opts$orig_shapefile}{PARAM_DESCRIPTION}
 
 \item{Intermediate_Folder}{PARAM_DESCRIPTION}
 }

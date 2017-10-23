@@ -4,11 +4,10 @@
 \alias{frg_createmask_eroded}
 \title{frg_createmask}
 \usage{
-frg_createmask_eroded(roi_file, FireMask_File, exp_path_str,
-  FireMask_File_Eroded, force_update)
+frg_createmask_eroded(opts, exp_path_str, force_update)
 }
 \arguments{
-\item{roi_file}{}
+\item{opts$roi_file}{}
 }
 \description{
 Accessory function to call IDL routine for Mask creation.

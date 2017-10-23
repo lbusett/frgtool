@@ -4,29 +4,9 @@
 \alias{frg_compSVI}
 \title{frg_compSVI}
 \usage{
-frg_compSVI(mod_dir, Shape_File, CLC_File_00, Scaled_Folder, Start_Year,
-  End_Year, NKer, SRDVI, SNDVI, nodata_out, roi_file, FireMask_File,
-  FireMask_File_Er, Index = "NDVI", Method = 2, force_update)
+frg_compSVI(opts, force_update)
 }
 \arguments{
-\item{mod_dir}{string Folder where the original and preprocessed image will be stored (i.e., the one above the 'Originals' folder)}
-
-\item{Shape_File}{string Input Shapefile of BAs}
-
-\item{CLC_File_00}{string ENVI file containing the CORINE land Cover map 2000, recoded to the EFFIS legend}
-
-\item{Start_Year}{numeric Starting year of the analysis}
-
-\item{End_Year}{numeric Ending Year of the analysis}
-
-\item{NKer}{numeric width (in Km) of the moving window used for computation of scaled indexes}
-
-\item{SRDVI}{numeric. 1 = compute SRDVI; 2 =  Don't Compute SRDVI}
-
-\item{SNDVI}{numeric. 1 =  compute SNDVI; 2 = Don't Compute SNDVI}
-
-\item{Method}{numeric. 2 = Percentage Median difference computation}
-
 \item{Intermediate_Folder}{string Folder for storing intermediate processing results}
 }
 \value{
@@ -34,14 +14,14 @@ frg_compSVI(mod_dir, Shape_File, CLC_File_00, Scaled_Folder, Start_Year,
 }
 \description{
 Function used to call the IDL functiosn used for computation of
-SRDVI and SNDVI yearly images (\emph{\strong{FRG_Compute_MedScaled_VI.pro}})
+opts$SRDVI and opts$SNDVI yearly images (\emph{\strong{FRG_Compute_MedScaled_VI.pro}})
 }
 \details{
 This function is used to call the IDL function used for computation of SDVI and
-SNDVI yearly images. It also calls the IDL routines needed to create the ENVI burnt
+opts$SNDVI yearly images. It also calls the IDL routines needed to create the ENVI burnt
 areas ROI, and the ENVI burnt areas MASKS (both total and eroded!).
-Yearly SRDVI (or SNDVI) images are computed starting from the corresponding Yearly
-Average mosaics. Computation of the scaled indexes for each pixel is done as follows:
+Yearly opts$SRDVI (or opts$SNDVI) images are computed starting from the corresponding Yearly
+Average mosaics. Computation of the scaled opts$indexes for each pixel is done as follows:
 \enumerate{
 \item The pixels belonging to the same class of the target included in a window of
 width specified by the user centred on the target are identified on the
@@ -53,14 +33,14 @@ to compute the MOMENTS of the distribution of VI values of the target
 CLC class in the window centred on the target pixel
 \item Computed MOMENTS are use to determine an ESTIMATE of the 5th, 50th (median)
 95th percentile of the distribution, using the Cornish-Fisher fourth-order Expansion
-method (\link{"http://www.nematrian.com/R.aspx?p=CornishFisherDerivation})
-\item Scaled indexes for the target pixel is computed exploiting this method:
+opts$method (\link{"http://www.nematrian.com/R.aspx?p=CornishFisherDerivation})
+\item Scaled opts$indexes for the target pixel is computed exploiting this opts$method:
 \itemize{
 \item 'Percentage Deviation to Kernel Median': For each pixel, the algorithm
 identifies all pixels of the image corresponding to the same CLC class
-contained in a window of width NKer then computes the median of the distribution
-of values of the analyzed Vegetation Index in the selecteds pixels.
-\item Scaled Index for the pixel are then computed as: sVI = 100 * (VI_pix - VI_median)/(VI_median).
+contained in a window of width opts$nker then computes the median of the distribution
+of values of the analyzed Vegetation opts$index in the selecteds pixels.
+\item Scaled opts$index for the pixel are then computed as: sVI = 100 * (VI_pix - VI_median)/(VI_median).
 }
 }
 

@@ -4,34 +4,33 @@
 \alias{frg_extract_svi}
 \title{frg_extract_svi}
 \usage{
-frg_extract_svi(SVI_File, Shape_File, CLC_File_00, ENV_Zones_File, Out_File,
-  erode, FireMask_File_Er, Intermed_Dir, Overlap, Shape_File_Orig,
-  LUT_File_Multiple)
+frg_extract_svi(SVI_file, shape_file, out_file, overlap, shape_file_orig,
+  lut_file_multiple, opts, force_update)
 }
 \arguments{
-\item{SVI_File}{string ENVI Meta File associated to time serie to be analyzed}
+\item{SVI_file}{string ENVI Meta File associated to time serie to be analyzed}
 
-\item{Shape_File}{string Burnt Areas Shapefile (Must Correspond to the 'burned_once' shafile if Overlap == 'Single'
-Must Correspond to the 'burned_once' shafile if Overlap == 'Multiple')}
+\item{out_file}{numeric BaseName of the output RData and CSV files}
 
-\item{CLC_File_00}{string ENVI file containing the CORINE land Cover map 2000, recoded to the EFFIS legend}
+\item{overlap}{string If == 'Single', extract time series for areas burned once.
+if =='Multiple, extract time series for areas burned multiple times}
+
+\item{shape_file_orig}{string Filename of the original input BAs shapefile}
+
+\item{Shape_File}{string Burnt Areas Shapefile (Must Correspond to the 'burned_once' shafile if overlap == 'Single'
+Must Correspond to the 'burned_once' shafile if overlap == 'Multiple')}
+
+\item{opts$clc_file}{string ENVI file containing the CORINE land Cover map 2000, recoded to the EFFIS legend}
 
 \item{ENV_Zones_File}{string Tiff file containing EcoZones (No longer used...)}
 
-\item{Out_File}{numeric BaseName of the output RData and CSV files}
-
-\item{erode}{flag if 1, then perfom analysis on eroded ROIS (default to 1)}
-
-\item{Intermed_Dir}{string name of the Folder containing the intermediate processing results}
-
-\item{Overlap}{string If == 'Single', extract time series for areas burned once.
-if =='Multiple, extract time series for areas burned multiple times}
-
-\item{Shape_File_Orig}{string Filename of the original input BAs shapefile}
-
-\item{LUT_File_Multiple}{string Filenlame of the LUT table created by FRG_Process_Shapefile.py}
+\item{opts$erode}{flag if 1, then perfom analysis on eroded ROIS (default to 1)}
 
 \item{erode_file}{string Filename of the ENVI mask containing the ERODED ROIS (generated automatically in FRG_Compute_SVI.R)}
+
+\item{opts$intermed_dir}{string name of the Folder containing the intermediate processing results}
+
+\item{LUT_File_Multiple}{string Filenlame of the LUT table created by FRG_Process_Shapefile.py}
 }
 \value{
 'DONE' if all went OK, otherwise error message

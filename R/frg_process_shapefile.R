@@ -2,7 +2,7 @@
 #' @description Process the Burnt area shapefile to create the shapefiles of areas
 #'  burnt once and that of areas burnt multiple times and the corresponding CSV
 #'  LUT by calling the "FRG_Burnt_Areas_Processing.py" python script
-#' @param Shape_File PARAM_DESCRIPTION
+#' @param opts$orig_shapefile PARAM_DESCRIPTION
 #' @param Intermediate_Folder PARAM_DESCRIPTION
 #' @return The function is called for its side effects
 #' @rdname frg_process_shapefile
@@ -15,22 +15,20 @@
 # --- Process the Burnt area shapefile to create the shapefile of area burnt once
 # --- and that of areas burnt multiple times and the corresponding ROIs
 # ------------------------------------------------------------------- #  
-frg_process_shapefile = function(Shape_File,
-                                 Intermediate_Folder) {
+frg_process_shapefile = function(opts) {
   
   # - create the two shapefiles starting from the original "full" shapefile by
   #  calling the "FRG_Burnt_Areas_Processing.py" python function
   
   message('-> Creating single and multiple fires shapefiles from : ', 
-          basename(Shape_File))
+          basename(opts$orig_shapefile))
   
-  py_script <- file.path(FRG_Options$src_dir_python,
+  py_script <- file.path(opts$src_dir_python,
                          "FRG_Burnt_Areas_Processing.py")
-  Shapes_Folder <- file.path(Intermediate_Folder,'Shapefiles')
-  dir.create(Shapes_Folder, recursive = T, showWarnings = FALSE)
-  str_python <- paste(FRG_Options$arcpython, py_script,
-                      '--Burned_Areas_Full_shp', Shape_File,
-                      '--Intermediate_Folder', Shapes_Folder, 
+  
+  str_python <- paste(opts$arcpython, py_script,
+                      '--Burned_Areas_Full_shp', opts$orig_shapefile,
+                      '--Intermediate_Folder', opts$intermed_shapes_dir, 
                       sep = ' ')
   out <- system(str_python,  invisible = FALSE, show.output.on.console = TRUE)
   if (out != 0) {
@@ -39,15 +37,15 @@ frg_process_shapefile = function(Shape_File,
   }
   
   Shape_File_Single   <- file.path(Intermed_Dir, "Shapefiles/",
-                                   paste0(tools::file_path_sans_ext(Shape_File), 
+                                   paste0(tools::file_path_sans_ext(opts$orig_shapefile), 
                                           "_Single_Fires.shp"))
   
   Shape_File_Multiple <- file.path(Intermed_Dir, "Shapefiles/",
-                                   paste0(tools::file_path_sans_ext(Shape_File), 
+                                   paste0(tools::file_path_sans_ext(opts$orig_shapefile), 
                                           "_Multiple_Fires.shp"))
   
   LUT_File_Multiple   <- file.path(Intermed_Dir, "Shapefiles/",
-                                   paste0(tools::file_path_sans_ext(Shape_File), 
+                                   paste0(tools::file_path_sans_ext(opts$orig_shapefile), 
                                           "_Intersect_LUT_csv.csv"))
   
   Shape_File_Inter    <- data.frame(Shape_File_Single = Shape_File_Single,

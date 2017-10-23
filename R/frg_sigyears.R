@@ -1,7 +1,7 @@
 #' @title FRG_Comp_Sig_Matrix
 #' 
 #' @description Function used to compute the number of consecutive years with significant VIR reductions for the different BAS, considering the selected number  \cr
-#'              of before fire years (MedWdt). Also, joins 'plotting' information computed in FRG_Comp_Sig_Matrix with 'Significance' information \cr
+#'              of before fire years (opts$MedWdt). Also, joins 'plotting' information computed in FRG_Comp_Sig_Matrix with 'Significance' information \cr
 #'              in the 'recov_stat' data frame and computes the Recovery Times. 
 #'              All informations derived (plot_stat + recov_stat) from the analysis are saved in the final Statistical Analysis output RData file
 #'
@@ -9,8 +9,8 @@
 #'
 #' @param file_in string RData file created by FRG_Comp_Sig_Matrix
 #' @param file_out string Name of the final Statistical Analysis output RData file 
-#' @param MedWdt numeric Number of pre-fire years considered as reference
-#' @param sig_level numeric Significance level used for Wilcoxon test 
+#' @param opts$MedWdt numeric Number of pre-fire years considered as reference
+#' @param opts$sig_level numeric Significance level used for Wilcoxon test 
 #'
 #' @return Saves a file containing the p-values matrix and the 'plot_stats' data frame in the 'p_matrixes' subfolder
 #'
@@ -19,8 +19,10 @@
 #' @export
 #' 
 
-frg_sigyears <- function(file_in = file_in, file_out = file_out, sig_level = sig_level, 
-                         MedWdt = MedWdt, median_analysis = TRUE) {
+frg_sigyears <- function(file_in,
+                         file_out,
+                         opts,
+                         median_analysis = TRUE) {
   
   
   load(file.path(file_in))  # Load the statistical analysis results (p-values matrix and plot_stat)
@@ -122,7 +124,7 @@ frg_sigyears <- function(file_in = file_in, file_out = file_out, sig_level = sig
     # Rows to be considered for the post-fire comparison (only after fire)
     selRows_Full  <- which(Rownames_Full >= 0)  
     
-    for (N in MedWdt) {
+    for (N in opts$MedWdt) {
       # Start of cycle on: Number of before-years to be considered for
       # assessing significance
       
@@ -133,7 +135,7 @@ frg_sigyears <- function(file_in = file_in, file_out = file_out, sig_level = sig
       #  and lower than the number of years considered for comparing)
       SelCols_Full       <- which(Colnames_Full < 0 & Colnames_Full >= -N) 
       # Convert p_values to significance.
-      Data_Matrix_Signif <- p_matrix_median[selRows_Full, SelCols_Full, ] < (sig_level) 
+      Data_Matrix_Signif <- p_matrix_median[selRows_Full, SelCols_Full, ] < (opts$sig_level) 
       
       if (N >= 2) {
         Sig_Years_median <- apply(Data_Matrix_Signif, 3, find_N_Seq)
@@ -144,7 +146,7 @@ frg_sigyears <- function(file_in = file_in, file_out = file_out, sig_level = sig
       dimnames(Sig_Years_median)[[1]] <- c("N_Signif", "N_Signif_Rec", 
                                            "Recov", "Signif_FireYear")
       
-      # Convert to a data frame and add accessory info (MedWdt)
+      # Convert to a data frame and add accessory info (opts$MedWdt)
       Sig_Years_median        <- as.data.frame(t(Sig_Years_median))  
       Sig_Years_median$Comp_N <- N
       # Add to the 'FULL' matrix
@@ -154,7 +156,7 @@ frg_sigyears <- function(file_in = file_in, file_out = file_out, sig_level = sig
     # Add the case_id as a dimension (to allow joining with other statistics of 
     # the fire contained in plot_stat)
     Sig_Years_median_tot$CASE_ID       <- as.factor(rep(dimnames(Sig_Years_median)[[1]], 
-                                                        length(MedWdt)))  
+                                                        length(opts$MedWdt)))  
     # Convert Recov field to string factor
     levels(Sig_Years_median_tot$Recov) <- c("UnRecovered", "Recovered")  
     
@@ -167,8 +169,10 @@ frg_sigyears <- function(file_in = file_in, file_out = file_out, sig_level = sig
   # what concerns FireYear, eccetera, with info related to the number of
   # significantly different years
   
-  recov_stat <- FRG_RecovStat_Matrix(file_in = file_in, plot_stat = plot_stat, 
-                                     Data_Median = Sig_Years_median_tot, MedWdt = MedWdt)
+  recov_stat <- FRG_RecovStat_Matrix(file_in = file_in,
+                                     plot_stat = plot_stat, 
+                                     Data_Median = Sig_Years_median_tot,
+                                     MedWdt = opts$MedWdt)
   
   # save output
   save(Sig_Years_median_tot, plot_stat, recov_stat, file = file_out)
@@ -184,14 +188,16 @@ frg_sigyears <- function(file_in = file_in, file_out = file_out, sig_level = sig
 #' @param file_in 
 #' @param plot_stat 
 #' @param Data_Median 
-#' @param MedWdt 
+#' @param opts$MedWdt 
 #'
 #' @return
 #' @export
 #' @importFrom plyr ddply summarize
 #' @examples
-FRG_RecovStat_Matrix <- function(file_in = file_in, plot_stat = plot_stat, 
-                                 Data_Median = Data_Median, MedWdt = MedWdt) {
+FRG_RecovStat_Matrix <- function(file_in = file_in,
+                                 plot_stat = plot_stat, 
+                                 Data_Median = Data_Median,
+                                 MedWdt) {
   # Join results obtained on multiple runs with varying parameters
   
   # Data_Median = Sig_Years_median_tot
@@ -200,14 +206,14 @@ FRG_RecovStat_Matrix <- function(file_in = file_in, plot_stat = plot_stat,
   recov_stat_full <- NULL
   # plot_stat$Index <- attr(plot_stat, "Index")
   plot_stat_first <- plyr::ddply(plot_stat, .(CASE_ID, CLC_Class), 
-                             plyr::summarize, OBJECTID = OBJECTID[1], FireYear = FireYear[1], Area_All = Area_All[1], 
-                             Area_Forest = Area_Forest[1], Area_CLC = Area_CLC[1], YearFromFire = YearFromFire[1], 
-                             N_PIX = N_PIX[1], Index = "Med_SNDVI", .parallel = F, .progress = "text")
+                                 plyr::summarize, OBJECTID = OBJECTID[1], FireYear = FireYear[1], Area_All = Area_All[1], 
+                                 Area_Forest = Area_Forest[1], Area_CLC = Area_CLC[1], YearFromFire = YearFromFire[1], 
+                                 N_PIX = N_PIX[1], Index = "Med_SNDVI", .parallel = F, .progress = "text")
   # Compute the variable 'N_Years_After. Contains the number of
   # 'available' years after the fire in the MODIS time serie.
   plot_stat_first$N_Years_After <- max(as.numeric(as.character(levels(plot_stat$FireYear)))) - 
     as.numeric(as.character(plot_stat_first$FireYear)) + 1
-  for (N in MedWdt) {
+  for (N in opts$MedWdt) {
     
     Data_Median_sub <- droplevels(subset(Data_Median, Comp_N == N))  # Get results obtained using a median of width N
     recov_stat_tmp <- plot_stat_first

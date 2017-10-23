@@ -31,18 +31,43 @@
 
 frg_main <- function(force_update = FALSE) {
   
-  # -------------------------------------------------------------------------------
-  # -# # Initialize project #-
-  # -------------------------------------------------------------------------------
-
-  utils::memory.limit(6000)  # Increase maximum allocable memory
+  
+  # - Initialize project                                                    ####
+  # ----------------------------------------------------------------------------
+  
+  # __________________________________________________________________________
+  # Create and initilize the `opts` list , which will contain all folder    ####
+  # / file names required for the processing, plus some additional
+  # processing options
+  
+  opts <- list()   
+  
+  # General processing options - do not touch unless you want to try        ####
+  # something "new" !
+  opts$erode     <- 1 
+  opts$min_pix   <- 10
+  opts$MedWdt    <- 3  
+  opts$sig_level <- 0.05
+  opts$sub_zones <- 0
+  opts$index     <- "NDVI"
+  
+  
   
   # path to frgtool IDL scripts
-  src_dir_idl    <- system.file("IDL_Scripts", package = "frgtool")
+  opts$src_dir_idl      <- system.file("IDL_Scripts", package = "frgtool")
+  
   # path to frgtool python scripts #nolint
-  src_dir_python <- system.file("python_Scripts", package = "frgtool") 
+  opts$src_dir_python   <- system.file("python_Scripts", package = "frgtool") 
+  
   # path to frgtool previous dir #nolint
-  prev_dir       <- system.file("ExtData/previous", package = "frgtool") 
+  
+  opts$prev_dir         <- system.file("ExtData/previous", package = "frgtool") 
+  
+  # paths to the exe used to create the update shapefile (runs on EFFIS
+  # oracle tables to generate the up-to-date shapefile of burnt areas
+  # at the end of each fire season)
+  opts$create_shape_exe <- system.file("Create_Shapefile_exe",
+                                     "frg_update_shapefile.exe", package = "frgtool")
   
   #   ________________________________________________________________________
   #   Find and set path to IDL.exe                                        ####
@@ -56,72 +81,25 @@ frg_main <- function(force_update = FALSE) {
   if (!is.null(attributes(idl_exe_dir)$status)) {
     stop("idl.exe was not found on your PATH. Exiting. Please add the folder", 
          "containing idl.exe to your Windows Path variable. ")
+  } else {
+    opts$idl_exe_dir <- idl_exe_dir
   }
   
   #   __________________________________________________________________________
-  #   check if effispath was already set. Otherwise ask to set it            ####
-  
-  if (is.null(options("frgtool_effispath")$frgtool_effispath)) {
-    check = FALSE
-    while (!check) {
-      effispath <- readline(
-        prompt = "Specify the path to the effis folder where the files to be used to update the ORACLE tables should be copied: ") #nolint
-      if (!dir.exists(effispath)) {
-        message("The selected folder is not valid. Please try again!")
-      } else {
-        message("frgtool --> `effispath` set to: ", effispath)
-        check = TRUE
-      }
-    }
-    effispath <- normalizePath(effispath)
-    options(frgtool_effispath =  effispath)
-  } else {
-    effispath <- options("frgtool_effispath")[[1]] 
-  }
+  #   check if effispath was already set. Otherwise ask to set it           ####
+  opts$effispath <- frg_set_effispath()
   
   #   __________________________________________________________________________
-  #   check if arcpypath was already set. Otherwise ask to set it            ####
+  #   check if arcpypath was already set. Otherwise ask to set it           ####
+  opts$arcpypath <- frg_set_arcpypath()
   
-  if (is.null(options("frgtool_arcpypath")$frgtool_arcpypath)) {
-    check = FALSE
-    while (!check) {
-      arcpypath <- readline(
-        prompt = strwrap("Specify the path to  the folder containing 
-                         `python.exe` LINKED TO YOUR ARCGIS INSTALLATION: ")
-      ) #nolint
-      if (!file.exists(file.path(arcpypath, "python.exe"))) {
-        message("The selected folder is not valid.", 
-                " Please try again!")
-      } else {
-        message("frgtool --> `arcpypath` set to: ", arcpypath)
-        check = TRUE
-      }
-    }
-    arcpypath <- normalizePath(arcpypath)
-    options(frgtool_arcpypath =  arcpypath)
-  } else {
-    arcpypath <- options("frgtool_arcpypath")[[1]] 
-  }
-  # paths to update shapefile script by Roberto Boca (runs on EFFIS
-  # oracle tables to generate the up-to-date shapefile of burnt areas
-  # at the end of each fire season!!!!)
-  Create_Shape_Script <- system.file("Create_ShapeFile_exe", 
-                                       "FRG_Update_Shapefile.exe", 
-                                       package = "frgtool")
-  # # Set Main Processing frg_conf
-  FRG_Options <<- data.frame( 
-    Previous_Dir        = prev_dir, 
-    No_Data_In_Rast     = 32767, 
-    No_Data_Out_Rast    = 32767, 
-    src_dir_idl         = src_dir_idl, 
-    src_dir_python      = src_dir_python, 
-    arcpython           = arcpypath, 
-    Create_Shape_Script = Create_Shape_Script,
-    effis_dir           = effispath, 
-    stringsAsFactors    = FALSE
-  )
+  opts$nodata_in    <- 32767
+  opts$nodata_out   <- 32767
+  opts$force_update <- force_update
   
-  # Build the Main GUI -------------------
+  
+  #   __________________________________________________________________________
+  #   Build and handle the main GUI                                         ####
   
   # Helper function to quit if 'Exit' pressed
   FRG_Dispose <- function(main_gui) {
@@ -133,35 +111,46 @@ frg_main <- function(force_update = FALSE) {
     title = "Fire Regeneration Monitoring Tool", 
     do.buttons = FALSE, horizontal = FALSE, anchor = c(0, 0), width = 200, 
     height = 200)
+  
+  # creat buttons to call different processing steps ----
   but_group        <- gWidgets::ggroup(horizontal = FALSE, container = main_gui)
+  
+  # create_shape --> Calls the function to update burnt areas shapefile ----
   create_shape_but <- gWidgets::gbutton(
     " Create Burned Areas Shapefile",
     container = but_group, 
     handler = function(h, ...) {
-      res <- try(system(as.character(FRG_Options$Create_Shape_Script), 
+      res <- try(system(as.character(opts$create_shape_exe), 
                         wait = FALSE, invisible = FALSE))
       message("An error occurred while creating the burned areas shapefile (")
     })
   
+  # process_but --> Open the processing GUI ----
   process_but <- gWidgets::gbutton(
     "Process Burnt Areas Data",
     container = but_group, 
     handler = function(h, ...) {
       gWidgets::dispose(main_gui)
-      res <- frgtool::frg_fullproc_gui(force_update = force_update)
+      res <- frgtool::frg_fullproc_gui(opts, 
+                                       force_update = force_update)
     })
+  
+  # update_oracle_but --> Call frg_update_oracle to update oracle tables ----
+  # using last results
   
   update_oracle_but <- gWidgets::gbutton(
     "Update Oracle tables",
     container = but_group, 
     handler = function(h, ...) {
-      res <- frgtool::FRG_Update_Oracle()
+      res <- frgtool::frg_update_oracle(opts, 
+                                        force_update = force_update)
     })
   
   gWidgets::glabel(
     text = "---------------------------------------------------------------", 
     markup = FALSE, editable = FALSE, handler = NULL, container = but_group)
   
+  # exit_but --> Quit the program ----
   acc_group <- gWidgets::ggroup(horizontal = TRUE, container = but_group)
   exit_but  <- gWidgets::gbutton("Quit ",
                                  container = acc_group,

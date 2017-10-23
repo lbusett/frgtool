@@ -4,26 +4,24 @@
 \alias{frg_sigmatrix}
 \title{frg_sigmatrix}
 \usage{
-frg_sigmatrix(In_File = In_File, Out_File = Out_File, min_pix = min_pix,
-  perc_diff = perc_diff, MedWdt = MedWdt, sub_zones = sub_zones,
-  sig_level = sig_level, erode = erode)
+frg_sigmatrix(in_file, out_file, opts)
 }
 \arguments{
-\item{In_File}{string File of scaled VI Time Series extracted for single-fire areas}
+\item{in_file}{string File of scaled VI Time Series extracted for single-fire areas}
 
-\item{Out_File}{string Basename for output files}
+\item{out_file}{string Basename for output files}
 
-\item{min_pix}{numeric MInimum number of CORE pixels for a bunt area to be considered}
+\item{opts$min_pix}{numeric MInimum number of CORE pixels for a bunt area to be considered}
 
-\item{perc_diff}{numeric Minimum percentage difference checked for significant reduction}
+\item{opts$perc_diff}{numeric Minimum percentage difference checked for significant reduction}
 
-\item{MedWdt}{numeric Number of pre-fire years considered as reference}
+\item{opts$MedWdt}{numeric Number of pre-fire years considered as reference}
 
-\item{sub_zones}{flag If 1 , consider ENV_ZONES differences when analyzing}
+\item{opts$sub_zones}{flag If 1 , consider ENV_ZONES differences when analyzing}
 
-\item{sig_level}{numeric Significance level used for Wilcoxon test}
+\item{opts$sig_level}{numeric Significance level used for Wilcoxon test}
 
-\item{erode}{flag If 1, perform analysis only on NON CORE burnt pixels}
+\item{opts$erode}{flag If 1, perform analysis only on NON CORE burnt pixels}
 }
 \value{
 Saves a .RData file containing data needed to plot NDVIR time series for the different single-fire BAs

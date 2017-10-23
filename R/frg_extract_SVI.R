@@ -6,18 +6,18 @@
 #'  areas shapefile (e.g., Area, FireYear, ...) and save results as an RData file (in the '/TS_Extraction subfolder) 
 #'  to be used later for statistical analysis
 #'
-#' @param SVI_File string ENVI Meta File associated to time serie to be analyzed
-#' @param Shape_File string Burnt Areas Shapefile (Must Correspond to the 'burned_once' shafile if Overlap == 'Single'
-#'                                                 Must Correspond to the 'burned_once' shafile if Overlap == 'Multiple')
-#' @param CLC_File_00 string ENVI file containing the CORINE land Cover map 2000, recoded to the EFFIS legend
+#' @param SVI_file string ENVI Meta File associated to time serie to be analyzed
+#' @param Shape_File string Burnt Areas Shapefile (Must Correspond to the 'burned_once' shafile if overlap == 'Single'
+#'                                                 Must Correspond to the 'burned_once' shafile if overlap == 'Multiple')
+#' @param opts$clc_file string ENVI file containing the CORINE land Cover map 2000, recoded to the EFFIS legend
 #' @param ENV_Zones_File string Tiff file containing EcoZones (No longer used...)
-#' @param Out_File numeric BaseName of the output RData and CSV files
-#' @param erode flag if 1, then perfom analysis on eroded ROIS (default to 1)
+#' @param out_file numeric BaseName of the output RData and CSV files
+#' @param opts$erode flag if 1, then perfom analysis on eroded ROIS (default to 1)
 #' @param erode_file string Filename of the ENVI mask containing the ERODED ROIS (generated automatically in FRG_Compute_SVI.R)
-#' @param Intermed_Dir string name of the Folder containing the intermediate processing results
-#' @param Overlap string If == 'Single', extract time series for areas burned once.
+#' @param opts$intermed_dir string name of the Folder containing the intermediate processing results
+#' @param overlap string If == 'Single', extract time series for areas burned once.
 #'        if =='Multiple, extract time series for areas burned multiple times
-#' @param Shape_File_Orig string Filename of the original input BAs shapefile
+#' @param shape_file_orig string Filename of the original input BAs shapefile
 #' @param LUT_File_Multiple string Filenlame of the LUT table created by FRG_Process_Shapefile.py
 #'
 #' @return 'DONE' if all went OK, otherwise error message
@@ -34,39 +34,44 @@
 #' Created Date: Nov 8, 2012
 #' @export
 #'
-frg_extract_svi <- function(SVI_File, Shape_File, CLC_File_00, ENV_Zones_File, 
-                            Out_File, erode, FireMask_File_Er, Intermed_Dir, Overlap, Shape_File_Orig, 
-                            LUT_File_Multiple) {
+frg_extract_svi <- function(SVI_file   ,
+                            shape_file ,
+                            out_file   ,
+                            overlap    ,
+                            shape_file_orig ,
+                            lut_file_multiple ,
+                            opts,
+                            force_update) {
   
   message("----------------------------------------------------------")
-  message("---- Extracting sVI time series for burnt areas - ", Overlap, " fires ----")
+  message("---- Extracting sVI time series for burnt areas - ", overlap, " fires ----")
   message("----------------------------------------------------------")
-  message(paste("---- -> In File for TS extraction:  ", SVI_File))
-  message(paste("---- -> Out File for TS extraction: ", Out_File))
+  message(paste("---- -> In File for TS extraction:  ", SVI_file))
+  message(paste("---- -> Out File for TS extraction: ", out_file))
   
   # Define output file names (csv and RData) ----
   
-  if (Overlap == "Single") {
-    Out_RData   <- paste(Out_File, "RData.RData", sep = "_")  # Filenames used for output saving RData Matrix
-    Out_IDL_CSV <- paste(Out_File, "IDL_Matrix.csv", sep = "_")
+  if (overlap == "Single") {
+    out_rdata   <- paste(out_file, "RData.RData", sep = "_")  # Filenames used for output saving RData Matrix
+    out_idl_csv <- paste(out_file, "IDL_Matrix.csv", sep = "_")
   } else {
-    Out_RData   <- paste(Out_File, "RData.RData", sep = "_")  # Filenames used for output saving RData Matrix
-    Out_IDL_CSV <- paste(Out_File, "IDL_Matrix.csv", sep = "_")
+    out_rdata   <- paste(out_file, "RData.RData", sep = "_")  # Filenames used for output saving RData Matrix
+    out_idl_csv <- paste(out_file, "IDL_Matrix.csv", sep = "_")
   }
   
   selection <- "no"
   
-  if (!(file.exists(Out_RData)) | selection == "yes") {
-    svi_folder  <- file.path(dirname(SVI_File), "Yearly_Images")
+  if (!(file.exists(out_rdata)) | selection == "yes") {
+    svi_folder  <- file.path(dirname(SVI_file), "Yearly_Images")
     
     # Open required raster files ----
     svi_files   <- file_path_sans_ext(list.files(svi_folder, pattern = ".hdr$",
                                                  recursive = TRUE, include.dirs = TRUE, 
                                                  full.names = TRUE)) 
     svi_stack   <- raster::stack(svi_files) 
-    clc_rast    <- raster::raster(CLC_File_00) 
-    erode_rast  <- raster::raster(FireMask_File_Er)
-    # envzon_rast <- raster::raster(ENV_Zones_File) 
+    clc_rast    <- raster::raster(opts$clc_file) 
+    erode_rast  <- raster::raster(opts$firemask_file_er)
+    
     
     raster::NAvalue(svi_stack) <- 32767 # set nodatavalue for input SVI file  
     
@@ -80,7 +85,7 @@ frg_extract_svi <- function(SVI_File, Shape_File, CLC_File_00, ENV_Zones_File,
     totburn_shp <- as(sf::st_read(Shape_File, stringsAsFactors = FALSE, quiet = TRUE),'Spatial') 
     nfires      <- dim(totburn_shp)[1]
     tempraster  <- tempfile(tmpdir = tempdir(), fileext = ".tiff") 
-    id_field    <- ifelse(Overlap == 'Single', 'OBJECTID','OVERLAP_ID') 
+    id_field    <- ifelse(overlap == 'Single', 'OBJECTID','OVERLAP_ID') 
     
     #Rasterize the shapefile to allow a fast extraction of SVI data ----
     
@@ -95,8 +100,8 @@ frg_extract_svi <- function(SVI_File, Shape_File, CLC_File_00, ENV_Zones_File,
                              small = FALSE,
                              verbose = TRUE, 
                              end_band = 3) 
-    # write.csv(ts_data, file = Out_IDL_CSV)
-    # save(ts_data, file = Out_RData) 
+    # write.csv(ts_data, file = out_idl_csv)
+    # save(ts_data, file = out_rdata) 
     
     # Data <- ts_data  # "Data" now contains time series for all burnt pixels 
     
@@ -107,13 +112,13 @@ frg_extract_svi <- function(SVI_File, Shape_File, CLC_File_00, ENV_Zones_File,
     message("---- Joining MODIS and Shapefile info ----")
     message("-----------------------------------------")
     
-    # BAreas_Name <- strsplit(basename(Shape_File_Orig), ".shp")[[1]]
-    # BAreas_Dir  <- dirname(Shape_File_Orig)
-    BAreas_shp  <- as(st_read(Shape_File_Orig, stringsAsFactors = FALSE, quiet = TRUE),"Spatial")
+    # BAreas_Name <- strsplit(basename(shape_file_orig), ".shp")[[1]]
+    # BAreas_Dir  <- dirname(shape_file_orig)
+    BAreas_shp  <- as(st_read(shape_file_orig, stringsAsFactors = FALSE, quiet = TRUE),"Spatial")
     Data_Shape  <- BAreas_shp@data  # Get attributes data from the shp
     
     
-    if (Overlap == "Single") {
+    if (overlap == "Single") {
       
       # Analyze areas burned only once ----
       
@@ -121,11 +126,11 @@ frg_extract_svi <- function(SVI_File, Shape_File, CLC_File_00, ENV_Zones_File,
       # Load the statistics file computed by IDL (Derived from Application of
       # FRG_ROI_STAT_ERODE.pro)
       
-      # Data = read.csv(Out_IDL_CSV,header = TRUE, na.strings =
-      # FRG_Options$No_Data_Out_Rast, stringsAsFactors = FALSE) Data[Data ==
-      # FRG_Options$No_Data_Out_Rast] = NA # Put the NODATA to 'R' NA
+      # Data = read.csv(out_idl_csv,header = TRUE, na.strings =
+      # opts$No_Data_Out_Rast, stringsAsFactors = FALSE) Data[Data ==
+      # opts$No_Data_Out_Rast] = NA # Put the NODATA to 'R' NA
       
-      # Data <- read.csv(Out_IDL_CSV)
+      # Data <- read.csv(out_idl_csv)
       # Data <- select(Data, -X)
       n_Years           <- length(unique(ts_data$Year))
       names(ts_data)[1] <- "OBJECTID"
@@ -133,7 +138,7 @@ frg_extract_svi <- function(SVI_File, Shape_File, CLC_File_00, ENV_Zones_File,
       # names(Data)[5:(5+n_Years-1)] =
       # as.character(seq(as.numeric(Start_Year),as.numeric(End_Year))) #
       # Correct columns names names(Data)[(5+n_Years):(5+2*n_Years-1)] =
-      # paste('erode',as.character(seq(as.numeric(Start_Year),as.numeric(End_Year))),
+      # paste('opts$erode',as.character(seq(as.numeric(Start_Year),as.numeric(End_Year))),
       # sep = '_') # Correct columns names
       
       # Remove from Data_Shape records not found in the MODIS ROI data
@@ -271,22 +276,22 @@ frg_extract_svi <- function(SVI_File, Shape_File, CLC_File_00, ENV_Zones_File,
       # Add attributes to the Data Frame (Useful to keep track of processing
       # options!)
       
-      # attr(Data, 'SVI_File') = SVI_File ;
+      # attr(Data, 'SVI_file') = SVI_file ;
       
       # Add some attributyes to "Data" to allow a-posteriori knowledge on ----
       # the conductyed processing 
       
-      # attr(ts_data, "Shape_File") <- Shape_File  #; \tattr(Data, 'CSV_File') = Out_IDL_CSV
-      # attr(ts_data, "CLC_File")   <- CLC_File_00
+      # attr(ts_data, "Shape_File") <- Shape_File  #; \tattr(Data, 'CSV_File') = out_idl_csv
+      # attr(ts_data, "CLC_File")   <- opts$clc_file
       # attr(ts_data, "Processing Date") <- Sys.Date()
       # attr(ts_data, "Start_Year") <- Start_Year
       # attr(ts_data, "End_Year")   <- End_Year
       # attr(ts_data, "Index")      <- "Med_SNDVI"
       
-      # Save the computed Data Frames in "Out_RData" ----
+      # Save the computed Data Frames in "out_rdata" ----
       
       print(paste("-> Saving TS info RData file"))
-      save(ts_data, Data_Shape, file = Out_RData)
+      save(ts_data, Data_Shape, file = out_rdata)
       
       # Finished Processing. Close message box and perform garbage collection
       gc()
@@ -305,11 +310,11 @@ frg_extract_svi <- function(SVI_File, Shape_File, CLC_File_00, ENV_Zones_File,
       Data_Shape_mult <- BAreas_shp_mult@data  # Get attributes data from the shp
       
       # Load the statistics file computed by IDL (Derived from Application of
-      # FRG_ROI_STAT_ERODE.pro) Data = read.csv(Out_IDL_CSV,header = TRUE,
-      # na.strings = FRG_Options$No_Data_Out_Rast, stringsAsFactors = FALSE)
-      # Data[Data == FRG_Options$No_Data_Out_Rast] = NA # Put the NODATA to
+      # FRG_ROI_STAT_ERODE.pro) Data = read.csv(out_idl_csv,header = TRUE,
+      # na.strings = opts$No_Data_Out_Rast, stringsAsFactors = FALSE)
+      # Data[Data == opts$No_Data_Out_Rast] = NA # Put the NODATA to
       # 'R' NA n_Years = (length(names(Data)) - 4)/2
-      # Data <- read.csv(Out_IDL_CSV)
+      # Data <- read.csv(out_idl_csv)
       # Data <- select(Data, -X)
       n_Years            <- length(unique(ts_data$Year))
       names(ts_data)[1]  <- "OVERLAP_ID"
@@ -319,7 +324,7 @@ frg_extract_svi <- function(SVI_File, Shape_File, CLC_File_00, ENV_Zones_File,
       # names(Data)[5:(5+n_Years-1)] =
       # as.character(seq(as.numeric(Start_Year),as.numeric(End_Year))) #
       # Correct columns names names(Data)[(5+n_Years):(5+2*n_Years-1)] =
-      # paste('erode',as.character(seq(as.numeric(Start_Year),as.numeric(End_Year))),
+      # paste('opts$erode',as.character(seq(as.numeric(Start_Year),as.numeric(End_Year))),
       # sep = '_') # Correct columns names
       
       # Load the LUT data relating each overlap with the corresponding
@@ -460,38 +465,38 @@ frg_extract_svi <- function(SVI_File, Shape_File, CLC_File_00, ENV_Zones_File,
       # Add attributes to the Data Frame (Useful to keep track of processing
       # options!)
       
-      # attr(ts_data, "SVI_File") <- SVI_File
+      # attr(ts_data, "SVI_file") <- SVI_file
       # attr(ts_data, "Shape_File") <- Shape_File
-      # attr(ts_data, "CSV_File") <- Out_IDL_CSV
-      # attr(ts_data, "CLC_File") <- CLC_File_00
+      # attr(ts_data, "CSV_File") <- out_idl_csv
+      # attr(ts_data, "CLC_File") <- opts$clc_file
       # attr(ts_data, "Processing Date") <- Sys.Date()
       # attr(ts_data, "Start_Year") <- Start_Year
       # attr(ts_data, "End_Year") <- End_Year
-      # if (length(grep("RDVI", SVI_File)) > 0) 
+      # if (length(grep("RDVI", SVI_file)) > 0) 
       # {
       #   attr(ts_data, "Index") <- "RDVI"
       # }  # to be removed !
-      # if (length(grep("NDVI", SVI_File)) > 0) 
+      # if (length(grep("NDVI", SVI_file)) > 0) 
       # {
       #   attr(ts_data, "Index") <- "NDVI"
       # }  # to be removed !
-      # if (length(grep("SNDVI", SVI_File) > 0)) {
+      # if (length(grep("SNDVI", SVI_file) > 0)) {
       #   attr(ts_data, "Index") <- "SNDVI"
       # }
-      # if (length(grep("SRDVI", SVI_File) > 0)) {
+      # if (length(grep("SRDVI", SVI_file) > 0)) {
       #   attr(ts_data, "Index") <- "SRDVI"
       # }
-      # if (length(grep("Med_SNDVI", SVI_File) > 0)) {
+      # if (length(grep("Med_SNDVI", SVI_file) > 0)) {
       #   attr(ts_data, "Index") <- "Med_SNDVI"
       # }
-      # if (length(grep("Med_SRDVI", SVI_File)) > 0) {
+      # if (length(grep("Med_SRDVI", SVI_file)) > 0) {
       #   attr(ts_data, "Index") <- "Med_SRDVI"
       # }
       
       # Save the computed Data Frames
       
       print(paste("-> Saving TS info RData file"))
-      save(ts_data, Data_Shape, file = Out_RData)
+      save(ts_data, Data_Shape, file = out_rdata)
       
       # Finished Processing. Close message box and perform garbage collection
       gc()
@@ -501,7 +506,7 @@ frg_extract_svi <- function(SVI_File, Shape_File, CLC_File_00, ENV_Zones_File,
     }
   } else {
     message("---- -> RData file joining MODIS and Shapefile info already existing: ", 
-            basename(Out_RData), "----")
+            basename(out_rdata), "----")
   }
   
   # Completed

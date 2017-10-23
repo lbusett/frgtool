@@ -4,13 +4,7 @@
 \alias{frg_buildroi}
 \title{frg_buildroi}
 \usage{
-frg_buildroi(Shape_File, CLC_File_00, exp_path_str, roi_file,
-  force_update = force_update)
-}
-\arguments{
-\item{Shape_File}{string Input Shapefile of BAs}
-
-\item{CLC_File_00}{string ENVI file containing the CORINE land Cover map 2000, recoded to the EFFIS legend}
+frg_buildroi(opts, exp_path_str, force_update)
 }
 \description{
 Accessory function to call IDL routine for ROI creation.

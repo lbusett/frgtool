@@ -7,7 +7,7 @@
 #' `FRG_Create_Mask.pro` is used to create a binary mask to exclude burned areas
 #' from statistics computaitons. See `FRG_Create_Mask.pro` in `/IDL/VI_Elaborations`
 #' for further documentation
-#' @param roi_file 
+#' @param opts$roi_file 
 #' @param force_update
 #' @inheritParams frg_compSVI
 #' @inheritParams frg_fullprocessing
@@ -15,33 +15,30 @@
 #' @return NULL
 #' @export
 
-frg_createmask <- function(roi_file, 
-                           CLC_File_00, 
+frg_createmask <- function(opts, 
                            exp_path_str,
-                           Intermed_Dir, 
-                           FireMask_File, 
-                           force_update = force_update) {
+                           force_update) {
   
-  
+ 
   # Check if mask already existing, If yes, do not recreate it unless
   # force_update == T
   
-  if (!file.exists(FireMask_File) | force_update) {
+  if (!file.exists(opts$firemask_file) | force_update) {
     
-    message("---- IDL-> Creating Burnt Areas Mask File: ", FireMask_File, " ----") 
+    message("---- IDL-> Creating Burnt Areas Mask File: ", opts$firemask_file, " ----") 
     
     # Build the command to run the FRG_Create_Mask.pro IDL funtion ----
     
     str_idl <- paste0(
-      "res = FRG_Create_Mask(roi_file = '",   roi_file,      "' , $ \n",
-      "                     CLC_00_File = '", CLC_File_00,   "' , $ \n",
-      "                     Mask_File = '",   FireMask_File, "')"
+      "res = FRG_Create_Mask(roi_file = '",    opts$roi_file,      "' , $ \n",
+      "                      CLC_00_File = '", opts$clc_file,      "' , $ \n",
+      "                      Mask_File = '",   opts$firemask_file, "')"
     )
     
     # Create the batch file needed to run the FRG_Create_Mask.pro IDL funtion ----
     # from a command shell
     
-    batch_file <- file.path(FRG_Options$src_dir_idl, "/batch_files/FRG_CreateMask_Batch.pro")
+    batch_file <- file.path(opts$src_dir_idl, "/batch_files/FRG_CreateMask_Batch.pro")
     fileConn   <- file(batch_file)
     writeLines(c(exp_path_str, 
                  "envi, /restore_base_save_files  ", 
@@ -50,7 +47,7 @@ frg_createmask <- function(roi_file,
     close(fileConn)
     
     # Execute FRG_Create_Mask.pro  ----
-    out <- system2("idl.exe", args = batch_file, stdout = "log_IDL")
+    out <- system2("idl.exe", args = batch_file)
     
     if (!is.null(attributes(out)$status)) {
       stop("An error occurred while creating the burned areas mask. 

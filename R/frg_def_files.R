@@ -1,78 +1,98 @@
 #' frg_def_files
 #' @description 
 #  Helper function used to define required file names and folders
-#' @param Out_Dir 
+#' @param out_dir 
 #' @param Start_Year 
 #' @param End_Year 
 #' @param mod_dir 
-#' @param Shape_File 
+#' @param opts$orig_shapefile 
+#' @param opts
 #'
-#' @return ff list contains all main file names and folders
+#' @return `opts`` list contains all main file names and folders
 #' @export
 
-frg_def_files <- function(Out_Dir,
-                          Start_Year,
-                          End_Year,
-                          mod_dir,
-                          Shape_File) {
-  
-  ff <- list()
+frg_def_files <- function(opts) {
   
   # Set Main Results Dir
-  # Out_Dir <- file.path(Out_Dir, paste("Results", Start_Year, End_Year, 
+  # out_dir <- file.path(out_dir, paste("Results", Start_Year, End_Year, 
   #                               as.character(Sys.Date()), 
   #                               sep = "_"))
-  ff[["Out_Dir"]]      <- file.path(Out_Dir)
-  ff[["mod_dir"]]      <- file.path(mod_dir)
-  ff[["OutFile_Conn"]] <- file.path(Out_Dir, paste("Process_Summary", ".txt", sep = ""))  # Set Processing log file
-  ff[["Intermed_Dir"]] <- file.path(Out_Dir, "Intermed_Proc")  # Set Dir for storing intermediate processing results
-  ff[["Summary_Dir"]]  <- file.path(Out_Dir, "Summaries_for_EFFIS")  # Set Dir for storing EFFIS summaries results
-  ff[["Scaled_Dir"]]   <- file.path(Out_Dir, "Scaled_Indexes")  # Define Dir were Scaled Indexes time series will be saved
-  ff[["OutOrig_Path"]] <- file.path(mod_dir, "Originals")
+  # opts[["out_dir"]]      <- file.path(out_dir)
+  # opts[["mod_dir"]]      <- file.path(mod_dir)
+  # Set Processing log file
+  opts[["orig_shapefile"]] <- opts$orig_shapefile
+  opts[["outfile_conn"]] <- file.path(opts$out_dir,
+                                      paste("Process_Summary", ".txt", sep = ""))  
+  # Set Dir for storing intermediate processing results
+  opts[["intermed_dir"]] <- file.path(opts$out_dir, "Intermed_Proc")  
+  # Set Dir for storing EFFIS summaries results
+  opts[["summary_dir"]]  <- file.path(opts$out_dir, "Summaries_for_EFFIS") 
+  # Define Dir were Scaled Indexes time series will be saved
+  opts[["scaled_dir"]]   <- file.path(opts$out_dir, "Scaled_Indexes")  
+  opts[["outorig_path"]] <- file.path(opts$mod_dir, "Originals")
   
-  ff[["roi_file"]]     <- file.path(ff$Intermed_Dir, "ENVI_ROI", 
-                     paste0(file_path_sans_ext(basename(Shape_File)), ".ROI"))
+  opts[["roi_file"]] <- file.path(opts$intermed_dir, "ENVI_ROI", 
+                                  paste0(file_path_sans_ext(basename(opts$orig_shapefile)), ".ROI"))
   
-  ff[["FireMask_File"]] <- file.path(ff$Intermed_Dir, "ENVI_Mask", # Define Mask file name and create Dir for mask storing if needed ----
-                                  paste0(file_path_sans_ext(basename(ff$roi_file)), 
-                                         "_ENVI_Mask"))
+  opts[["firemask_file"]] <- file.path(
+    opts$intermed_dir, "ENVI_Mask", # Define Mask file name and create Dir for mask storing if needed ----
+    paste0(file_path_sans_ext(basename(opts$roi_file)), 
+           "_ENVI_Mask"))
   
-  ff[["FireMask_File_Er"]] <- file.path(ff$Intermed_Dir, "ENVI_Mask",  # Define Mask file name and create Dir for mask storing if needed ----
-                                  paste0(file_path_sans_ext(basename(ff$roi_file)), 
-                                         "_ENVI_Mask_Eroded"))
+  opts[["firemask_file_er"]] <- file.path(opts$intermed_dir, "ENVI_Mask",  # Define Mask file name and create Dir for mask storing if needed ----
+                                          paste0(file_path_sans_ext(basename(opts$roi_file)), 
+                                                 "_ENVI_Mask_Eroded"))
   
-  ff[["out_dir_extrsvi"]]     <- file.path(ff$Out_Dir, "Med_SNDVI", "TS_Extraction")
+  opts[["out_dir_extrsvi"]]     <- file.path(opts$out_dir,
+                                             "Med_SNDVI/TS_Extraction")
   
-  ff[["ExtTS_File_Single"]]   <- file.path(ff$out_dir_extrsvi, 
-                                        paste0("Med_SNDVI_ts_single"))
-  ff[["ExtTS_File_Multiple"]] <- file.path(ff$out_dir_extrsvi, 
-                                        paste0("Med_SNDVI_ts_multiple"))
+  opts[["ts_file_single"]]   <- file.path(opts$out_dir_extrsvi, 
+                                          paste0("Med_SNDVI_ts_single"))
+  opts[["ts_file_multiple"]] <- file.path(opts$out_dir_extrsvi, 
+                                          paste0("Med_SNDVI_ts_multiple"))
   
-  ff[["out_dir_stats"]] <- file.path(ff$Out_Dir, "Med_SNDVI", "Stat_Analysis")
+  opts[["out_dir_stats"]] <- file.path(opts$out_dir, "Med_SNDVI/Stat_Analysis")
   
-  ff[["TS_filename"]] <- file.path(ff$Scaled_Dir, "Med_SNDVI", 
-                                   paste0("Med_SNDVI", "_", Start_Year, "_", End_Year, "_META")) 
+  opts[["ts_filename"]] <- file.path(
+    opts$scaled_dir, "Med_SNDVI", 
+    paste0("Med_SNDVI", "_", opts$start_year, "_", opts$end_year, "_META")
+  ) 
   
   # Set Basename for statistics output file
-  ff[["Stats_File_Single"]]   <- file.path(ff$out_dir_stats, "Burned_Once",     basename(ff$ExtTS_File_Single))
-  ff[["Stats_File_Multiple"]] <- file.path(ff$out_dir_stats, "Burned_Multiple", basename(ff$ExtTS_File_Multiple))
-  
+  opts[["stats_file_single"]]   <- file.path(opts$out_dir_stats,
+                                             "Burned_Once",
+                                             basename(opts$ts_file_single))
+  opts[["stats_file_multiple"]] <- file.path(opts$out_dir_stats,
+                                             "Burned_Multiple",
+                                             basename(opts$ts_file_multiple))
+  opts[["intermed_shapes_dir"]]   = file.path(opts$intermed_dir, "Shapefiles/")
+  opts[["opts$orig_shapefile_single"]] = file.path(opts$intermed_dir, "Shapefiles/",
+                                                   paste0(tools::file_path_sans_ext(opts$orig_shapefile), 
+                                                          "_Single_Fires.shp"))
+  opts[["opts$orig_shapefile_multiple"]] = file.path(opts$intermed_dir, "Shapefiles/",
+                                                     paste0(tools::file_path_sans_ext(opts$orig_shapefile), 
+                                                            "_Multiple_Fires.shp"))
+  opts[["lut_file_multiple"]] = file.path(opts$intermed_dir, "Shapefiles/",
+                                          paste0(tools::file_path_sans_ext(opts$orig_shapefile), 
+                                                 "_Intersect_LUT_csv.csv"))
+  opts[["out_shape_dir"]] <- file.path(opts$summary_dir, "Shapefiles")
   
   # Create all required Dirs (if needed) ----
   
-  dir.create(ff$Scaled_Dir,                   recursive = TRUE, showWarnings = FALSE)
-  dir.create(ff$Intermed_Dir,                 recursive = TRUE, showWarnings = FALSE)
-  dir.create(ff$Summary_Dir,                  recursive = TRUE, showWarnings = FALSE)
-  dir.create(ff$OutOrig_Path,                 recursive = TRUE, showWarnings = FALSE)
-  dir.create(dirname(ff$roi_file),            recursive = TRUE, showWarnings = FALSE)
-  dir.create(dirname(ff$FireMask_File),       recursive = TRUE, showWarnings = FALSE)
-  dir.create(dirname(ff$FireMask_File_Er),    recursive = TRUE, showWarnings = FALSE)
-  dir.create(ff$out_dir_extrsvi,              recursive = TRUE, showWarnings = FALSE)
-  dir.create(ff$out_dir_stats,                recursive = TRUE, showWarnings = FALSE)
-  dir.create(dirname(ff$Stats_File_Single),   recursive = TRUE, showWarnings = FALSE)
-  dir.create(dirname(ff$Stats_File_Multiple), recursive = TRUE, showWarnings = FALSE)
-
-  #Send back the `ff` list ----
-  return(ff)
+  dir.create(opts$scaled_dir,                recursive = TRUE, showWarnings = FALSE)
+  dir.create(opts$intermed_dir,              recursive = TRUE, showWarnings = FALSE)
+  dir.create(opts$summary_dir,               recursive = TRUE, showWarnings = FALSE)
+  dir.create(opts$outorig_path,              recursive = TRUE, showWarnings = FALSE)
+  dir.create(dirname(opts$roi_file),         recursive = TRUE, showWarnings = FALSE)
+  dir.create(dirname(opts$firemask_file),    recursive = TRUE, showWarnings = FALSE)
+  dir.create(dirname(opts$firemask_file_er), recursive = TRUE, showWarnings = FALSE)
+  dir.create(opts$out_dir_extrsvi,           recursive = TRUE, showWarnings = FALSE)
+  dir.create(opts$out_dir_stats,             recursive = TRUE, showWarnings = FALSE)
+  dir.create(dirname(opts$ts_file_single),   recursive = TRUE, showWarnings = FALSE)
+  dir.create(dirname(opts$ts_file_multiple), recursive = TRUE, showWarnings = FALSE)
+  dir.create(dirname(opts$intermed_shapes_dir), recursive = TRUE, showWarnings = FALSE)
+  
+  #Send back the updated `opts` list ----
+  return(opts)
   
 }

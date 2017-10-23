@@ -4,10 +4,12 @@
 \alias{frg_def_files}
 \title{frg_def_files}
 \usage{
-frg_def_files(Out_Dir, Start_Year, End_Year, mod_dir, Shape_File)
+frg_def_files(opts)
 }
 \arguments{
-\item{Out_Dir}{}
+\item{opts}{}
+
+\item{out_dir}{}
 
 \item{Start_Year}{}
 
@@ -15,8 +17,8 @@ frg_def_files(Out_Dir, Start_Year, End_Year, mod_dir, Shape_File)
 
 \item{mod_dir}{}
 
-\item{Shape_File}{}
+\item{opts$orig_shapefile}{}
 }
 \value{
-ff list contains all main file names and folders
+`opts`` list contains all main file names and folders
 }

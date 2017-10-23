@@ -4,12 +4,10 @@
 \alias{frg_createmask}
 \title{frg_createmask}
 \usage{
-frg_createmask(roi_file, CLC_File_00, exp_path_str, FireMask_File, force_update)
+frg_createmask(opts, exp_path_str, force_update)
 }
 \arguments{
-\item{roi_file}{}
-
-\item{CLC_File_00}{string ENVI file containing the CORINE land Cover map 2000, recoded to the EFFIS legend}
+\item{opts$roi_file}{}
 }
 \description{
 Accessory function to call IDL routine for Mask creation.
