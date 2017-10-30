@@ -100,11 +100,11 @@ frg_fullprocessing <- function(opts,
       # Process the Burnt area shapefile to create the shapefile of areas ----
       # burnt once of areas burnt multiple times 
       
-      if (!((file_exists(opts$shape_file_single) & 
-             file_exists(opts$shape_file_multiple) & 
-             file_exists(opts$lut_file_multiple)) | 
-            force_update)) {
-        
+      if (!(file.exists(opts$shapefile_single) & 
+             file.exists(opts$shapefile_multiple) & 
+             file.exists(opts$lut_file_multiple)) | 
+            force_update) {
+        browser()
          proc_shapes <- frg_process_shapefile(opts)
       }
       
@@ -113,21 +113,22 @@ frg_fullprocessing <- function(opts,
       
       # Perform TS extraction on the shapefile of areas burned once ----
       er <- frg_extract_svi(SVI_file   = opts$ts_filename, 
-                            shape_file = opts$shape_file_single, 
-                            out_file   = opts$ts_file_single, 
+                            shape_file = opts$shapefile_single, 
+                            out_file   = opts$stats_file_single, 
                             overlap    = "Single", 
-                            shape_file_Orig = opts$orig_shape_file, 
+                            shape_file_orig = opts$orig_shapefile, 
                             lut_file_multiple = "",
                             opts,
                             force_update)
+
       
       # Perform TS extraction on the shapefile of areas burned more than once ----
       
       er <- frg_extract_svi(SVI_file   = opts$ts_filename, 
-                            shape_file = opts$shape_file_multiple, 
-                            out_file   = opts$ts_file_multiple, 
+                            shape_file = opts$shapefile_multiple, 
+                            out_file   = opts$stats_file_multiple, 
                             overlap = "Multiple", 
-                            shape_file_Orig = opts$orig_shape_file, 
+                            shape_file_orig = opts$orig_shapefile, 
                             lut_file_multiple = opts$lut_file_multiple,
                             opts,
                             force_update)

@@ -65,16 +65,23 @@ frg_def_files <- function(opts) {
   opts[["stats_file_multiple"]] <- file.path(opts$out_dir_stats,
                                              "Burned_Multiple",
                                              basename(opts$ts_file_multiple))
+  
   opts[["intermed_shapes_dir"]]   = file.path(opts$intermed_dir, "Shapefiles/")
-  opts[["opts$orig_shapefile_single"]] = file.path(opts$intermed_dir, "Shapefiles/",
-                                                   paste0(tools::file_path_sans_ext(opts$orig_shapefile), 
-                                                          "_Single_Fires.shp"))
-  opts[["opts$orig_shapefile_multiple"]] = file.path(opts$intermed_dir, "Shapefiles/",
-                                                     paste0(tools::file_path_sans_ext(opts$orig_shapefile), 
-                                                            "_Multiple_Fires.shp"))
-  opts[["lut_file_multiple"]] = file.path(opts$intermed_dir, "Shapefiles/",
-                                          paste0(tools::file_path_sans_ext(opts$orig_shapefile), 
-                                                 "_Intersect_LUT_csv.csv"))
+  opts[["shapefile_single"]] = file.path(
+    opts$intermed_dir, "Shapefiles/",
+    paste0(basename(tools::file_path_sans_ext(opts$orig_shapefile)), 
+           "_Single_Fires.shp")
+  )
+  opts[["shapefile_multiple"]] =  file.path(
+    opts$intermed_dir, "Shapefiles/",
+    paste0(basename(tools::file_path_sans_ext(opts$orig_shapefile)), 
+           "_Multiple_Fires.shp")
+  )
+  opts[["lut_file_multiple"]] = file.path(
+    opts$intermed_dir, "Shapefiles/",
+    paste0(basename(tools::file_path_sans_ext(opts$orig_shapefile)), 
+           "_Intersect_LUT_csv.csv")
+    )
   opts[["out_shape_dir"]] <- file.path(opts$summary_dir, "Shapefiles")
   
   # Create all required Dirs (if needed) ----

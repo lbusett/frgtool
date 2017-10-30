@@ -21,7 +21,7 @@ frg_createmeta <- function(opts,
                          opts$start_year, "_",
                          opts$end_year, "_META.dat",
                          sep = "")
-  if (!file.exists(meta_filename | force_update)){
+  if (!file.exists(meta_filename) | force_update){
     meta_filename <- file.path(file.path(opts$scaled_dir,
                                          paste0("Med_S", opts$index),
                                          meta_filename))

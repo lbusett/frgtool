@@ -157,7 +157,7 @@ frg_compSVI <- function(opts,
   
   frg_createmeta(opts, 
                  out_files, 
-                 force_update = force_update)
+                 force_update)
   
   # End cycle opts$SNDVI vs opts$SRDVI
   
