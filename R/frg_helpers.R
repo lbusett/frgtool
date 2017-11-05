@@ -12,32 +12,31 @@
 #' @export 
 #' @author Lorenzo Busetto, phD (2017) <lbusett@gmail.com>
 #' 
-frg_set_effispath <- function() {
-  if (is.null(options("frgtool_effispath")$frgtool_effispath)) {
-    check = FALSE
-    while(!check) {
-      effispath <- readline(
-        prompt = "Specify the path to the effis folder where the files to be used to update the ORACLE tables should be copied: ") #nolint
-      if (!dir.exists(effispath)) {
-        message("The selected folder is not valid. Please try again!")
-      } else {
-        message("frgtool --> `effispath` set to: ", effispath)
-        check = TRUE
-      }
-    }
-    effispath <- normalizePath(effispath)
-    options(frgtool_effispath =  effispath)
-  } else {
-    effispath <- options("frgtool_effispath")[[1]] 
-  }
-  return(effispath)
-}
+# frg_set_effispath <- function() {
+#   if (is.null(options("frgtool_effispath")$frgtool_effispath)) {
+#     check = FALSE
+#     while(!check) {
+#       effispath <- readline(
+#         prompt = "Specify the path to the effis folder where the files to be used to update the ORACLE tables should be copied: ") #nolint
+#       if (!dir.exists(effispath)) {
+#         message("The selected folder is not valid. Please try again!")
+#       } else {
+#         message("frgtool --> `effispath` set to: ", effispath)
+#         check = TRUE
+#       }
+#     }
+#     effispath <- normalizePath(effispath)
+#     options(frgtool_effispath =  effispath)
+#   } else {
+#     effispath <- options("frgtool_effispath")[[1]] 
+#   }
+#   return(effispath)
+# }
 
 #' @title frg_set_arcpypath
 #' @description check if arcpypath global option was already set.
 #'  Otherwise ask to set it and check it. 
-#' @return OUTPUT_DESCRIPTION
-#' @details DETAILS
+#' @return path to argis python
 #' @rdname frg_set_arcpypath
 #' @export 
 #' @author Lorenzo Busetto, phD (2017) <lbusett@gmail.com>

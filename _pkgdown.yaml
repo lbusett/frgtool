@@ -1,0 +1,20 @@
+title: frgtool
+url: http://lbusett.github.io/frgtool
+template:
+  params:
+    bootswatch: flatly
+navbar:
+  type: inverse
+  left:
+    - icon: fa-home
+      href: index.html
+  right:
+    - icon: fa-newspaper-o
+      text: "news"
+      href: news/index.html
+    - icon: fa-file-code-o 
+      text: "functions"
+      href: reference/index.html
+    - icon: fa-github fa-lg
+      text: "github"
+      href: https://github.com/lbusett/frgtool/

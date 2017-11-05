@@ -2,7 +2,7 @@ Package: frgtool
 Type: Package
 Title: Analyze Post Fire Vegetation Regeneration from Time Series of Summertime MODIS data
 Version: 0.1.0.9000
-Author: Lorenzo Busetto
+Authors@R: person("Lorenzo", "Busetto", email = "busetto.l@irea.cnr.it", role = c("aut", "cre"), comment = c(ORCID = "0000-0001-9634-6038"))
 Maintainer: Lorenzo Busetto <lbusett@gmail.com>
 Description: Allows analysis of post-fire vegetation regeneration 
  from time series of summertime MODIS data
