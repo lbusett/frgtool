@@ -4,28 +4,25 @@
 \alias{frg_plotstat_multiple}
 \title{frg_plotstat_multiple}
 \usage{
-frg_plotstat_multiple(In_File = In_File, Out_File = Out_File,
-  min_pix = min_pix, sub_zones = sub_zones, erode = erode)
+frg_plotstat_multiple(in_file, out_file, opts)
 }
 \arguments{
-\item{In_File}{string File of scaled VI Time Series extracted for multiple-fire areas}
+\item{in_file}{string File of scaled VI Time Series extracted for multiple-fire
+areas}
 
-\item{Out_File}{string Basename for output files}
+\item{out_file}{string Basename for output files}
 
-\item{min_pix}{numeric MInimum number of CORE pixels for a bunt area to be considered}
-
-\item{sub_zones}{flag If 1 , consider ENV_ZONES differences when analyzing}
-
-\item{erode}{flag If 1, perform analysis only on NON CORE burnt pixels}
+\item{opts}{\code{list} of options passed from \code{frg_fullprocessing()}}
 }
 \value{
-Saves a .RData file containing data needed to plot NDVIR time series for the different multiple-fire BAs
+Saves a .RData file containing data needed to plot Med_SVI time series
+for the different multiple-fire BAs
 }
 \description{
-Function used extract the info necessary to plot the NDVIRtime series (i.e., boxplots, overlapid of BA, fireyears, ecc) \ cr
-for multiple-fire areas
+Function used extract the info necessary to plot the Med_SVI
+time series (i.e., boxplots, overlapid of BA, fireyears, ecc) for areas
+burnt multiple times
 }
 \author{
-Lorenzo Busetto - email: lorenzo.busetto@jrc.ec.europa.eu
-Created Date: Feb 16, 2012
+Lorenzo Busetto, phD (2017) \href{mailto:lbusett@gmail.com}{lbusett@gmail.com}
 }

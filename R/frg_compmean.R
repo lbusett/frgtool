@@ -1,19 +1,33 @@
-#' frg_compmean
-#' @param ReProc 
-#' @param UI_check 
-#' @param max_UI 
-#' @importFrom raster mean blockSize getValues writeStart writeStop writeValues stack
+#' @title frg_compmean
+#' @description Accessory function to compute average summer NDVI for each year. 
+#' @details Accessory function to compute average summer NDVI for each year using
+#'  MODIS data downloaded by frg_moddownload.
+#' @param opts `list` of options passed from `frg_fullprocessing()`
+#' @param yy `character` year of the analysis
+#' @param UI_check `logical` If TRUE, use usefulness index data to filter-out 
+#'  low quality data, Default: TRUE
+#' @param max_UI `numeric` Maximum UI value of high-quality NDVI data. Values 
+#'  of pixels with UI > max_UI are treated as noisy and not considered in average
+#'  computation, Default: 5
+#' @param force_update `logical` If TRUE, recompute the average files even if
+#'  it already exist, Default: FALSE
+#' @return `character` If all goes well, the function returns "DONE!"
+#' @rdname frg_compmean
+#' @export 
+#' @author Lorenzo Busetto, phD (2017) <lbusett@gmail.com>
+#' @importFrom raster raster blockSize writeStart getValues writeValues writeStop
+#'  stack
 #' @author Lorenzo Busetto, PhD (2012)
 #'         email: lbusett@gmail.com
 
 frg_compmean <- function(opts,
                          yy,
-                         UI_check,
-                         max_UI, 
-                         force_update) {
+                         UI_check = TRUE,
+                         max_UI = 5, 
+                         force_update = FALSE) {
   
   # Crete output folders if necessary ----
-  out_dir_avg      <- file.path(opts$out_origpath,'NDVI','Averages')				
+  out_dir_avg      <- file.path(opts$out_origpath,'NDVI','Averages')
   outfilename_avg  <- file.path(out_dir_avg, paste0("NDVI_Average_",yy,".tif"))
   dir.create(out_dir_avg, showWarnings = FALSE, recursive = T)
   
@@ -35,24 +49,24 @@ frg_compmean <- function(opts,
     
     # Accessory function for average computation in chunks ----
     frg_maskmeanNDVI <- function(NDVI, UI, Rely, max_UI, filename) {
-      out <- raster(NDVI)
-      bs  <- blockSize(out)
+      out <- raster::raster(NDVI)
+      bs  <- raster::blockSize(out)
       
-      out <- writeStart(out, filename, overwrite = TRUE, NAflag = 32767)
+      out <- raster::writeStart(out, filename, overwrite = TRUE, NAflag = 32767)
       for (i in 1:bs$n) {
-        vi_data_1 <- getValues(NDVI[[1]], row = bs$row[i], nrows = bs$nrows[i]) *
-          ifelse((getValues(UI[[1]], row = bs$row[i], nrows = bs$nrows[i]) <= max_UI) &
-                   (getValues(Rely[[1]], row = bs$row[i], nrows = bs$nrows[i]) <= 1), 1, NA) 
+        vi_data_1 <- raster::getValues(NDVI[[1]], row = bs$row[i], nrows = bs$nrows[i]) *
+          ifelse((raster::getValues(UI[[1]], row = bs$row[i], nrows = bs$nrows[i]) <= max_UI) &
+                   (raster::getValues(Rely[[1]], row = bs$row[i], nrows = bs$nrows[i]) <= 1), 1, NA) 
         
-        vi_data_2 <- getValues(NDVI[[2]], row = bs$row[i], nrows = bs$nrows[i]) *
-          ifelse((getValues(UI[[2]], row = bs$row[i], nrows = bs$nrows[i]) <= max_UI) &
-                   (getValues(Rely[[2]], row = bs$row[i], nrows = bs$nrows[i]) <= 1), 1, NA)   
+        vi_data_2 <- raster::getValues(NDVI[[2]], row = bs$row[i], nrows = bs$nrows[i]) *
+          ifelse((raster::getValues(UI[[2]], row = bs$row[i], nrows = bs$nrows[i]) <= max_UI) &
+                   (raster::getValues(Rely[[2]], row = bs$row[i], nrows = bs$nrows[i]) <= 1), 1, NA)   
         
         vi_data   <- rowMeans(cbind(vi_data_1, vi_data_2), na.rm = TRUE) 
-        writeValues(out, vi_data, bs$row[i])
+        raster::writeValues(out, vi_data, bs$row[i])
         gc()
       }
-      writeStop(out)
+      raster::writeStop(out)
     }
     
     # Setup data and compute average ----

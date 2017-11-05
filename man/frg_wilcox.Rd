@@ -4,37 +4,29 @@
 \alias{frg_wilcox}
 \title{FRG_Comp_Sig_Matrix}
 \usage{
-frg_wilcox(In_File = In_File, out_file_pmat = out_file_pmat,
-  min_pix = min_pix, perc_diff = perc_diff, MedWdt = MedWdt,
-  sub_zones = sub_zones, erode = erode)
+frg_wilcox(in_file, out_file_pmat, opts)
 }
 \arguments{
-\item{In_File}{string File of scaled VI Time Series extracted for single-fire areas}
+\item{in_file}{string File of scaled VI Time Series extracted for single-fire areas}
 
-\item{out_file_pmat}{string Output file name where the p-values matrix is saved}
+\item{out_file_pmat}{\code{character} path to the file to be used to store the
+p-values matrix}
 
-\item{min_pix}{numeric Minimum number of CORE pixels for a bunt area to be considered}
-
-\item{perc_diff}{numeric Minimum percentage difference checked for significant reduction}
-
-\item{MedWdt}{numeric Number of pre-fire years considered as reference}
-
-\item{sub_zones}{flag If 1 , consider ENV_ZONES differences when analyzing}
-
-\item{erode}{flag If 1, perform analysis only on NON CORE burnt pixels}
-
-\item{sig_level}{numeric Significance level used for Wilcoxon test}
+\item{opts}{\code{list} of options passed from \code{frg_fullprocessing()}}
 }
 \value{
-Saves a p_matrix.RData file containing the p-values matrix and the 'plot_stats' data frame in the 'p_matrixes' subfolder
+Saves a p_matrix.RData file containing the p-values matrix and the
+'plot_stats' data frame in the 'p_matrixes' subfolder
 }
 \description{
-Function used to perform the Wilcoxon test of significant differences, using differnt number of 'before fire years' as reference \cr
-The function creates and saves matrixes of p-values obtained using differnt number of before fire years. Matrix is saved within the 'p-matrixes' subfolder \cr
-of the folder containing the final output file. Additional info necessary to plot the time series (i.e., boxplots, objectids of fires, fireyears, ecc) \ cr
-are also saved in the same file (plot_stat data frame).
+Function used to perform the Wilcoxon test of significant differences,
+using differnt number of 'before fire years' as reference. The function creates
+and saves matrixes of p-values obtained using differnt number of before fire
+years. Matrix is saved within the 'p-matrixes' subfolder of the folder
+containing the final output file. Additional info necessary to plot the time
+series (i.e., boxplots, objectids of fires, fireyears, ecc) are also saved
+in the same file (plot_stat data frame).
 }
 \author{
-Lorenzo Busetto - email: lorenzo.busetto@jrc.ec.europa.eu
-Created Date: Feb 16, 2012
+Lorenzo Busetto, phD (2017) \href{mailto:lbusett@gmail.com}{lbusett@gmail.com}
 }

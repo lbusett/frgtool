@@ -2,52 +2,27 @@
 % Please edit documentation in R/frg_fullprocessing.R
 \name{frg_fullprocessing}
 \alias{frg_fullprocessing}
-\title{frg_fullprocessing}
+\title{FUNCTION_TITLE}
 \usage{
 frg_fullprocessing(opts, force_update, MOD_dwl = FALSE, Comp_SVI = TRUE,
   Extr_Stat = TRUE, Sig_Anal = TRUE)
 }
 \arguments{
-\item{mod_dir}{string Folder where the original and preprocessed image will be stored (i.e., the one above the 'Originals' folder)}
+\item{opts}{PARAM_DESCRIPTION}
 
-\item{opts$shape_file}{string Input Shapefile of BAs}
+\item{force_update}{PARAM_DESCRIPTION}
 
-\item{opts$clc_file}{string ENVI file containing the CORINE land Cover map 2000, recoded to the EFFIS legend}
+\item{MOD_dwl}{PARAM_DESCRIPTION, Default: FALSE}
 
-\item{opts$out_dir}{string Main Results Dir where results of the analysis will be saved}
+\item{Comp_SVI}{PARAM_DESCRIPTION, Default: TRUE}
 
-\item{Start_Year}{numeric Starting year of the analysis}
+\item{Extr_Stat}{PARAM_DESCRIPTION, Default: TRUE}
 
-\item{End_Year}{numeric Ending Year of the analysis}
-
-\item{Method}{numeric. 2 = Percentage Median difference computation}
-
-\item{SRDVI}{numeric. 1 = compute SRDVI; 2 =  Don't Compute SRDVI}
-
-\item{SNDVI}{numeric. 1 =  compute SNDVI; 2 = Don't Compute SNDVI}
-
-\item{ReProc}{numeric if = 1, already existing Scaled Indexes will be recomputed}
-
-\item{opts$redown}{numeric if = 1, MODIS images needed to create already existing mosaic files will be redownloaded, and
-already existing mosaics will be overwritten}
-
-\item{ReProcIm}{numeric if = 1, already existing MODIS mosaics will be reprocessed}
-
-\item{erode}{flag if = 1, analysis is conducted only on core pixels (defaults to 1)}
-
-\item{min_pix}{numeric minimum number of core pixels needed for a BA to be processed (default to 10)}
-
-\item{NKer}{numeric width (in Km) of the moving window used for computation of scaled indexes}
-
-\item{sig_level}{numeric Significance level for Wilcoxon test. Default to 0.05}
-
-\item{sub_zones}{Obsolete}
-
-\item{MedWdt}{}
-
-\item{perc_diffs}{numeric hash table Reduction Threshold on NDVIR reduction used in significance reduction analysis
-with wilcoxon test}
+\item{Sig_Anal}{PARAM_DESCRIPTION, Default: TRUE}
 }
 \description{
-Function used to apply all FRG processing steps
+FUNCTION_DESCRIPTION
+}
+\author{
+Lorenzo Busetto, phD (2017) \href{mailto:lbusett@gmail.com}{lbusett@gmail.com}
 }

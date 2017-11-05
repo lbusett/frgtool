@@ -1,8 +1,7 @@
-#' frg_compSVI 
+#'@title frg_compSVI 
 #'@description Function used to call the IDL functiosn used for computation of 
-#'             opts$SRDVI and opts$SNDVI yearly images (_**FRG_Compute_MedScaled_VI.pro**_)
-#'@details 
-#' This function is used to call the IDL function used for computation of SDVI and 
+#' SNDVI yearly images (_**frg_compute_med_SVI.pro**_)
+#'@details This function is used to call the IDL function used for computation of SDVI and 
 #' opts$SNDVI yearly images. It also calls the IDL routines needed to create the ENVI burnt 
 #' areas ROI, and the ENVI burnt areas MASKS (both total and eroded!). 
 #' Yearly opts$SRDVI (or opts$SNDVI) images are computed starting from the corresponding Yearly
@@ -17,7 +16,7 @@
 #'    CLC class in the window centred on the target pixel
 #' 4. Computed MOMENTS are use to determine an ESTIMATE of the 5th, 50th (median) 
 #'    95th percentile of the distribution, using the Cornish-Fisher fourth-order Expansion 
-#'    opts$method (["http://www.nematrian.com/R.aspx?p=CornishFisherDerivation])
+#'    opts$method ("http://www.nematrian.com/R.aspx?p=CornishFisherDerivation)
 #' 5. Scaled opts$indexes for the target pixel is computed exploiting this opts$method:
 #'    - 'Percentage Deviation to Kernel Median': For each pixel, the algorithm 
 #'    identifies all pixels of the image corresponding to the same CLC class 
@@ -25,20 +24,22 @@
 #'    of values of the analyzed Vegetation opts$index in the selecteds pixels. 
 #'    - Scaled opts$index for the pixel are then computed as: sVI = 100 * (VI_pix - VI_median)/(VI_median).
 #'
-#'(For further details, see the documentation for the IDL function _FRG_Compute_MedScaled_VI.pro_)
-#' @inheritParams frg_fullprocessing 
-#' @param  Intermediate_Folder string Folder for storing intermediate processing results
-#' @return 'DONE' if all went OK, otherwise error message to be treated by 'try.catch'
-#' @author Lorenzo Busetto (2016)
-#'         email: lbusett@8gmail.com
+#'(For further details, see the documentation for the IDL function _frg_compute_med_SVI_batch_)
+#' @param opts `list` of options passed from `frg_fullprocessing()`
+#' @param force_update `logical` If TRUE, recreate the ROI file even if it already
+#'  exist, default: FALSE
+#' @rdname frg_compSVI
+#' @return 'DONE' if all went OK, otherwise error message to be treated by
+#' 'try.catch'
+#' @author Lorenzo Busetto, phD (2017) <lbusett@gmail.com>
 #' @export
 #' 
 frg_compSVI <- function(opts,  
                         force_update) {
   
-  message("----------------------------------------------------------")
-  message("------------- Computation of Scaled opts$indexes --------------")
-  message("----------------------------------------------------------")
+  message("- ------------------------------------------------------ -")
+  message("- Computation of Scaled Indexes                          -")
+  message("- ------------------------------------------------------ -")
   
   # Initialize processing variables ----
   
@@ -82,8 +83,11 @@ frg_compSVI <- function(opts,
   
   
   out_files    <- NULL  
-  in_avg_dir   <- file.path(opts$mod_dir, "Originals", opts$index, "Averages")  # Folder containing the Mean yearly VI images
-  in_avg_files <- list.files(in_avg_dir, pattern = "*.tif$")         # Get List of ENVI header files    
+  # Set Folder containing the Mean yearly VI images
+  in_avg_dir   <- file.path(opts$mod_dir, "Originals", opts$index, "Averages")  
+  
+  # Get List of ENVI header files    
+  in_avg_files <- list.files(in_avg_dir, pattern = "*.tif$")
   
   # Start Cycling on selected years ----
   
@@ -103,24 +107,24 @@ frg_compSVI <- function(opts,
     if (file.exists(out_file) == FALSE | force_update) {
       
       # Update status bar
-      message("---- Computing Med_opts$SNDVI for year ", yy," ----")
+      message("---- Computing Med_SNDVI for year ", yy," ----")
       
       # Build string to call the FRG_Compute_MedScaled_VI.pro IDL script ----
-      str_idl <- paste0("res = FRG_Compute_MedScaled_VI(", 
-                        "CLC_File_00 = '",   opts$clc_file,   "' , $ \n",
-                        "In_File = '",       in_avg_file,   "' , $ \n",
-                        "FireMask_File = '", opts$FireMask_File, "' , $ \n",
-                        "Out_File = '",      out_file,      "' , $ \n",
+      str_idl <- paste0("res = frg_compute_med_SVI(", 
+                        "CLC_file_00 = '",   opts$clc_file,   "' , $ \n",
+                        "in_file = '",       in_avg_file,   "' , $ \n",
+                        "firemask_file = '", opts$firemask_file, "' , $ \n",
+                        "out_file = '",      out_file,      "' , $ \n",
                         "nodata_out = '",    opts$nodata_out,    "' , $ \n",
-                        "N_Ker = '",         opts$nker,          "' , $ \n", 
+                        "n_ker = '",         opts$nker,          "' , $ \n", 
                         "index = '",         opts$index,         "' , $ \n", 
-                        "Year = '",          yy,            "' )"
+                        "year = '",          yy,            "' )"
       )
       
       # Build an IDL batch file using the string defined above ----
       # browser()  
       batch_file <- file.path(opts$src_dir_idl, 
-                              "/batch_files/FRG_Compute_Med_SVI_batch.pro")
+                              "/batch_files/frg_compute_med_SVI_batch.pro")
       fileConn <- file(batch_file)
       writeLines(c(exp_path_str, 
                    "envi, /restore_base_save_files  ", 
@@ -135,7 +139,7 @@ frg_compSVI <- function(opts,
       
       if (!is.null(attributes(out)$status) | !file.exists(out_file)) {
         stop("An error occurred while computing scaled opts$indexes ! Processing stopped. 
-                Check 'FRG_Compute_Med_SVI_batch.pro'. Manually compiling and running
+                Check 'frg_compute_med_SVI_batch.pro'. Manually compiling and running
                 it from IDL allows debugging ! ")
       } else {
         # Update list of available sVI files to be used for META file creation
@@ -144,8 +148,8 @@ frg_compSVI <- function(opts,
       
     } else {
       out_files <- c(out_files, out_file) 
-      message("---- Scaled VI file already existing for year ", yy, " - skipping ----")
-    } # End of 'if-else' condition on file existence
+      message("- -> Scaled VI file already existing for year ", yy, " - skipping")
+    } # End of 'if-else' condition on file existences
     
   } # End of Cycle on Years
   

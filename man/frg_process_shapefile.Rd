@@ -7,9 +7,7 @@
 frg_process_shapefile(opts)
 }
 \arguments{
-\item{opts$orig_shapefile}{PARAM_DESCRIPTION}
-
-\item{Intermediate_Folder}{PARAM_DESCRIPTION}
+\item{opts}{\code{list} of options passed from \code{frg_fullprocessing()}}
 }
 \value{
 The function is called for its side effects

@@ -1,21 +1,23 @@
-#' frg_buildroi
-#' @description Accessory function to call IDL routine for ROI creation. 
-#' @details 
-#' Function used to create a batch file (`FRG_Create_ROI_batch.pro`) which 
-#' is then used to call the `FRG_CREATE_ROI.pro` IDL unction from a command shell.  
-#' 
-#' `FRG_CREATE_ROI.pro` is used to create a ROI file starting from the shapefile
-#' of burned areas. See `FRG_CREATE_ROI.pro` in `/IDL/Build_ROIS` for further 
-#' documentation
-#' @inheritParams frg_compSVI
-#' @inheritParams frg_fullprocessing
-#' @importFrom tools file_path_sans_ext
-#' @return NULL
-#' @export
+#' @title frg_buildroi
+#' @description Accessory function to call the IDL routine for ROI creation. 
+#' @details Function used to create a batch file (`frg_create_ROI_batch.pro`) which 
+#'  is then used to call the `frg_create_ROI.pro` IDL unction from a command shell.  
+#'  `frg_create_ROI.pro` is used to create a ROI file starting from the shapefile
+#'  of burned areas. See `frg_create_ROI.pro` in `/IDL/Build_ROIS` for further 
+#'  documentation
+#' @param opts `list` of options passed from `frg_fullprocessing()`
+#' @param exp_path_str `character` string to be used to expand the IDL path
+#'  in IDL batch files
+#' @param force_update `logical` If TRUE, recreate the ROI file even if it already
+#'  exist, default: FALSE
+#' @return `character` path of the created ROI file
+#' @rdname frg_buildroi
+#' @export 
+#' @author Lorenzo Busetto, phD (2017) <lbusett@gmail.com>
 
 frg_buildroi <- function(opts, 
                          exp_path_str, 
-                         force_update) {
+                         force_update = FALSE) {
   
   # Check if ROI already existing, If not, create it 
   
@@ -23,18 +25,18 @@ frg_buildroi <- function(opts,
   if (!file.exists(opts$roi_file) | force_update) {
     message("---- IDL-> Creating ROI File: ", opts$roi_file, " Please Wait ! ----")
     
-    # Build the command to run the FRG_Create_ROI.pro IDL funtion ----
+    # Build the command to run the frg_create_ROI.pro IDL funtion ----
     str_idl <- paste0(
-      "res = FRG_Create_ROI(Shape_File    = '", opts$orig_shapefile,  "' , $ \n",
-      "                     CLC_00_File   = '", opts$clc_file,       "' , $ \n",
+      "res = frg_create_ROI(shape_file    = '", opts$orig_shapefile,  "' , $ \n",
+      "                     CLC_00_file   = '", opts$clc_file,       "' , $ \n",
       "                     roi_file      = '", opts$roi_file,       "')"
     )
     
-    # Create the batch file needed to run the FRG_Create_ROI.pro IDL funtion ----
+    # Create the batch file needed to run the frg_create_ROI.pro IDL funtion ----
     # from a command shell
     
     batch_file <- file.path(opts$src_dir_idl,
-                            "batch_files/FRG_Create_ROI_batch.pro")
+                            "batch_files/frg_create_ROI_batch.pro")
     fileConn   <- file(batch_file)
     writeLines(c(exp_path_str, 
                  "envi, /restore_base_save_files  ", 
@@ -43,18 +45,17 @@ frg_buildroi <- function(opts,
                  "exit"), fileConn)
     close(fileConn)
     
-    # Execute FRG_Create_ROI_batch.pro  ----
+    # Execute frg_create_ROI_batch.pro  ----
     
     out <- system2("idl.exe", args = batch_file)
     
-    # Error message on problems in execution of FRG_Create_ROI_batch.pro
+    # Error message on problems in execution of frg_create_ROI_batch.pro
     if (!is.null(attributes(out)$status) | !file.exists(opts$roi_file)) {
-      stop("An error occurred while creating ROIs. Check '/IDL/FRG_Create_ROI_batch.pro'.
+      stop("An error occurred while creating ROIs. Check '/IDL/frg_create_ROI_batch.pro'.
             Manually compiling and running it from IDL allows debugging ! ")
     }
   } else {
-    message("---- ROI file already existing - skipping ----")
-    message("---- ------------------------------------ ----")
+    message("- -> ROI file already existing - skipping ")
   }
   return(opts$roi_file)
 }

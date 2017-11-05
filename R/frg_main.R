@@ -54,10 +54,10 @@ frg_main <- function(force_update = FALSE) {
   
   
   # path to frgtool IDL scripts
-  opts$src_dir_idl      <- system.file("IDL_Scripts", package = "frgtool")
+  opts$src_dir_idl      <- system.file("IDL_scripts", package = "frgtool")
   
   # path to frgtool python scripts #nolint
-  opts$src_dir_python   <- system.file("python_Scripts", package = "frgtool") 
+  opts$src_dir_python   <- system.file("python_scripts", package = "frgtool") 
   
   # path to frgtool previous dir #nolint
   
@@ -85,9 +85,9 @@ frg_main <- function(force_update = FALSE) {
     opts$idl_exe_dir <- idl_exe_dir
   }
   
-  #   __________________________________________________________________________
-  #   check if effispath was already set. Otherwise ask to set it           ####
-  opts$effispath <- frg_set_effispath()
+  # #   __________________________________________________________________________
+  # #   check if effispath was already set. Otherwise ask to set it           ####
+  # opts$effispath <- frg_set_effispath()
   
   #   __________________________________________________________________________
   #   check if arcpypath was already set. Otherwise ask to set it           ####

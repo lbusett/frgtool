@@ -1,5 +1,0 @@
-!PATH = Expand_Path('+E:/Fire_Regeneration_Tool/IDL-FRG') +' ;' + !PATH
-envi, /restore_base_save_files  
-ENVI_batch_init
-res = FRG_ROI_STAT_ERODE(ROI_File = 'F:\Fire_Regeneration\Output_2015/Results_2000_2015_Ker_50_Perc_Diff_9.5/Intermediate_Processing/ENVI_ROI/Burned_Areas_00_15_Single_Fires.ROI' , Erode_File ='F:\Fire_Regeneration\Output_2015/Results_2000_2015_Ker_50_Perc_Diff_9.5/Intermediate_Processing/ENVI_Mask/Burned_Areas_00_15_ENVI_Mask_Eroded' , SVI_File ='F:\Fire_Regeneration\Output_2015/Results_2000_2015_Ker_50_Perc_Diff_9.5/Scaled_Indexes/Med_SNDVI/Med_SNDVI_2000_2015_META' , CLC_File_00='E:\Fire_Regeneration_Tool\Ancillary_Data\CLC_00\CLC_00_250_ENVI' , ENV_Zones_File='E:/Fire_Regeneration_Tool/Ancillary_Data/ENV_Zones/ENV_Zones.tif' , Out_File ='F:\Fire_Regeneration\Output_2015/Results_2000_2015_Ker_50_Perc_Diff_9.5/Med_SNDVI/TS_Extraction/Burned_Once/TS_Extraction_Med_SNDVI_2000_2015_META_IDL_Matrix.csv' , no_data_in = '-999' , Start_Year ='2000' , End_Year ='2015' )
-exit

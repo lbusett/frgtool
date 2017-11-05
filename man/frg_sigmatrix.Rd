@@ -11,29 +11,25 @@ frg_sigmatrix(in_file, out_file, opts)
 
 \item{out_file}{string Basename for output files}
 
-\item{opts$min_pix}{numeric MInimum number of CORE pixels for a bunt area to be considered}
-
-\item{opts$perc_diff}{numeric Minimum percentage difference checked for significant reduction}
-
-\item{opts$MedWdt}{numeric Number of pre-fire years considered as reference}
-
-\item{opts$sub_zones}{flag If 1 , consider ENV_ZONES differences when analyzing}
-
-\item{opts$sig_level}{numeric Significance level used for Wilcoxon test}
-
-\item{opts$erode}{flag If 1, perform analysis only on NON CORE burnt pixels}
+\item{opts}{\code{list} of options passed from \code{frg_fullprocessing()}}
 }
 \value{
 Saves a .RData file containing data needed to plot NDVIR time series for the different single-fire BAs
 }
 \description{
-Function used to perform statistical analysis in order to determine significance of scaled VI reductions in years following \cr
-the fire. Starting from extracted time series, compute matrixes of p-values using FRG_Comp_Regr_Matrix. p-values matrixes contain result \cr
-of the Wilcoxon test, computed using the selected number of reference pre-fire years and the selected \cr
-minimum difference percentage. Matrixes of significances are then created using FRG_Significance_Analysis and saved. \cr
-( Note: this is only a wrapper used to call the FRG_Comp_Regr_Matrix. and FRG_Significance_Analysis functions)
+Function used to perform statistical analysis in order to
+determine significance of scaled VI reductions in years following the fire.
+\itemize{
+\item Starting from extracted time series, compute matrixes of p-values using
+FRG_Comp_Regr_Matrix. p-values matrixes contain result of the Wilcoxon
+test, computed using the selected number of reference pre-fire years and
+the selected minimum difference percentage.
+\item Matrixes of significances are then created using FRG_Significance_Analysis and saved.
+}
+
+Note: this is only a wrapper used to call the FRG_Comp_Regr_Matrix
+and FRG_Significance_Analysis functions)
 }
 \author{
-Lorenzo Busetto - email: lorenzo.busetto@jrc.ec.europa.eu
-Created Date: Feb 16, 2012
+Lorenzo Busetto, phD (2013-2017) \href{mailto:lbusett@gmail.com}{lbusett@gmail.com}
 }

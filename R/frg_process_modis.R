@@ -15,15 +15,11 @@
 #'   c. The average yearly values for DVI and NDVI are computed starting from the
 #'   images of DOY 209 and 225. NODATA and bad quality data#'   are automatically removed
 #'                   
-#' @param mod_dir    string Folder where the original and preprocessed image will be stored
-#' @param opts$start_year numeric Starting year of the analysis
-#' @param opts$end_year   numeric Ending Year of the analysis
-#' @param opts$reproc_images   numeric if = 1, already existing MODIS mosaics will be reprocessed
-#' @param opts$redown     numeric if = 1, MODIS images needed to create already existing mosaic 
-#'                   files will be opts$redownloaded, and already existing mosaics will be overwritten
+#' @param opts    string Folder where the original and preprocessed image will be stored
 #' @param UI_check   flag If = 1 then a chack on pixel usefulness index is done while
 #'                   determining pixels to be used to compute average NDVI. default = 1
 #' @param max_UI     Max UI value kept when averaging MODIS data. default = 5
+#' @param force_update DESCRIPTION , Default: FALSE
 #'
 #' @author Lorenzo Busetto (2016)
 #' email: lbusett@gmail.com

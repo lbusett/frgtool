@@ -2,7 +2,8 @@
 % Please edit documentation in R/frg_fastzonal.R
 \name{frg_fastzonal}
 \alias{frg_fastzonal}
-\title{frg_fastzonal}
+\title{Helper function used to extract data from the Med_SNDVI time series
+in correspondance of the different burnt areas}
 \usage{
 frg_fastzonal(in_rts, zone_object, clc_object, mask_object, start_date = NULL,
   end_date = NULL, start_band = NULL, end_band = NULL, id_field = NULL,
@@ -11,41 +12,45 @@ frg_fastzonal(in_rts, zone_object, clc_object, mask_object, start_date = NULL,
   maxchunk = 5e+07)
 }
 \arguments{
-\item{in_rts}{a}
+\item{in_rts}{PARAM_DESCRIPTION}
 
-\item{zone_object}{f}
+\item{zone_object}{PARAM_DESCRIPTION}
 
-\item{mask_object}{g}
+\item{clc_object}{PARAM_DESCRIPTION}
 
-\item{end_date}{g}
+\item{mask_object}{PARAM_DESCRIPTION}
 
-\item{start_band}{t}
+\item{start_date}{PARAM_DESCRIPTION, Default: NULL}
 
-\item{end_band}{re}
+\item{end_date}{PARAM_DESCRIPTION, Default: NULL}
 
-\item{id_field}{g}
+\item{start_band}{PARAM_DESCRIPTION, Default: NULL}
 
-\item{FUN}{h}
+\item{end_band}{PARAM_DESCRIPTION, Default: NULL}
 
-\item{out_format}{g}
+\item{id_field}{PARAM_DESCRIPTION, Default: NULL}
 
-\item{small}{h}
+\item{FUN}{PARAM_DESCRIPTION, Default: 'null'}
 
-\item{small_method}{h}
+\item{out_format}{PARAM_DESCRIPTION, Default: 'xts'}
 
-\item{na.rm}{g}
+\item{small}{PARAM_DESCRIPTION, Default: TRUE}
 
-\item{verbose}{g}
+\item{small_method}{PARAM_DESCRIPTION, Default: 'centroids'}
 
-\item{maxchunk}{f}
+\item{na.rm}{PARAM_DESCRIPTION, Default: TRUE}
+
+\item{verbose}{PARAM_DESCRIPTION, Default: FALSE}
+
+\item{maxchunk}{PARAM_DESCRIPTION, Default: 5e+07}
 }
 \value{
 ts_data data.table containing SVI time series extracted for each burnt
 area from \code{in_rts} multitemporal SVI raster file
 }
 \description{
-aaaa
+FUNCTION_DESCRIPTION
 }
-\examples{
-
+\author{
+Lorenzo Busetto, phD (2017) \href{mailto:lbusett@gmail.com}{lbusett@gmail.com}
 }

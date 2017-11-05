@@ -4,19 +4,30 @@
 \alias{frg_createmask}
 \title{frg_createmask}
 \usage{
-frg_createmask(opts, exp_path_str, force_update)
+frg_createmask(opts, exp_path_str, force_update = FALSE)
 }
 \arguments{
-\item{opts$roi_file}{}
+\item{opts}{\code{list} of options passed from \code{frg_fullprocessing()}}
+
+\item{exp_path_str}{\code{character} string to be used to expand the IDL path
+in IDL batch files}
+
+\item{force_update}{\code{logical} If TRUE, recreate the ROI file even if it already
+exist, default: FALSE}
+}
+\value{
+\code{character} path to the created mask
 }
 \description{
 Accessory function to call IDL routine for Mask creation.
 }
 \details{
-Function used to create a batch file (\code{FRG_CreateMask_Batch.pro}) which
-is then used to call the \code{FRG_Create_Mask.pro} IDL function from a command shell.
-
-\code{FRG_Create_Mask.pro} is used to create a binary mask to exclude burned areas
-from statistics computaitons. See \code{FRG_Create_Mask.pro} in \code{/IDL/VI_Elaborations}
+Function used to create a batch file (\code{frg_createmask_batch.pro}) which
+is then used to call the \code{frg_createmask.pro} IDL function from a command shell.
+\code{frg_createmask.pro} is used to create a binary mask to exclude burned areas
+from statistics computaitons. See \code{frg_createmask.pro} in \code{/IDL/VI_Elaborations}
 for further documentation
+}
+\author{
+Lorenzo Busetto, phD (2017) \href{mailto:lbusett@gmail.com}{lbusett@gmail.com}
 }

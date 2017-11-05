@@ -7,18 +7,14 @@
 frg_def_files(opts)
 }
 \arguments{
-\item{opts}{}
-
-\item{out_dir}{}
-
-\item{Start_Year}{}
-
-\item{End_Year}{}
-
-\item{mod_dir}{}
-
-\item{opts$orig_shapefile}{}
+\item{opts}{initial options list created by frg_main}
 }
 \value{
-`opts`` list contains all main file names and folders
+\code{opts} list containing all main file names and folders
+}
+\description{
+Helper function used to define required file names and folders
+}
+\author{
+Lorenzo Busetto, phD (2017) \href{mailto:lbusett@gmail.com}{lbusett@gmail.com}
 }

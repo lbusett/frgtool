@@ -4,16 +4,30 @@
 \alias{frg_buildroi}
 \title{frg_buildroi}
 \usage{
-frg_buildroi(opts, exp_path_str, force_update)
+frg_buildroi(opts, exp_path_str, force_update = FALSE)
+}
+\arguments{
+\item{opts}{\code{list} of options passed from \code{frg_fullprocessing()}}
+
+\item{exp_path_str}{\code{character} string to be used to expand the IDL path
+in IDL batch files}
+
+\item{force_update}{\code{logical} If TRUE, recreate the ROI file even if it already
+exist, default: FALSE}
+}
+\value{
+\code{character} path of the created ROI file
 }
 \description{
-Accessory function to call IDL routine for ROI creation.
+Accessory function to call the IDL routine for ROI creation.
 }
 \details{
-Function used to create a batch file (\code{FRG_Create_ROI_batch.pro}) which
-is then used to call the \code{FRG_CREATE_ROI.pro} IDL unction from a command shell.
-
-\code{FRG_CREATE_ROI.pro} is used to create a ROI file starting from the shapefile
-of burned areas. See \code{FRG_CREATE_ROI.pro} in \code{/IDL/Build_ROIS} for further
+Function used to create a batch file (\code{frg_create_ROI_batch.pro}) which
+is then used to call the \code{frg_create_ROI.pro} IDL unction from a command shell.
+\code{frg_create_ROI.pro} is used to create a ROI file starting from the shapefile
+of burned areas. See \code{frg_create_ROI.pro} in \code{/IDL/Build_ROIS} for further
 documentation
+}
+\author{
+Lorenzo Busetto, phD (2017) \href{mailto:lbusett@gmail.com}{lbusett@gmail.com}
 }

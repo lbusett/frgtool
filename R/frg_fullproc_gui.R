@@ -1,7 +1,7 @@
 #' @title frg_fullproc_gui
 #' @description Function used to create the GUI for selecting the parameters for 
 #' full FRG processing.
-#' @param opts
+#' @param opts `list` of options passed from `frg_fullprocessing()`
 #' @param force_update `logical` If TRUE, intermediate processing outputs (e.g., 
 #'   creation of burnt areas shapefile, computation of SVI, etc. are re-run 
 #'   even if intermecdiate processing outputs are already present in the 
@@ -13,12 +13,10 @@
 #'  parameters are saved in the 'FRG_Full_Previous.RData' file and processing is 
 #'  started
 #' @return NULL
-#' @author Lorenzo Busetto (2012 - 2017)
-#'         email: lbusett@gmail.com
-#' @rdname frg_fullproc_gui       
-#' @export
 #' @import gWidgetsRGtk2
-#' @importFrom hash hash values
+#' @rdname frg_fullproc_gui
+#' @export 
+#' @author Lorenzo Busetto, phD (2017) <lbusett@gmail.com>
 #' 
 frg_fullproc_gui <- function(opts, 
                              force_update = FALSE) {
@@ -228,8 +226,6 @@ frg_fullproc_gui <- function(opts,
       
       frg_fullprocessing(opts,
                          force_update =  force_update)
-      
-      enabled(Main_GUI) <- TRUE
       
     } else {
       gmessage("Error in selected Years. Please Correct", title = "Warning", 

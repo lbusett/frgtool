@@ -7,14 +7,18 @@
 frg_compSVI(opts, force_update)
 }
 \arguments{
-\item{Intermediate_Folder}{string Folder for storing intermediate processing results}
+\item{opts}{\code{list} of options passed from \code{frg_fullprocessing()}}
+
+\item{force_update}{\code{logical} If TRUE, recreate the ROI file even if it already
+exist, default: FALSE}
 }
 \value{
-'DONE' if all went OK, otherwise error message to be treated by 'try.catch'
+'DONE' if all went OK, otherwise error message to be treated by
+'try.catch'
 }
 \description{
 Function used to call the IDL functiosn used for computation of
-opts$SRDVI and opts$SNDVI yearly images (\emph{\strong{FRG_Compute_MedScaled_VI.pro}})
+SNDVI yearly images (\emph{\strong{frg_compute_med_SVI.pro}})
 }
 \details{
 This function is used to call the IDL function used for computation of SDVI and
@@ -33,7 +37,7 @@ to compute the MOMENTS of the distribution of VI values of the target
 CLC class in the window centred on the target pixel
 \item Computed MOMENTS are use to determine an ESTIMATE of the 5th, 50th (median)
 95th percentile of the distribution, using the Cornish-Fisher fourth-order Expansion
-opts$method (\link{"http://www.nematrian.com/R.aspx?p=CornishFisherDerivation})
+opts$method ("http://www.nematrian.com/R.aspx?p=CornishFisherDerivation)
 \item Scaled opts$indexes for the target pixel is computed exploiting this opts$method:
 \itemize{
 \item 'Percentage Deviation to Kernel Median': For each pixel, the algorithm
@@ -44,9 +48,8 @@ of values of the analyzed Vegetation opts$index in the selecteds pixels.
 }
 }
 
-(For further details, see the documentation for the IDL function \emph{FRG_Compute_MedScaled_VI.pro})
+(For further details, see the documentation for the IDL function \emph{frg_compute_med_SVI_batch})
 }
 \author{
-Lorenzo Busetto (2016)
-email: lbusett@8gmail.com
+Lorenzo Busetto, phD (2017) \href{mailto:lbusett@gmail.com}{lbusett@gmail.com}
 }

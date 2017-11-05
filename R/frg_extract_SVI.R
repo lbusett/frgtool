@@ -1,38 +1,35 @@
-#'frg_extract_svi
-#'@description Function used to extract Scaled VIs time series of the different pixels of analyzed burnt areas, 
-#'  associate info form the burnt areas shapefile and save as an RData file to be used for statistical analysis
-#'@details This function is used to extract Scaled VIs time series of the different pixels of analyzed burnt 
-#'  areas from the raster images created by 'FRG_Compute_SVI.R, associate ancillary info derived form the burnt 
-#'  areas shapefile (e.g., Area, FireYear, ...) and save results as an RData file (in the '/TS_Extraction subfolder) 
-#'  to be used later for statistical analysis
-#'
+#' @title frg_extract_svi
+#' @description Function used to extract Scaled VIs time series of the different
+#'  pixels of analyzed burnt areas, associate info form the burnt areas shapefile
+#'  and save as an RData file to be used for statistical analysis
+#' @details This function is used to extract Scaled VIs time series of the different
+#'  pixels of analyzed burnt areas from the raster images created by 
+#'  `FRG_Compute_SVI.R``, associate ancillary info derived form the burnt 
+#'  areas shapefile (e.g., Area, FireYear, ...) and save results as an RData file
+#'  (in the '/TS_Extraction subfolder) to be used later for statistical analysis
 #' @param SVI_file string ENVI Meta File associated to time serie to be analyzed
-#' @param shape_file string Burnt Areas Shapefile (Must Correspond to the 'burned_once' shafile if overlap == 'Single'
-#'                                                 Must Correspond to the 'burned_once' shafile if overlap == 'Multiple')
-#' @param opts$clc_file string ENVI file containing the CORINE land Cover map 2000, recoded to the EFFIS legend
-#' @param ENV_Zones_File string Tiff file containing EcoZones (No longer used...)
-#' @param out_file numeric BaseName of the output RData and CSV files
-#' @param opts$erode flag if 1, then perfom analysis on eroded ROIS (default to 1)
-#' @param erode_file string Filename of the ENVI mask containing the ERODED ROIS (generated automatically in FRG_Compute_SVI.R)
-#' @param opts$intermed_dir string name of the Folder containing the intermediate processing results
+#' @param shape_file string Burnt Areas Shapefile (Must Correspond to the 'burned_once'
+#'  shafile if overlap == 'Single'   Must Correspond to the 'burned_multiple'
+#'  shapefile if overlap == 'Multiple')
+#' @param out_file base path for the output files
 #' @param overlap string If == 'Single', extract time series for areas burned once.
-#'        if =='Multiple, extract time series for areas burned multiple times
+#'  if =='Multiple', extract time series for areas burned multiple times
 #' @param shape_file_orig string Filename of the original input BAs shapefile
-#' @param LUT_File_Multiple string Filenlame of the LUT table created by FRG_Process_Shapefile.py
-#'
+#' @param lut_file_multiple string Filenlame of the LUT table created by
+#'  FRG_Process_Shapefile.py
+#' @param opts `list` of options passed from `frg_fullprocessing()`
+#' @param force_update `logical` If TRUE, recreate the ROI file even if it already
+#'  exist, default: FALSE
 #' @return 'DONE' if all went OK, otherwise error message
-#'
 #' @importFrom tools file_path_sans_ext
 #' @importFrom sf st_read
 #' @importFrom lubridate ymd
 #' @importFrom raster raster stack setZ extent
 #' @importFrom gdalUtils gdal_rasterize
 #' @importFrom stringr str_split
-#' @author Lorenzo Busetto (2012)
-#' email: lorenzo.busetto@@jrc.ec.europa.eu
-#'
-#' Created Date: Nov 8, 2012
-#' @export
+#' @importFrom utils txtProgressBar setTxtProgressBar
+#' @export 
+#' @author Lorenzo Busetto, phD (2017) <lbusett@gmail.com>
 #'
 frg_extract_svi <- function(SVI_file   ,
                             shape_file ,
@@ -43,11 +40,13 @@ frg_extract_svi <- function(SVI_file   ,
                             opts,
                             force_update) {
   
-  message("----------------------------------------------------------")
-  message("---- Extracting sVI time series for burnt areas - ", overlap, " fires ----")
-  message("----------------------------------------------------------")
-  message(paste("---- -> In File for TS extraction:  ", SVI_file))
-  message(paste("---- -> Out File for TS extraction: ", out_file))
+  as <- Area_HA <- J <- OBJECTID <- OVERLAP_ID <- NULL 
+  
+  message("- ------------------------------------------------------ -")
+  message("- Extracting sVI time series for burnt areas - ", overlap, " fires -")
+  message("- ------------------------------------------------------ -")
+  message(paste("- -> In File for TS extraction:  ", SVI_file))
+  message(paste("- -> Out File for TS extraction: ", out_file))
   
   # Define output file names (csv and RData) ----
   
@@ -65,9 +64,11 @@ frg_extract_svi <- function(SVI_file   ,
     svi_folder  <- file.path(dirname(SVI_file), "Yearly_Images")
     
     # Open required raster files ----
-    svi_files   <- file_path_sans_ext(list.files(svi_folder, pattern = ".hdr$",
-                                                 recursive = TRUE, include.dirs = TRUE, 
-                                                 full.names = TRUE)) 
+    svi_files   <- tools::file_path_sans_ext(list.files(svi_folder,
+                                                        pattern = ".hdr$",
+                                                        recursive = TRUE, 
+                                                        include.dirs = TRUE, 
+                                                        full.names = TRUE)) 
     svi_stack   <- raster::stack(svi_files) 
     clc_rast    <- raster::raster(opts$clc_file) 
     erode_rast  <- raster::raster(opts$firemask_file_er)
@@ -76,36 +77,37 @@ frg_extract_svi <- function(SVI_file   ,
     raster::NAvalue(svi_stack) <- 32767 # set nodatavalue for input SVI file  
     
     # set Dates as attribute to input svi time series ----
-    dates     <- ymd(paste0(str_split(names(svi_stack),'_', simplify = TRUE)[,3],'-01-01')) 
-    svi_stack <- setZ(svi_stack, dates,'time') 
+    dates     <- lubridate::ymd(paste0(
+      stringr::str_split(names(svi_stack),'_', simplify = TRUE)[,3],'-01-01')) 
+    
+    svi_stack <- raster::setZ(svi_stack, dates,'time') 
     
     # Open required shape file ----
     # (Single otr multiple burnt areas)
     
-    totburn_shp <- as(sf::st_read(shape_file, stringsAsFactors = FALSE, quiet = TRUE),'Spatial') 
+    totburn_shp <- as(sf::st_read(shape_file, stringsAsFactors = FALSE, quiet = TRUE),
+                      'Spatial') 
     nfires      <- dim(totburn_shp)[1]
     tempraster  <- tempfile(tmpdir = tempdir(), fileext = ".tiff") 
     id_field    <- ifelse(overlap == 'Single', 'OBJECTID','OVERLAP_ID') 
     
     #Rasterize the shapefile to allow a fast extraction of SVI data ----
     
-    gdal_rasterize(shape_file, tempraster, tr = raster::res(svi_stack), 
-                   te = extent(svi_stack)[c(1, 3, 2, 4)], a = id_field, 
-                   ot = 'Int32') 
+    gdalUtils::gdal_rasterize(shape_file,
+                              tempraster,
+                              tr = raster::res(svi_stack), 
+                              te = raster::extent(svi_stack)[c(1, 3, 2, 4)],
+                              a = id_field, 
+                              ot = 'Int32') 
     
-    ts_data <- frg_fastzonal(in_rts = svi_stack, zone_object = tempraster, 
-                             mask_object = erode_rast, clc_object = clc_rast, 
-                             # envzone_object = envzon_rast, 
+    ts_data <- frg_fastzonal(in_rts = svi_stack,
+                             zone_object = tempraster, 
+                             mask_object = erode_rast,
+                             clc_object = clc_rast, 
                              id_field = "ID", 
                              small = FALSE,
                              verbose = TRUE, 
                              end_band = 3) 
-    # write.csv(ts_data, file = out_idl_csv)
-    # save(ts_data, file = out_rdata) 
-    
-    # Data <- ts_data  # "Data" now contains time series for all burnt pixels 
-    
-    
     # Load the burned Areas shapefile and save the attribute table as a ----
     # data frame
     message("-----------------------------------------")
@@ -114,7 +116,8 @@ frg_extract_svi <- function(SVI_file   ,
     
     # BAreas_Name <- strsplit(basename(shape_file_orig), ".shp")[[1]]
     # BAreas_Dir  <- dirname(shape_file_orig)
-    BAreas_shp  <- as(st_read(shape_file_orig, stringsAsFactors = FALSE, quiet = TRUE),"Spatial")
+    BAreas_shp  <- as(sf::st_read(shape_file_orig, stringsAsFactors = FALSE, quiet = TRUE),
+                      "Spatial")
     Data_Shape  <- BAreas_shp@data  # Get attributes data from the shp
     
     
@@ -122,31 +125,16 @@ frg_extract_svi <- function(SVI_file   ,
       
       # Analyze areas burned only once ----
       
-      #
-      # Load the statistics file computed by IDL (Derived from Application of
-      # FRG_ROI_STAT_ERODE.pro)
-      
-      # Data = read.csv(out_idl_csv,header = TRUE, na.strings =
-      # opts$No_Data_Out_Rast, stringsAsFactors = FALSE) Data[Data ==
-      # opts$No_Data_Out_Rast] = NA # Put the NODATA to 'R' NA
-      
-      # Data <- read.csv(out_idl_csv)
-      # Data <- select(Data, -X)
       n_Years           <- length(unique(ts_data$Year))
       names(ts_data)[1] <- "OBJECTID"
       ts_data$OBJECTID  <- as.factor(ts_data$OBJECTID)
-      # names(Data)[5:(5+n_Years-1)] =
-      # as.character(seq(as.numeric(Start_Year),as.numeric(End_Year))) #
-      # Correct columns names names(Data)[(5+n_Years):(5+2*n_Years-1)] =
-      # paste('opts$erode',as.character(seq(as.numeric(Start_Year),as.numeric(End_Year))),
-      # sep = '_') # Correct columns names
       
       # Remove from Data_Shape records not found in the MODIS ROI data
       
-      Data_Shape <- Data_Shape[which(Data_Shape$OBJECTID %in%
+      Data_Shape         <- Data_Shape[which(Data_Shape$OBJECTID %in%
                                        unique(ts_data$OBJECTID)),]
       Data_Shape$Area_HA <- as.numeric(as.character(Data_Shape$Area_HA))
-      Data_Shape <- dplyr::arrange(Data_Shape, dplyr::desc(Area_HA))
+      Data_Shape         <- dplyr::arrange(Data_Shape, dplyr::desc(Area_HA))
       
       # Compute the FireYear and Area variable for each fire (From the
       # sahpefile data) and add it to the DataFrame
@@ -156,9 +144,10 @@ frg_extract_svi <- function(SVI_file   ,
       Area_Forest <- numeric(length(ts_data$OBJECTID))
       IDS         <- unique(Data_Shape$OBJECTID)
       
-      
-      ts_data    <- data.table(ts_data,    key = c("OBJECTID", "Year"))
-      Data_Shape <- data.table(Data_Shape, key = "OBJECTID")
+      # ts_data$OBJECTID <- as.character(ts_data$OBJECTID)
+      ts_data    <- data.table::data.table(ts_data, key = c("OBJECTID", "Year"))
+      Data_Shape$OBJECTID <- as.factor(Data_Shape$OBJECTID)
+      Data_Shape <- data.table::data.table(Data_Shape, key = "OBJECTID")
       
       # ts_data_sub <- ts_data[Year == 2005]
       # Accessory function used to compute Burnt area for each CLC class from
@@ -185,25 +174,20 @@ frg_extract_svi <- function(SVI_file   ,
                                  scler_Area = scler_Area, full_Area = full_Area)
       }
       
-      # setkey(ts_data, "OBJECTID")
-      # setkey(Data_Shape, "OBJECTID")
       # Retrieve or compute burned area for each CLC class ----
-      # pb <- txtProgressBar(min = 1, max = length(IDS), style = 3)
-      Data_Shape$ID        <- (as.character(Data_Shape$ID))
-      Data_Shape$OBJECTID  <- (as.character(Data_Shape$ID))
-      ts_data$OBJECTID <- as.numeric(as.character(ts_data$OBJECTID))
-      browser()
+      pb <- utils::txtProgressBar(min = 1, max = length(IDS), style = 2)
+      
       for (FireID in 1:length(IDS)) {
         
-        # Sys.sleep(0.005)
-        # setTxtProgressBar(pb, FireID)
+        Sys.sleep(0.005)
+        utils::setTxtProgressBar(pb, FireID)
         if (FireID %in% seq(1, 20000, 400)) {
           message("---- Processing Burnt area: ", FireID, "  of: ", length(IDS)," ----")
         }
         
-        ID_to_find  <- (as.character(IDS[FireID]))
-        subdata_shp <- Data_Shape[OBJECTID == ID_to_find]
-        # subdata_shp <- Data_Shape[J(ID_to_find), nomatch = 0L]
+        ID_to_find  <- as.character(IDS[FireID])
+        # subdata_shp <- Data_Shape[OBJECTID == ID_to_find]
+        subdata_shp <- Data_Shape[J(ID_to_find), nomatch = 0L]
         FireRows    <- which(ts_data$OBJECTID == ID_to_find)  # Rows of the dataframe corresponding to the selected fire
         
         # FireRows    <- ts_data[OBJECTID == ID_to_find, which = TRUE]
@@ -292,7 +276,7 @@ frg_extract_svi <- function(SVI_file   ,
       # attr(ts_data, "Index")      <- "Med_SNDVI"
       
       # Save the computed Data Frames in "out_rdata" ----
-     
+      
       print(paste("-> Saving TS info RData file"))
       save(ts_data, Data_Shape, file = out_rdata)
       
@@ -309,7 +293,8 @@ frg_extract_svi <- function(SVI_file   ,
       # BAreas_Dir      <- dirname(shape_file)  # (Used to determine burnt surface in the overlaps )
       # BAreas_shp_mult <- readOGR(BAreas_Dir, BAreas_Name)
       # 
-      BAreas_shp_mult <-as(st_read(shape_file, stringsAsFactors = FALSE, quiet = TRUE),"Spatial")
+      BAreas_shp_mult <- as(sf::st_read(shape_file, stringsAsFactors = FALSE, quiet = TRUE),
+                            "Spatial")
       Data_Shape_mult <- BAreas_shp_mult@data  # Get attributes data from the shp
       
       # Load the statistics file computed by IDL (Derived from Application of
@@ -332,7 +317,7 @@ frg_extract_svi <- function(SVI_file   ,
       
       # Load the LUT data relating each overlap with the corresponding
       # original BAs
-      browser()
+      
       Data_LUT <- read.csv2(file = lut_file_multiple, stringsAsFactors = FALSE, 
                             header = TRUE, sep = ";")  # Restore the LUT
       # Create a new empty Data_Shape object. This will be filled using info
@@ -391,13 +376,13 @@ frg_extract_svi <- function(SVI_file   ,
       pb <- txtProgressBar(min = 1, max = length(IDS), style = 3)
       for (FireID in 1:length(IDS)) {
         
-        # Sys.sleep(0.005)
-        # setTxtProgressBar(pb, FireID)
+        Sys.sleep(0.005)
+        setTxtProgressBar(pb, FireID)
         if (FireID %in% seq(1, 20000, 400)) {
           message("---- Processing Burnt area: ", FireID, "  of: ", length(IDS)," ----")
         }
         
-        ID_to_find  <- as.numeric(as.character(IDS[FireID]))
+        ID_to_find  <- as.character(IDS[FireID])
         
         subdata_shp <- Data_Shape[OVERLAP_ID == ID_to_find]
         # FireRows    <- which(ts_data$OVERLAP_ID == ID_to_find)  # Rows of the dataframe corresponding to the selected fire
@@ -418,6 +403,7 @@ frg_extract_svi <- function(SVI_file   ,
                                              ID_to_find), ]$YearSeason)  
         YY      <- min_FireYear  # Set Fire Year to the year of the first fire
         # subdata <- ts_data_sub[OVERLAP_ID == ID_to_find & Year == YY] 
+        ID_to_find <- as.character(ID_to_find)
         subdata     <- ts_data[J(ID_to_find), nomatch = 0L] 
         
         # Estimate burned area in the different LC classes, as the product of the
@@ -509,8 +495,7 @@ frg_extract_svi <- function(SVI_file   ,
       
     }
   } else {
-    message("---- -> RData file joining MODIS and Shapefile info already existing: ", 
-            basename(out_rdata), "----")
+    message("- -> RData file joining MODIS and Shapefile info already existing - Skipping! ")
   }
   
   # Completed

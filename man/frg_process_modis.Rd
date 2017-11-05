@@ -7,21 +7,14 @@
 frg_process_modis(opts, UI_check, max_UI, force_update)
 }
 \arguments{
+\item{opts}{string Folder where the original and preprocessed image will be stored}
+
 \item{UI_check}{flag If = 1 then a chack on pixel usefulness index is done while
 determining pixels to be used to compute average NDVI. default = 1}
 
 \item{max_UI}{Max UI value kept when averaging MODIS data. default = 5}
 
-\item{mod_dir}{string Folder where the original and preprocessed image will be stored}
-
-\item{opts$start_year}{numeric Starting year of the analysis}
-
-\item{opts$end_year}{numeric Ending Year of the analysis}
-
-\item{opts$reproc_images}{numeric if = 1, already existing MODIS mosaics will be reprocessed}
-
-\item{opts$redown}{numeric if = 1, MODIS images needed to create already existing mosaic
-files will be opts$redownloaded, and already existing mosaics will be overwritten}
+\item{force_update}{DESCRIPTION , Default: FALSE}
 }
 \description{
 Function used to download, mosaic and preprocess MODIS data

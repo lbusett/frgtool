@@ -10,44 +10,40 @@ frg_extract_svi(SVI_file, shape_file, out_file, overlap, shape_file_orig,
 \arguments{
 \item{SVI_file}{string ENVI Meta File associated to time serie to be analyzed}
 
-\item{out_file}{numeric BaseName of the output RData and CSV files}
+\item{shape_file}{string Burnt Areas Shapefile (Must Correspond to the 'burned_once'
+shafile if overlap == 'Single'   Must Correspond to the 'burned_multiple'
+shapefile if overlap == 'Multiple')}
+
+\item{out_file}{base path for the output files}
 
 \item{overlap}{string If == 'Single', extract time series for areas burned once.
-if =='Multiple, extract time series for areas burned multiple times}
+if =='Multiple', extract time series for areas burned multiple times}
 
 \item{shape_file_orig}{string Filename of the original input BAs shapefile}
 
-\item{Shape_File}{string Burnt Areas Shapefile (Must Correspond to the 'burned_once' shafile if overlap == 'Single'
-Must Correspond to the 'burned_once' shafile if overlap == 'Multiple')}
+\item{lut_file_multiple}{string Filenlame of the LUT table created by
+FRG_Process_Shapefile.py}
 
-\item{opts$clc_file}{string ENVI file containing the CORINE land Cover map 2000, recoded to the EFFIS legend}
+\item{opts}{\code{list} of options passed from \code{frg_fullprocessing()}}
 
-\item{ENV_Zones_File}{string Tiff file containing EcoZones (No longer used...)}
-
-\item{opts$erode}{flag if 1, then perfom analysis on eroded ROIS (default to 1)}
-
-\item{erode_file}{string Filename of the ENVI mask containing the ERODED ROIS (generated automatically in FRG_Compute_SVI.R)}
-
-\item{opts$intermed_dir}{string name of the Folder containing the intermediate processing results}
-
-\item{LUT_File_Multiple}{string Filenlame of the LUT table created by FRG_Process_Shapefile.py}
+\item{force_update}{\code{logical} If TRUE, recreate the ROI file even if it already
+exist, default: FALSE}
 }
 \value{
 'DONE' if all went OK, otherwise error message
 }
 \description{
-Function used to extract Scaled VIs time series of the different pixels of analyzed burnt areas,
-associate info form the burnt areas shapefile and save as an RData file to be used for statistical analysis
+Function used to extract Scaled VIs time series of the different
+pixels of analyzed burnt areas, associate info form the burnt areas shapefile
+and save as an RData file to be used for statistical analysis
 }
 \details{
-This function is used to extract Scaled VIs time series of the different pixels of analyzed burnt
-areas from the raster images created by 'FRG_Compute_SVI.R, associate ancillary info derived form the burnt
-areas shapefile (e.g., Area, FireYear, ...) and save results as an RData file (in the '/TS_Extraction subfolder)
-to be used later for statistical analysis
+This function is used to extract Scaled VIs time series of the different
+pixels of analyzed burnt areas from the raster images created by
+`FRG_Compute_SVI.R``, associate ancillary info derived form the burnt
+areas shapefile (e.g., Area, FireYear, ...) and save results as an RData file
+(in the '/TS_Extraction subfolder) to be used later for statistical analysis
 }
 \author{
-Lorenzo Busetto (2012)
-email: lorenzo.busetto@jrc.ec.europa.eu
-
-Created Date: Nov 8, 2012
+Lorenzo Busetto, phD (2017) \href{mailto:lbusett@gmail.com}{lbusett@gmail.com}
 }

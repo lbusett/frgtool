@@ -4,19 +4,36 @@
 \alias{frg_compmean}
 \title{frg_compmean}
 \usage{
-frg_compmean(opts, yy, UI_check, max_UI, force_update)
+frg_compmean(opts, yy, UI_check = TRUE, max_UI = 5, force_update = FALSE)
 }
 \arguments{
-\item{UI_check}{}
+\item{opts}{\code{list} of options passed from \code{frg_fullprocessing()}}
 
-\item{max_UI}{}
+\item{yy}{\code{character} year of the analysis}
 
-\item{ReProc}{}
+\item{UI_check}{\code{logical} If TRUE, use usefulness index data to filter-out
+low quality data, Default: TRUE}
+
+\item{max_UI}{\code{numeric} Maximum UI value of high-quality NDVI data. Values
+of pixels with UI > max_UI are treated as noisy and not considered in average
+computation, Default: 5}
+
+\item{force_update}{\code{logical} If TRUE, recompute the average files even if
+it already exist, Default: FALSE}
+}
+\value{
+\code{character} If all goes well, the function returns "DONE!"
 }
 \description{
-frg_compmean
+Accessory function to compute average summer NDVI for each year.
+}
+\details{
+Accessory function to compute average summer NDVI for each year using
+MODIS data downloaded by frg_moddownload.
 }
 \author{
+Lorenzo Busetto, phD (2017) \href{mailto:lbusett@gmail.com}{lbusett@gmail.com}
+
 Lorenzo Busetto, PhD (2012)
 email: lbusett@gmail.com
 }

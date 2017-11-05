@@ -4,20 +4,15 @@
 \alias{frg_update_oracle}
 \title{frg_update_oracle}
 \usage{
-frg_update_oracle(effis_folder)
+frg_update_oracle()
 }
 \value{
-In_folder : Name of the folder containing the files used to update the oracle tables
+The function is called for its side effects
 }
 \description{
-Function used to update the Oracle database tables using processing results of FRG
-}
-\details{
-This function is used to update the Oracle database tables using processing results of FRG
+Function used to update the Oracle database tables using
+processing results of FRG
 }
 \author{
-Lorenzo Busetto (2012)
-email: lorenzo.busetto@jrc.ec.europa.eu
-
-Created Date: Nov 8, 2012
+Lorenzo Busetto, phD (2017) \href{mailto:lbusett@gmail.com}{lbusett@gmail.com}
 }

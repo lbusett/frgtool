@@ -1,12 +1,12 @@
 !PATH = Expand_Path('+D:/Documents/Source/git/frgtool/inst/IDL_Scripts') +' ;' + !PATH
 envi, /restore_base_save_files  
 ENVI_batch_init
-res = FRG_Compute_MedScaled_VI(CLC_File_00 = 'D:\frg\Ancillary_Data\CLC_00\CLC_00_250_ENVI' , $ 
-In_File = 'D:\frg\MODIS/Originals/NDVI/Averages/NDVI_Average_2016.tif' , $ 
-FireMask_File = '' , $ 
-Out_File = 'D:\frg\output/Scaled_Indexes/Med_SNDVI/Yearly_Images/2016/Med_SNDVI_2016' , $ 
+res = frg_compute_med_SVI(CLC_file_00 = 'D:\frg\Ancillary_Data\CLC_00\CLC_00_250_ENVI' , $ 
+in_file = 'D:\frg\MODIS/Originals/NDVI/Averages/NDVI_Average_2016.tif' , $ 
+firemask_file = 'D:\frg\output3/Intermed_Proc/ENVI_Mask/Burned_Areas_00_16_ENVI_Mask' , $ 
+out_file = 'D:\frg\output3/Scaled_Indexes/Med_SNDVI/Yearly_Images/2016/Med_SNDVI_2016' , $ 
 nodata_out = '32767' , $ 
-N_Ker = '801' , $ 
+n_ker = '801' , $ 
 index = 'NDVI' , $ 
-Year = '2016' )
+year = '2016' )
 exit

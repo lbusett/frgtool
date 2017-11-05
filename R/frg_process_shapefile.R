@@ -2,8 +2,7 @@
 #' @description Process the Burnt area shapefile to create the shapefiles of areas
 #'  burnt once and that of areas burnt multiple times and the corresponding CSV
 #'  LUT by calling the "FRG_Burnt_Areas_Processing.py" python script
-#' @param opts$orig_shapefile PARAM_DESCRIPTION
-#' @param Intermediate_Folder PARAM_DESCRIPTION
+#' @param opts `list` of options passed from `frg_fullprocessing()`
 #' @return The function is called for its side effects
 #' @rdname frg_process_shapefile
 #' @export 
@@ -16,6 +15,7 @@
 # --- and that of areas burnt multiple times and the corresponding ROIs
 # ------------------------------------------------------------------- #  
 frg_process_shapefile = function(opts) {
+  
   
   # - create the two shapefiles starting from the original "full" shapefile by
   #  calling the "FRG_Burnt_Areas_Processing.py" python function
@@ -36,15 +36,15 @@ frg_process_shapefile = function(opts) {
          Processing aborted!')
   }
   
-  Shape_File_Single   <- file.path(Intermed_Dir, "Shapefiles/",
+  Shape_File_Single   <- file.path(opts$intermed_dir, "Shapefiles/",
                                    paste0(tools::file_path_sans_ext(opts$orig_shapefile), 
                                           "_Single_Fires.shp"))
   
-  Shape_File_Multiple <- file.path(Intermed_Dir, "Shapefiles/",
+  Shape_File_Multiple <- file.path(opts$intermed_dir, "Shapefiles/",
                                    paste0(tools::file_path_sans_ext(opts$orig_shapefile), 
                                           "_Multiple_Fires.shp"))
   
-  LUT_File_Multiple   <- file.path(Intermed_Dir, "Shapefiles/",
+  LUT_File_Multiple   <- file.path(opts$intermed_dir, "Shapefiles/",
                                    paste0(tools::file_path_sans_ext(opts$orig_shapefile), 
                                           "_Intersect_LUT_csv.csv"))
   

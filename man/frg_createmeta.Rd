@@ -4,8 +4,23 @@
 \alias{frg_createmeta}
 \title{frg_createmeta}
 \usage{
-frg_createmeta(opts, out_files, force_update)
+frg_createmeta(opts, out_files, force_update = FALSE)
+}
+\arguments{
+\item{opts}{\code{list} of options passed from \code{frg_fullprocessing()}}
+
+\item{out_files}{\code{character} names of raster files to be used to create the META}
+
+\item{force_update}{\code{logical} If TRUE, recreate the ROI file even if it already
+exist, default: FALSE}
+}
+\value{
+The function is called for its side effects
 }
 \description{
-frg_createmeta
+Create ENVI META files allowing access to time series
+of Med_SVI files
+}
+\author{
+Lorenzo Busetto, phD (2017) \href{mailto:lbusett@gmail.com}{lbusett@gmail.com}
 }

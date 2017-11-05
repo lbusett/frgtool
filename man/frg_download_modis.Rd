@@ -7,14 +7,21 @@
 frg_download_modis(opts, yy)
 }
 \arguments{
-\item{yy}{Year for which images are to be downloaded and processed}
+\item{opts}{\code{list} of options passed from \code{frg_fullprocessing()}}
+
+\item{yy}{Year for which images are to be downloaded and processed (NOTE:
+within \code{frgtool}, different years are processed in a for cycle.)}
+}
+\value{
+The function is called for its side effects
 }
 \description{
-Function used to download, mosaic and reproject MODIS data
+Function used to download, mosaic and reproject MODIS data, using
+`MODIStsp`` functionalities
 }
 \details{
 The function leverages
-functionality form \code{MODIStsp} package \link{https://github.com/lbusett/MODIStsp/}
+functionality form \code{MODIStsp} package (https://github.com/lbusett/MODIStsp/)
 \strong{Download and Mosaicing}:
 Images covering Europe for DOYS 209 and 225 of each selected year are downloaded,
 mosaiced and reprojected in LAEA projection, with 250m pixels size
@@ -26,5 +33,5 @@ access the full time series in \code{ENVI} and \code{R} are stored in the \code{
 subfolder
 }
 \author{
-Lorenzo Busetto, PhD (2017) - email lbusett@gmail.com
+Lorenzo Busetto, phD (2017) \href{mailto:lbusett@gmail.com}{lbusett@gmail.com}
 }

@@ -2,21 +2,33 @@
 % Please edit documentation in R/frg_createmaskeroded.R
 \name{frg_createmask_eroded}
 \alias{frg_createmask_eroded}
-\title{frg_createmask}
+\title{frg_createmask_eroded}
 \usage{
-frg_createmask_eroded(opts, exp_path_str, force_update)
+frg_createmask_eroded(opts, exp_path_str, force_update = FALSE)
 }
 \arguments{
-\item{opts$roi_file}{}
+\item{opts}{\code{list} of options passed from \code{frg_fullprocessing()}}
+
+\item{exp_path_str}{\code{character} string to be used to expand the IDL path
+in IDL batch files}
+
+\item{force_update}{\code{logical} If TRUE, recreate the ROI file even if it already
+exist, default: FALSE}
+}
+\value{
+\code{character} path to the created mask
 }
 \description{
-Accessory function to call IDL routine for Mask creation.
+Accessory function to call IDL routine for Mask creation - eroded.
 }
 \details{
-Function used to create a batch file (\code{FRG_CreateMask_Eroded_Batch.pro}) which
-is then used to call the \code{FRG_Create_Mask_Eroded.pro} IDL function from a command shell.
-
-\code{FRG_Create_Mask_Eroded.pro} is used to create an eroded version of the binary mask
+Function used to create a batch file (\code{frg_createmask_eroded_batch.pro}) which
+is then used to call the \code{frg_createmask_eroded.pro} IDL function from a command shell.
+\code{frg_createmask_eroded.pro} is used to create an eroded version of the binary mask
 of burned areas, which allows to identify non-border (CORE) burnt pixels.
-See \code{FRG_Create_Mask_Eroded.pro} in \code{/IDL/VI_Elaborations} for further documentation
+See \code{frg_createmask_eroded.pro} in \code{/IDL_scripts/VI_Elaborations} for
+further documentation
+}
+\author{
+Lorenzo Busetto, phD (2017) \href{mailto:lbusett@gmail.com}{lbusett@gmail.com}
 }

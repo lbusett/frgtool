@@ -2,29 +2,32 @@
 % Please edit documentation in R/frg_sigyears.R
 \name{frg_sigyears}
 \alias{frg_sigyears}
-\title{FRG_Comp_Sig_Matrix}
+\title{frg_sigyears}
 \usage{
 frg_sigyears(file_in, file_out, opts, median_analysis = TRUE)
 }
 \arguments{
-\item{file_in}{string RData file created by FRG_Comp_Sig_Matrix}
+\item{file_in}{\code{character} RData file created by FRG_Comp_Sig_Matrix}
 
-\item{file_out}{string Name of the final Statistical Analysis output RData file}
+\item{file_out}{\code{character} Name of the final Statistical Analysis output RData file}
 
-\item{opts$MedWdt}{numeric Number of pre-fire years considered as reference}
+\item{opts}{\code{list} of options passed from \code{frg_fullprocessing()}}
 
-\item{opts$sig_level}{numeric Significance level used for Wilcoxon test}
+\item{median_analysis}{\code{logical} (obsolete - always TRUE)}
 }
 \value{
-Saves a file containing the p-values matrix and the 'plot_stats' data frame in the 'p_matrixes' subfolder
+Saves a file containing the p-values matrix and the 'plot_stats' data
+frame in the 'p_matrixes' subfolder
 }
 \description{
-Function used to compute the number of consecutive years with significant VIR reductions for the different BAS, considering the selected number  \cr
-of before fire years (opts$MedWdt). Also, joins 'plotting' information computed in FRG_Comp_Sig_Matrix with 'Significance' information \cr
-in the 'recov_stat' data frame and computes the Recovery Times.
-All informations derived (plot_stat + recov_stat) from the analysis are saved in the final Statistical Analysis output RData file
+Function used to compute the number of consecutive years with
+significant VIR reductions for the different BAS, considering the selected number
+of before fire years (opts$MedWdt). Also, joins 'plotting' information computed
+in FRG_Comp_Sig_Matrix with 'Significance' information in the 'recov_stat'
+data frame and computes the Recovery Times. All informations derived
+(plot_stat + recov_stat) from the analysis are saved in the final Statistical
+Analysis output RData file
 }
 \author{
-Lorenzo Busetto - email: lorenzo.busetto@jrc.ec.europa.eu
-Created Date: Feb 16, 2012
+Lorenzo Busetto, phD (2017) \href{mailto:lbusett@gmail.com}{lbusett@gmail.com}
 }
