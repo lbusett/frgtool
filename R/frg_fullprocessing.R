@@ -20,7 +20,7 @@ frg_fullprocessing <- function(opts,
                                force_update, 
          # Flags to skip some processing steps in debugging phase - Set all to T
          # for complete processing - proceed with caution !
-                               MOD_dwl   = FALSE,
+                               MOD_dwl   = TRUE,
                                Comp_SVI  = TRUE,
                                Extr_Stat = TRUE,
                                Sig_Anal  = TRUE) {
