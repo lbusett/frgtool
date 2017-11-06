@@ -3,12 +3,10 @@
 .RData
 .Ruserdata
 old_version_backup
-
 data/ENV_Zones/
 data/CLC_00/
 inst/ExtData/previous/
 previous/frg_previous\.RData
 \.vs/
 inst/doc
-
 config/frg_config\.RData
