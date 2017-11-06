@@ -4,11 +4,20 @@
 \alias{frg_fullproc_gui}
 \title{frg_fullproc_gui}
 \usage{
-frg_fullproc_gui()
+frg_fullproc_gui(opts, force_update = FALSE)
+}
+\arguments{
+\item{opts}{\code{list} of options passed from \code{frg_fullprocessing()}}
+
+\item{force_update}{\code{logical} If TRUE, intermediate processing outputs (e.g.,
+creation of burnt areas shapefile, computation of SVI, etc. are re-run
+even if intermecdiate processing outputs are already present in the
+specified output folders. Useful to make a "clean run" of the tool,
+Default: FALSE)}
 }
 \description{
 Function used to create the GUI for selecting the parameters for
-full FRG procesing
+full FRG processing.
 }
 \details{
 Main GUI of the tool - used only to set the processing options and
@@ -18,6 +27,5 @@ parameters are saved in the 'FRG_Full_Previous.RData' file and processing is
 started
 }
 \author{
-Lorenzo Busetto (2012 - 2017)
-email: lbusett@gmail.com
+Lorenzo Busetto, phD (2017) \href{mailto:lbusett@gmail.com}{lbusett@gmail.com}
 }

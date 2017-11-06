@@ -1,12 +1,20 @@
 Package: frgtool
 Type: Package
-Title: Analyze Post Fire Vegetation Regeneration from Time Series of summertime MODIS data
-Version: 0.1.0
-Author: Lorenzo Busetto
+Title: Analyze Post Fire Vegetation Regeneration from Time Series of Summertime MODIS data
+Version: 0.1.0.9000
+Authors@R: person("Lorenzo", "Busetto", email = "busetto.l@irea.cnr.it", role = c("aut", "cre"), comment = c(ORCID = "0000-0001-9634-6038"))
 Maintainer: Lorenzo Busetto <lbusett@gmail.com>
-Description: More about what it does (maybe more than one line)
-License: GPL-3
-Imports: gWidgetsRGtk2, gWidgets, RGtk2
+Description: Allows analysis of post-fire vegetation regeneration 
+ from time series of summertime MODIS data
+License: GPL-3 + file LICENSE
+Imports: gWidgetsRGtk2, gWidgets, RGtk2, tcltk, MODIStsp, magrittr, gdata, data.table,
+         plyr, dplyr, RJSONIO, abind, gdalUtils, hash, lubridate,
+         raster, rgdal, sf, sp, stringr, xts, methods
 LazyData: TRUE
 RoxygenNote: 6.0.1
 Roxygen: list(markdown = TRUE)
+URL: https://github.com/lbusett/frgtool
+BugReports: https://github.com/lbusett/frgtool/issues
+Suggests: knitr,
+    rmarkdown
+VignetteBuilder: knitr
