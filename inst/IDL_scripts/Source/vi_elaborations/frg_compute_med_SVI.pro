@@ -1,6 +1,6 @@
 ;+
 ;:Name:
-;frg_compute_med_SVI
+;frg_compute_med_svi
 ;
 ;:Description:
 ; Function used to compute the Scaled Vegetation indexes starting from original NDVI or RDVI data
@@ -45,7 +45,7 @@
 ;
 ;-
 
-function frg_compute_med_SVI,  $
+function frg_compute_med_svi,  $
     CLC_file_00 = CLC_file_00, $
     in_file = in_file, $
     firemask_file = firemask_file, $

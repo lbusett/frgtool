@@ -110,21 +110,20 @@ frg_compSVI <- function(opts,
       message("---- Computing Med_SNDVI for year ", yy," ----")
       
       # Build string to call the FRG_Compute_MedScaled_VI.pro IDL script ----
-      str_idl <- paste0("res = frg_compute_med_SVI(", 
-                        "CLC_file_00 = '",   opts$clc_file,   "' , $ \n",
-                        "in_file = '",       in_avg_file,   "' , $ \n",
+      str_idl <- paste0("res = frg_compute_med_svi(CLC_file_00 = '",   opts$clc_file,      "' , $ \n",
+                        "in_file = '",       in_avg_file,        "' , $ \n",
                         "firemask_file = '", opts$firemask_file, "' , $ \n",
-                        "out_file = '",      out_file,      "' , $ \n",
+                        "out_file = '",      out_file,           "' , $ \n",
                         "nodata_out = '",    opts$nodata_out,    "' , $ \n",
                         "n_ker = '",         opts$nker,          "' , $ \n", 
-                        "index = '",         opts$index,         "' , $ \n", 
+                        "index = '",         opts$index,         "' , $ \n",
                         "year = '",          yy,            "' )"
       )
       
       # Build an IDL batch file using the string defined above ----
-      # browser()  
+      
       batch_file <- file.path(opts$src_dir_idl, 
-                              "/batch_files/frg_compute_med_SVI_batch.pro")
+                              "batch_files/frg_compute_med_svi_batch.pro")
       fileConn <- file(batch_file)
       writeLines(c(exp_path_str, 
                    "envi, /restore_base_save_files  ", 
@@ -135,7 +134,8 @@ frg_compSVI <- function(opts,
       close(fileConn)
       
       # Launch computation in IDL ----
-      out <- system2("idl.exe", args = batch_file)  
+      # out <- system2("idl.exe", args = batch_file)  
+      out <- system2("idl", args = batch_file)
       
       if (!is.null(attributes(out)$status) | !file.exists(out_file)) {
         stop("An error occurred while computing scaled opts$indexes ! Processing stopped. 

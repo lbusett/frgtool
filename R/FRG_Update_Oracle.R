@@ -8,8 +8,9 @@
 #' @import gWidgetsRGtk2
 #' @export
 
-frg_update_oracle = function(){
-  
+frg_update_oracle = function(opts, 
+                             force_update = force_update){
+ 
   Main_W =  gbasicdialog("Update FRG Oracle Tables", horizontal = FALSE,
                          do.buttons = FALSE, spacing = 10)
   Files_Group = gframe(text = "Select Folder containing FRG processing results to be used to update ORACLE tables",
@@ -66,24 +67,16 @@ frg_update_oracle = function(){
     
     err = 'OK'
     effis_folder = svalue(Out_Fold)
+    if (!file.exists(effis_folder)) dir.create(effis_folder, recursive = TRUE)
     enabled(Main_GUI) = FALSE
-    
-    
-    # Copy the processing log file
-    log_file = list.files(paste(svalue(Res_Fold), sep = ''),
-                          pattern = ".txt$", full.names = T)
-    copy = file.copy(log_file,
-                     file.path(effis_folder,'Data','Processing_log.txt'),
-                     overwrite = T)
-    if (copy == 'FALSE') {err = 'Error'}
-    
+
     # Check for existance of output tables and set the names
     
     In_Folder = file.path(paste(svalue(Res_Fold), sep = ''),
                           'Summaries_for_EFFIS')
     Files_list = basename(list.files(In_Folder, full.names = T,
                                      include.dirs = FALSE))
-    
+    # browser()
     chk_LUT = 0 ; chk_Plot = 0 ; chk_Plot_M = 0 ; chk_Recov = 0
     for (file in Files_list) {
       if (length(grep("Intersect_LUT_csv.csv",file)) == 1 ) {LUT_File = file ; chk_LUT = 1}
@@ -131,6 +124,8 @@ frg_update_oracle = function(){
     if (min(c(chk_shp_single,chk_shp_M,chk_shp_Full)) == 0) {err ='Error'}
     
     if (err != 'Error') { # If all files found, start the copy to the effis/regeneration/data/ folder
+      
+      dir.create(file.path(effis_folder,'Data'), recursive = TRUE)
       
       copy = file.copy(file.path(In_Folder,LUT_File),
                        file.path(effis_folder,'Data','reg_intersect_lut.csv'),

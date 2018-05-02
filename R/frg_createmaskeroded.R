@@ -42,7 +42,9 @@ frg_createmask_eroded <- function(opts,
     close(fileConn)
     
     # Execute frg_createmask_eroded.pro  ----
-    out <- system2("idl.exe", args = batch_file, stdout = T) 
+    # out <- system2("idl.exe", args = batch_file, stdout = T) 
+    
+    out <- system2("idl", args = batch_file, stdout = T) 
     
     if (!is.null(attributes(out)$status) | !file.exists(opts$firemask_file_er)) {
       stop("An error occurred while creating the burned areas eroded mask. 

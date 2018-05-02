@@ -52,7 +52,8 @@ frg_compmean <- function(opts,
       out <- raster::raster(NDVI)
       bs  <- raster::blockSize(out)
       
-      out <- raster::writeStart(out, filename, overwrite = TRUE, NAflag = 32767)
+      out <- raster::writeStart(out, filename, overwrite = TRUE, NAflag = 32767, 
+                                options = c("COMPRESS=NONE"))
       for (i in 1:bs$n) {
         vi_data_1 <- raster::getValues(NDVI[[1]], row = bs$row[i], nrows = bs$nrows[i]) *
           ifelse((raster::getValues(UI[[1]], row = bs$row[i], nrows = bs$nrows[i]) <= max_UI) &

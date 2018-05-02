@@ -217,6 +217,7 @@ frg_fullproc_gui <- function(opts,
     opts$SNDVI     <- 1
     
     if (opts$end_year >= opts$start_year) {
+      
       # Save  widgets values in the frg_previous.RData file
       save(opts, file = file.path(opts$prev_dir, 
                                             "frg_previous.RData"))

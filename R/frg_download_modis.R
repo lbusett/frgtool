@@ -38,15 +38,16 @@ frg_download_modis <- function(opts,
   mstp_opts$out_folder      <- file.path(opts$out_origpath, "time_series")
   mstp_opts$download_server <- "http"
   mstp_opts$reprocess       <- ifelse(opts$redown == 1, "Yes", "No")
-  mstp_opts$start_x         <- 17
-  mstp_opts$end_x           <- 18
-  mstp_opts$start_y         <- 4
-  mstp_opts$end_y           <- 4
+  # mstp_opts$start_x         <- 17
+  # mstp_opts$end_x           <- 18
+  # mstp_opts$start_y         <- 4
+  # mstp_opts$end_y           <- 4
+  mstp_opts$use_aria        <- TRUE
   RJSONIO::toJSON(mstp_opts) %>% 
     write(mstp_opts_file)
   # Launch MODIStsp   ----
-  
-  MODIStsp::MODIStsp(options_file = mstp_opts_file,
+  print(mstp_opts)
+ MODIStsp(options_file = mstp_opts_file,
            gui = FALSE)
   
   message("--- Download, mosaicing and reprojection for ", yy,  "complete ! ---")

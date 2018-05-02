@@ -41,7 +41,9 @@ frg_createmask <- function(opts,
     close(fileConn)
     
     # Execute frg_createmask.pro  ----
-    out <- system2("idl.exe", args = batch_file)
+    # out <- system2("idl.exe", args = batch_file)
+    
+    out <- system2("idl", args = batch_file)
     
     if (!is.null(attributes(out)$status)) {
       stop("An error occurred while creating the burned areas mask. 

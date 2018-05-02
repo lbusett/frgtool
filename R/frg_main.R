@@ -91,7 +91,7 @@ frg_main <- function(force_update = FALSE) {
   
   #   __________________________________________________________________________
   #   check if arcpypath was already set. Otherwise ask to set it           ####
-  opts$arcpypath <- frg_set_arcpypath()
+  # opts$arcpypath <- frg_set_arcpypath()
   
   opts$nodata_in    <- 32767
   opts$nodata_out   <- 32767

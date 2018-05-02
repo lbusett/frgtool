@@ -47,7 +47,9 @@ frg_buildroi <- function(opts,
     
     # Execute frg_create_ROI_batch.pro  ----
     
-    out <- system2("idl.exe", args = batch_file)
+    # out <- system2("idl.exe", args = batch_file)
+    
+    out <- system2("idl", args = batch_file)
     
     # Error message on problems in execution of frg_create_ROI_batch.pro
     if (!is.null(attributes(out)$status) | !file.exists(opts$roi_file)) {

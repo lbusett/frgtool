@@ -61,7 +61,7 @@ frg_def_files                   <- function(opts) {
   opts[["stats_file_multiple"]] <- file.path(opts$out_dir_stats,
                                              "Burned_Multiple",
                                              basename(opts$ts_file_multiple))
-  
+  # browser()
   opts[["intermed_shapes_dir"]] <- file.path(opts$intermed_dir, "Shapefiles/")
   opts[["shapefile_single"]] = file.path(
     opts$intermed_dir, "Shapefiles/",
